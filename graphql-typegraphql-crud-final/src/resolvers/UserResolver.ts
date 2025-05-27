@@ -1,6 +1,7 @@
 import { Arg, Mutation, Query, Resolver } from "type-graphql";
 import { PrismaClient } from "@prisma/client";
-import { User, CreateUserInput, UpdateUserInput } from "../schema/User";
+import { User } from "../schema/User";
+import { CreateUserInput, UpdateUserInput } from "../schema/UserInput";
 
 const prisma = new PrismaClient();
 
