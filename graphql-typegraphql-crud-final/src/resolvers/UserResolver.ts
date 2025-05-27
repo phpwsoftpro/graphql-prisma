@@ -1,4 +1,4 @@
-import { Arg, Mutation, Query, Resolver } from "type-graphql";
+import { Arg, ID, Mutation, Query, Resolver } from "type-graphql";
 import { PrismaClient } from "@prisma/client";
 import { User } from "../schema/User";
 import { CreateUserInput, UpdateUserInput } from "../schema/UserInput";
@@ -13,7 +13,7 @@ export class UserResolver {
   }
 
   @Query(() => User, { nullable: true })
-  async user(@Arg("id") id: number) {
+  async user(@Arg("id", () => ID) id: number) {
     return prisma.user.findUnique({ where: { id } });
   }
 
@@ -24,14 +24,19 @@ export class UserResolver {
 
   @Mutation(() => User, { nullable: true })
   async updateUser(
-    @Arg("id") id: number,
+    @Arg("id", () => ID) id: number,
     @Arg("data") data: UpdateUserInput
   ) {
-    return prisma.user.update({ where: { id }, data });
+    const updateData = Object.fromEntries(
+      Object.entries(data).filter(([, value]) => value !== undefined)
+    ) as UpdateUserInput;
+
+    return prisma.user.update({ where: { id }, data: updateData });
   }
 
-  @Mutation(() => User, { nullable: true })
-  async deleteUser(@Arg("id") id: number) {
-    return prisma.user.delete({ where: { id } });
+  @Mutation(() => Boolean)
+  async deleteUser(@Arg("id", () => ID) id: number) {
+    await prisma.user.delete({ where: { id } });
+    return true;
   }
 }

@@ -42,10 +42,10 @@ export class CreateUserInput {
   avatarUrl?: string;
 
   @Field({ nullable: true })
-  jobTitle?: string;
+  role?: string;
 
   @Field({ nullable: true })
-  role?: string;
+  jobTitle?: string;
 }
 
 @InputType()
@@ -63,8 +63,8 @@ export class UpdateUserInput {
   avatarUrl?: string;
 
   @Field({ nullable: true })
-  jobTitle?: string;
+  role?: string;
 
   @Field({ nullable: true })
-  role?: string;
+  jobTitle?: string;
 }
