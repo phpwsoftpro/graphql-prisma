@@ -1,31 +1,70 @@
-import { Field, ID, ObjectType } from "type-graphql"
+import { Field, ID, ObjectType, InputType } from "type-graphql";
 
 @ObjectType()
 export class User {
   @Field(() => ID)
-  id: number
+  id: number;
 
   @Field()
-  name: string
+  name: string;
 
   @Field()
-  email: string
-
-  @Field()
-  password: string
+  email: string;
 
   @Field({ nullable: true })
-  avatarUrl?: string
+  avatarUrl?: string;
 
   @Field()
-  createdAt: Date
-
-  @Field()
-  updatedAt: Date
-
-  @Field()
-  role: string
+  role: string;
 
   @Field({ nullable: true })
-  jobTitle?: string
+  jobTitle?: string;
+
+  @Field()
+  createdAt: Date;
+
+  @Field()
+  updatedAt: Date;
+}
+
+@InputType()
+export class CreateUserInput {
+  @Field()
+  name: string;
+
+  @Field()
+  email: string;
+
+  @Field()
+  password: string;
+
+  @Field({ nullable: true })
+  avatarUrl?: string;
+
+  @Field({ nullable: true })
+  jobTitle?: string;
+
+  @Field({ nullable: true })
+  role?: string;
+}
+
+@InputType()
+export class UpdateUserInput {
+  @Field({ nullable: true })
+  name?: string;
+
+  @Field({ nullable: true })
+  email?: string;
+
+  @Field({ nullable: true })
+  password?: string;
+
+  @Field({ nullable: true })
+  avatarUrl?: string;
+
+  @Field({ nullable: true })
+  jobTitle?: string;
+
+  @Field({ nullable: true })
+  role?: string;
 }

@@ -1,25 +1,25 @@
-import { Arg, Mutation, Query, Resolver } from "type-graphql"
-import { PrismaClient } from "@prisma/client"
-import { User } from "../schema/User"
-import { CreateUserInput, UpdateUserInput } from "../schema/UserInput"
+import { Arg, Mutation, Query, Resolver } from "type-graphql";
+import { PrismaClient } from "@prisma/client";
+import { User } from "../schema/User";
+import { CreateUserInput, UpdateUserInput } from "../schema/UserInput";
 
-const prisma = new PrismaClient()
+const prisma = new PrismaClient();
 
 @Resolver(() => User)
 export class UserResolver {
   @Query(() => [User])
   async users() {
-    return prisma.user.findMany()
+    return prisma.user.findMany();
   }
 
   @Query(() => User, { nullable: true })
   async user(@Arg("id") id: number) {
-    return prisma.user.findUnique({ where: { id } })
+    return prisma.user.findUnique({ where: { id } });
   }
 
   @Mutation(() => User)
   async createUser(@Arg("data") data: CreateUserInput) {
-    return prisma.user.create({ data })
+    return prisma.user.create({ data });
   }
 
   @Mutation(() => User, { nullable: true })
@@ -27,11 +27,11 @@ export class UserResolver {
     @Arg("id") id: number,
     @Arg("data") data: UpdateUserInput
   ) {
-    return prisma.user.update({ where: { id }, data })
+    return prisma.user.update({ where: { id }, data });
   }
 
   @Mutation(() => User, { nullable: true })
   async deleteUser(@Arg("id") id: number) {
-    return prisma.user.delete({ where: { id } })
+    return prisma.user.delete({ where: { id } });
   }
 }
