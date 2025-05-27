@@ -1,0 +1,39 @@
+version: '3.9'
+
+services:
+  postgres:
+    image: postgres:15
+    restart: always
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    ports:
+      - '5432:5432'
+
+  app:
+    build: .
+    depends_on:
+      - postgres
+    environment:
+      DATABASE_URL: ${DATABASE_URL}
+    ports:
+      - '8000:8000'
+    command: >
+      sh -c "
+        echo '📦 Installing dependencies...' &&
+        pnpm install &&
+        echo '🧬 Generating Prisma client...' &&
+        npx prisma generate &&
+        echo '⏳ Waiting for PostgreSQL...' &&
+        until nc -z postgres 5432; do sleep 1; done &&
+        echo '🚀 Creating and applying migrations...' &&
+        npx prisma migrate dev --name init --skip-seed &&
+        echo '🟢 Starting development server on port 8000...' &&
+        pnpm dev
+      "
+
+volumes:
+  pgdata:
