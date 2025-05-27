@@ -3,12 +3,13 @@ import { ApolloServer } from "apollo-server"
 import { buildSchema } from "type-graphql"
 import { PrismaClient } from "@prisma/client"
 import { TodoResolver } from "./resolvers/TodoResolver"
+import { UserResolver } from "./resolvers/UserResolver"
 
 const prisma = new PrismaClient()
 
 async function bootstrap() {
   const schema = await buildSchema({
-    resolvers: [TodoResolver],
+    resolvers: [TodoResolver, UserResolver],
     validate: false,
   })
 
