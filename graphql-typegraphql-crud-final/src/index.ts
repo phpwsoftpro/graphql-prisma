@@ -7,6 +7,9 @@ import { UserResolver } from "./resolvers/UserResolver";
 import { CompanyResolver } from "./resolvers/CompanyResolver";
 import { ContactResolver } from "./resolvers/ContactResolver";
 import { QuoteResolver } from "./resolvers/QuoteResolver";
+import { DealStageResolver } from "./resolvers/DealStageResolver";
+import { DealResolver } from "./resolvers/DealResolver";
+import { ProjectResolver } from "./resolvers/ProjectResolver";
 
 const prisma = new PrismaClient();
 
@@ -18,6 +21,9 @@ async function bootstrap() {
       CompanyResolver,
       ContactResolver,
       QuoteResolver,
+      DealStageResolver,
+      DealResolver,
+      ProjectResolver,
     ],
     validate: false,
   });
