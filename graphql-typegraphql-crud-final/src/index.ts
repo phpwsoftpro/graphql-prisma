@@ -6,6 +6,7 @@ import { TodoResolver } from "./resolvers/TodoResolver";
 import { UserResolver } from "./resolvers/UserResolver";
 import { CompanyResolver } from "./resolvers/CompanyResolver";
 import { ContactResolver } from "./resolvers/ContactResolver";
+import { NotificationResolver } from "./resolvers/NotificationResolver";
 import { TokenResolver } from "./resolvers/TokenResolver";
 import { TaskStageResolver } from "./resolvers/TaskStageResolver";
 import { TaskResolver } from "./resolvers/TaskResolver";
@@ -27,6 +28,7 @@ async function bootstrap() {
       UserResolver,
       CompanyResolver,
       ContactResolver,
+      NotificationResolver,
       TokenResolver,
       TaskStageResolver,
       TaskResolver,
