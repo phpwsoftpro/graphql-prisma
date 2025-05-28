@@ -1,0 +1,14 @@
+version: '3.8'
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: refine_frontend_crm_graphql
+    ports:
+      - "5174:5173"  # Changed external port from 5173 to 5174
+    environment:
+      - NODE_ENV=development
+    stdin_open: true
+    tty: true
