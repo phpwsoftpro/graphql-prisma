@@ -299,3 +299,12 @@ model Audit {
   userId Int?
   user   User? @relation("AuditCreatedBy", fields: [userId], references: [id])
 }
+
+model Todo {
+  id          Int      @id @default(autoincrement())
+  title       String
+  content     String?
+  completedAt DateTime?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
