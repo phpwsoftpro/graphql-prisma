@@ -12,6 +12,7 @@ import { TokenResolver } from "./resolvers/TokenResolver";
 import { TaskStageResolver } from "./resolvers/TaskStageResolver";
 import { TaskResolver } from "./resolvers/TaskResolver";
 import { CategoryResolver } from "./resolvers/CategoryResolver";
+import { EventCategoryResolver } from "./resolvers/EventCategoryResolver";
 import { ChecklistResolver } from "./resolvers/ChecklistResolver";
 import { AuditResolver } from "./resolvers/AuditResolver";
 import { ProductResolver } from "./resolvers/ProductResolver";
@@ -37,6 +38,7 @@ async function bootstrap() {
       TaskStageResolver,
       TaskResolver,
       CategoryResolver,
+      EventCategoryResolver,
       ChecklistResolver,
       AuditResolver,
       ProductResolver,
