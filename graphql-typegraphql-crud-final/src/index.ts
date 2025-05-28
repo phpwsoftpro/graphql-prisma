@@ -12,6 +12,7 @@ import { TokenResolver } from "./resolvers/TokenResolver";
 import { TaskStageResolver } from "./resolvers/TaskStageResolver";
 import { TaskResolver } from "./resolvers/TaskResolver";
 import { CategoryResolver } from "./resolvers/CategoryResolver";
+import { EventCategoryResolver } from "./resolvers/EventCategoryResolver";
 import { ChecklistResolver } from "./resolvers/ChecklistResolver";
 import { AuditResolver } from "./resolvers/AuditResolver";
 import { ProductResolver } from "./resolvers/ProductResolver";
@@ -19,7 +20,8 @@ import { QuoteResolver } from "./resolvers/QuoteResolver";
 import { DealStageResolver } from "./resolvers/DealStageResolver";
 import { DealResolver } from "./resolvers/DealResolver";
 import { ProjectResolver } from "./resolvers/ProjectResolver";
-import { EventCategoryResolver } from "./resolvers/EventCategoryResolver";
+import { EventResolver } from "./resolvers/EventResolver";
+import { CommentResolver } from "./resolvers/CommentResolver";
 
 const prisma = new PrismaClient();
 
@@ -44,6 +46,8 @@ async function bootstrap() {
       DealStageResolver,
       DealResolver,
       ProjectResolver,
+      EventResolver,
+      CommentResolver,
     ],
     validate: false,
   });
