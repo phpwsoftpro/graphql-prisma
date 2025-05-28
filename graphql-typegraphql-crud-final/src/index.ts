@@ -19,6 +19,7 @@ import { QuoteResolver } from "./resolvers/QuoteResolver";
 import { DealStageResolver } from "./resolvers/DealStageResolver";
 import { DealResolver } from "./resolvers/DealResolver";
 import { ProjectResolver } from "./resolvers/ProjectResolver";
+import { EventCategoryResolver } from "./resolvers/EventCategoryResolver";
 
 const prisma = new PrismaClient();
 
@@ -35,6 +36,7 @@ async function bootstrap() {
       TaskStageResolver,
       TaskResolver,
       CategoryResolver,
+      EventCategoryResolver,
       ChecklistResolver,
       AuditResolver,
       ProductResolver,
