@@ -6,12 +6,19 @@ import { TodoResolver } from "./resolvers/TodoResolver";
 import { UserResolver } from "./resolvers/UserResolver";
 import { CompanyResolver } from "./resolvers/CompanyResolver";
 import { ContactResolver } from "./resolvers/ContactResolver";
+import { AuditResolver } from "./resolvers/AuditResolver";
 
 const prisma = new PrismaClient();
 
 async function bootstrap() {
   const schema = await buildSchema({
-    resolvers: [TodoResolver, UserResolver, CompanyResolver, ContactResolver],
+    resolvers: [
+      TodoResolver,
+      UserResolver,
+      CompanyResolver,
+      ContactResolver,
+      AuditResolver,
+    ],
     validate: false,
   });
 
