@@ -66,5 +66,35 @@ export class UserResolver {
 
     return { token: tokenValue, expires };
   }
+
+  @Mutation(() => LoginPayload)
+  async refreshToken(
+    @Arg("refreshToken") refreshToken: string
+  ): Promise<LoginPayload> {
+    const existing = await prisma.token.findFirst({
+      where: {
+        token: refreshToken,
+        type: "login",
+        blacklisted: false,
+      },
+    });
+
+    if (!existing || existing.expires < new Date()) {
+      throw new Error("Invalid or expired token");
+    }
+
+    const newTokenValue = randomBytes(32).toString("hex");
+    const newExpires = new Date(Date.now() + 60 * 60 * 1000);
+
+    await prisma.token.update({
+      where: { id: existing.id },
+      data: {
+        token: newTokenValue,
+        expires: newExpires,
+      },
+    });
+
+    return { token: newTokenValue, expires: newExpires };
+  }
 }
 
