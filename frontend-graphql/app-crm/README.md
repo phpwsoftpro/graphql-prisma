@@ -83,18 +83,30 @@ refine is a React-based powerful framework for building low-code applications. I
   - `salesOwner` (user info)
   - `contacts` (basic contact info)
 
-  Example response:
+Example response:
 
-  ```json
-  {
-    "data": {
-      "companies": {
-        "nodes": [/* company objects */],
-        "totalCount": 0
-      }
+```json
+{
+  "data": {
+    "companies": {
+      "nodes": [
+        {
+          "id": 1,
+          "name": "Acme",
+          "avatarUrl": null,
+          "dealsAggregate": [
+            { "sum": { "value": 1000 } }
+          ],
+          "salesOwner": { "id": 2, "name": "Jane" },
+          "contacts": [
+            { "id": 5, "name": "John" }
+          ]
+        }
+      ],
+      "totalCount": 1
     }
   }
-  ```
+}
 
 
 ## Try this example on your local

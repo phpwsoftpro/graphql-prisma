@@ -2,6 +2,20 @@ import { Field, ID, ObjectType } from "type-graphql";
 import { Contact } from "./Contact";
 import { User } from "./User";
 
+
+@ObjectType()
+export class DealSum {
+  @Field()
+  value: number;
+}
+
+@ObjectType()
+export class DealAggregate {
+  @Field(() => DealSum)
+  sum: DealSum;
+}
+
+
 @ObjectType()
 export class Company {
   @Field(() => ID)
@@ -44,10 +58,15 @@ export class Company {
   salesOwnerId?: number;
 
   @Field(() => User, { nullable: true })
-  salesOwner?: User;
+
+  salesOwner?: User | null;
 
   @Field(() => [Contact])
-  contacts!: Contact[];
+  contacts?: Contact[];
+
+  @Field(() => [DealAggregate], { nullable: true })
+  dealsAggregate?: DealAggregate[];
+
 
   @Field()
   createdAt: Date;
