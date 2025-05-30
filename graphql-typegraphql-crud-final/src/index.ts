@@ -61,9 +61,61 @@ async function bootstrap() {
   await server.start();
 
   const app = express();
+  app.use(express.json());
   server.applyMiddleware({ app });
 
-  // Endpoint /tasks
+  // GET /task/:id
+  app.get("/task/:id", async (req, res) => {
+    const id = parseInt(req.params.id, 10);
+    if (Number.isNaN(id)) {
+      res.status(400).json({ message: "Invalid id" });
+      return;
+    }
+
+    try {
+      const task = await prisma.task.findUnique({
+        where: { id },
+        select: {
+          id: true,
+          title: true,
+          description: true,
+          dueDate: true,
+          completed: true,
+          stage: {
+            select: {
+              id: true,
+              title: true,
+            },
+          },
+          users: {
+            select: {
+              id: true,
+              name: true,
+              email: true,
+            },
+          },
+          checklists: {
+            select: {
+              id: true,
+              title: true,
+              checked: true,
+            },
+          },
+        },
+      });
+
+      if (!task) {
+        res.status(404).json({ message: "Task not found" });
+        return;
+      }
+
+      res.json(task);
+    } catch (e) {
+      res.status(500).json({ message: "Server error" });
+    }
+  });
+
+  // GET /tasks
   app.get("/tasks", async (_req, res) => {
     const tasks = await prisma.task.findMany({
       select: {
@@ -98,7 +150,7 @@ async function bootstrap() {
     res.json(formatted);
   });
 
-  // Endpoint /events
+  // GET /events
   app.get("/events", async (_req, res) => {
     const events = await prisma.event.findMany({
       select: {
@@ -109,14 +161,13 @@ async function bootstrap() {
         endDate: true,
       },
     });
+
     res.setHeader("Content-Type", "application/json");
     res.json({ nodes: events, totalCount: events.length });
   });
 
   app.listen({ port: 8000 }, () => {
-    console.log(
-      `🚀 Server ready at http://localhost:8000${server.graphqlPath}`
-    );
+    console.log(`🚀 Server ready at http://localhost:8000${server.graphqlPath}`);
   });
 }
 
