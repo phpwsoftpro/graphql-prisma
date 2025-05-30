@@ -63,6 +63,7 @@ async function bootstrap() {
   const app = express();
   server.applyMiddleware({ app });
 
+  // Endpoint /tasks
   app.get("/tasks", async (_req, res) => {
     const tasks = await prisma.task.findMany({
       select: {
@@ -95,6 +96,21 @@ async function bootstrap() {
     }));
 
     res.json(formatted);
+  });
+
+  // Endpoint /events
+  app.get("/events", async (_req, res) => {
+    const events = await prisma.event.findMany({
+      select: {
+        id: true,
+        title: true,
+        color: true,
+        startDate: true,
+        endDate: true,
+      },
+    });
+    res.setHeader("Content-Type", "application/json");
+    res.json({ nodes: events, totalCount: events.length });
   });
 
   app.listen({ port: 8000 }, () => {
