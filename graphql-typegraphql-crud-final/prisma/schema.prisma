@@ -68,6 +68,7 @@ model Contact {
   company     Company? @relation("CompanyContacts", fields: [companyId], references: [id])
   status      String?
   jobTitle    String?
+  avatarUrl   String?
   deals       Deal[]    @relation("DealContact")
 
   salesOwnerId Int?
