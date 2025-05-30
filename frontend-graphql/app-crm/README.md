@@ -80,3 +80,25 @@ npm create refine-app@latest -- --example app-crm
 <br/>
 
 [![Open app-crm example from refine](https://codesandbox.io/static/img/play-codesandbox.svg)](https://codesandbox.io/embed/github/refinedev/refine/tree/master/examples/app-crm?view=preview&theme=dark&codemirror=1)
+
+## API Endpoints
+
+### List Quotes
+
+**Endpoint:** `GET /quotes`
+
+Returns the following fields for each quote:
+
+- `id`
+- `title`
+- `status`
+- `description`
+- `subTotal`
+- `total`
+- `tax`
+- `createdAt`
+- `items` (array of product or service details)
+- `company`
+- `salesOwner`
+- `contact`
+
