@@ -1,15 +1,17 @@
 import { Arg, ID, Mutation, Query, Resolver } from "type-graphql";
 import { PrismaClient } from "@prisma/client";
-import { TaskStage } from "../schema/TaskStage";
+import { TaskStage, TaskStageConnection } from "../schema/TaskStage";
 import { CreateTaskStageInput, UpdateTaskStageInput } from "../schema/TaskStageInput";
 
 const prisma = new PrismaClient();
 
 @Resolver(() => TaskStage)
 export class TaskStageResolver {
-  @Query(() => [TaskStage])
+  @Query(() => TaskStageConnection)
   async taskStages() {
-    return prisma.taskStage.findMany();
+    const nodes = await prisma.taskStage.findMany();
+    const totalCount = await prisma.taskStage.count();
+    return { nodes, totalCount };
   }
 
   @Query(() => TaskStage, { nullable: true })

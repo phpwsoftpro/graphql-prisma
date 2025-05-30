@@ -9,12 +9,27 @@ const prisma = new PrismaClient();
 export class QuoteResolver {
   @Query(() => [Quote])
   async quotes() {
-    return prisma.quote.findMany();
+    return prisma.quote.findMany({
+      include: {
+        items: true,
+        company: true,
+        salesOwner: true,
+        contact: true,
+      },
+    });
   }
 
   @Query(() => Quote, { nullable: true })
   async quote(@Arg("id", () => ID) id: number) {
-    return prisma.quote.findUnique({ where: { id } });
+    return prisma.quote.findUnique({
+      where: { id },
+      include: {
+        items: true,
+        company: true,
+        salesOwner: true,
+        contact: true,
+      },
+    });
   }
 
   @Mutation(() => Quote)
