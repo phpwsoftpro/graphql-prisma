@@ -1,5 +1,6 @@
 import "reflect-metadata";
-import { ApolloServer } from "apollo-server";
+import express from "express";
+import { ApolloServer } from "apollo-server-express";
 import { buildSchema } from "type-graphql";
 import { PrismaClient } from "@prisma/client";
 import { TodoResolver } from "./resolvers/TodoResolver";
@@ -57,8 +58,68 @@ async function bootstrap() {
     context: () => ({ prisma }),
   });
 
-  const { url } = await server.listen(8000);
-  console.log(`🚀 Server ready at ${url}`);
+  await server.start();
+
+  const app = express();
+  app.use(express.json());
+
+  app.get("/task/:id", async (req, res) => {
+    const id = parseInt(req.params.id, 10);
+    if (Number.isNaN(id)) {
+      res.status(400).json({ message: "Invalid id" });
+      return;
+    }
+
+    try {
+      const task = await prisma.task.findUnique({
+        where: { id },
+        select: {
+          id: true,
+          title: true,
+          description: true,
+          dueDate: true,
+          completed: true,
+          stage: {
+            select: {
+              id: true,
+              title: true,
+            },
+          },
+          users: {
+            select: {
+              id: true,
+              name: true,
+              email: true,
+            },
+          },
+          checklists: {
+            select: {
+              id: true,
+              title: true,
+              checked: true,
+            },
+          },
+        },
+      });
+
+      if (!task) {
+        res.status(404).json({ message: "Task not found" });
+        return;
+      }
+
+      res.json(task);
+    } catch (e) {
+      res.status(500).json({ message: "Server error" });
+    }
+  });
+
+  server.applyMiddleware({ app });
+
+  app.listen(8000, () => {
+    console.log(
+      `🚀 Server ready at http://localhost:8000${server.graphqlPath}`
+    );
+  });
 }
 
 bootstrap();
