@@ -3,6 +3,7 @@ import express from "express";
 import { ApolloServer } from "apollo-server-express";
 import { buildSchema } from "type-graphql";
 import { PrismaClient } from "@prisma/client";
+
 import { TodoResolver } from "./resolvers/TodoResolver";
 import { UserResolver } from "./resolvers/UserResolver";
 import { CompanyResolver } from "./resolvers/CompanyResolver";
@@ -62,6 +63,16 @@ async function bootstrap() {
 
   const app = express();
   app.use(express.json());
+
+  // GET /dashboard/counts
+  app.get("/dashboard/counts", async (_req, res) => {
+    const [companies, contacts, deals] = await Promise.all([
+      prisma.company.count(),
+      prisma.contact.count(),
+      prisma.deal.count(),
+    ]);
+    res.json({ companies, contacts, deals });
+  });
 
   // GET /users
   app.get("/users", async (_req, res) => {
