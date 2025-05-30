@@ -69,6 +69,45 @@ refine is a React-based powerful framework for building low-code applications. I
 
 ![Product Edit Page](https://refine.ams3.cdn.digitaloceanspaces.com/example-readmes/login.png "Product Edit Page")
 
+## Company API Endpoints
+
+### 1. List Companies
+
+- **Endpoint:** `GET /companies`
+- **Returns:**
+  - `id`
+  - `name`
+  - `avatarUrl`
+  - `dealsAggregate.sum.value`
+  - `salesOwner` (user info)
+  - `contacts` (basic contact info)
+
+Example response:
+
+```json
+{
+  "data": {
+    "companies": {
+      "nodes": [
+        {
+          "id": 1,
+          "name": "Acme",
+          "avatarUrl": null,
+          "dealsAggregate": [
+            { "sum": { "value": 1000 } }
+          ],
+          "salesOwner": { "id": 2, "name": "Jane" },
+          "contacts": [
+            { "id": 5, "name": "John" }
+          ]
+        }
+      ],
+      "totalCount": 1
+    }
+  }
+}
+```
+
 ## Try this example on your local
 
 ```bash

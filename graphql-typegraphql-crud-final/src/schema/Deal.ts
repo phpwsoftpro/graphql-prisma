@@ -11,6 +11,11 @@ export class Deal {
   @Field()
   amount: number;
 
+  @Field({ name: "value" })
+  getValue(): number {
+    return this.amount;
+  }
+
   @Field({ nullable: true })
   description?: string;
 
