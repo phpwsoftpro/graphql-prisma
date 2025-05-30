@@ -40,6 +40,7 @@ model Company {
   description  String?
   avatarUrl    String?
   website      String?
+  totalRevenue Int?
   companySize  String?
   businessType String?
   address      String?
