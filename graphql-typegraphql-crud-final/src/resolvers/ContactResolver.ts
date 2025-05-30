@@ -10,19 +10,25 @@ const prisma = new PrismaClient();
 export class ContactResolver {
   @Query(() => ContactConnection)
   async contacts() {
+
     const nodes = await prisma.contact.findMany({ include: { company: true } });
     const totalCount = await prisma.contact.count();
     return { nodes, totalCount };
+
   }
 
   @Query(() => Contact, { nullable: true })
   async contact(@Arg("id", () => ID) id: number) {
+
     return prisma.contact.findUnique({ where: { id }, include: { company: true } });
+
   }
 
   @Mutation(() => Contact)
   async createContact(@Arg("data") data: CreateContactInput) {
+
     return prisma.contact.create({ data, include: { company: true } });
+
   }
 
   @Mutation(() => Contact, { nullable: true })
@@ -33,7 +39,9 @@ export class ContactResolver {
     const updateData = Object.fromEntries(
       Object.entries(data).filter(([, value]) => value !== undefined)
     ) as UpdateContactInput;
+
     return prisma.contact.update({ where: { id }, data: updateData, include: { company: true } });
+
   }
 
   @Mutation(() => Boolean)

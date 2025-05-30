@@ -16,11 +16,11 @@ async function main() {
   // Company
   await prisma.company.createMany({
     data: [
-      { name: "Acme Corp", industry: "Tech", description: "A tech company", avatarUrl: "https://example.com/acme.png", website: "https://acme.com", companySize: "100-500", businessType: "B2B", address: "123 Acme St", city: "New York", country: "USA", salesOwnerId: 1 },
-      { name: "Beta Ltd", industry: "Finance", description: "A finance company", avatarUrl: "https://example.com/beta.png", website: "https://beta.com", companySize: "50-100", businessType: "B2C", address: "456 Beta Ave", city: "London", country: "UK", salesOwnerId: 2 },
-      { name: "Gamma Inc", industry: "Health", description: "A health company", avatarUrl: "https://example.com/gamma.png", website: "https://gamma.com", companySize: "200-1000", businessType: "B2B", address: "789 Gamma Rd", city: "Berlin", country: "Germany", salesOwnerId: 3 },
-      { name: "Delta LLC", industry: "Retail", description: "A retail company", avatarUrl: "https://example.com/delta.png", website: "https://delta.com", companySize: "10-50", businessType: "B2C", address: "101 Delta Blvd", city: "Paris", country: "France", salesOwnerId: 4 },
-      { name: "Epsilon PLC", industry: "Education", description: "An education company", avatarUrl: "https://example.com/epsilon.png", website: "https://epsilon.com", companySize: "500-2000", businessType: "B2B", address: "202 Epsilon Sq", city: "Tokyo", country: "Japan", salesOwnerId: 5 },
+      { name: "Acme Corp", industry: "Tech", description: "A tech company", avatarUrl: "https://example.com/acme.png", website: "https://acme.com", totalRevenue: 100000, companySize: "100-500", businessType: "B2B", address: "123 Acme St", city: "New York", country: "USA", salesOwnerId: 1 },
+      { name: "Beta Ltd", industry: "Finance", description: "A finance company", avatarUrl: "https://example.com/beta.png", website: "https://beta.com", totalRevenue: 200000, companySize: "50-100", businessType: "B2C", address: "456 Beta Ave", city: "London", country: "UK", salesOwnerId: 2 },
+      { name: "Gamma Inc", industry: "Health", description: "A health company", avatarUrl: "https://example.com/gamma.png", website: "https://gamma.com", totalRevenue: 300000, companySize: "200-1000", businessType: "B2B", address: "789 Gamma Rd", city: "Berlin", country: "Germany", salesOwnerId: 3 },
+      { name: "Delta LLC", industry: "Retail", description: "A retail company", avatarUrl: "https://example.com/delta.png", website: "https://delta.com", totalRevenue: 400000, companySize: "10-50", businessType: "B2C", address: "101 Delta Blvd", city: "Paris", country: "France", salesOwnerId: 4 },
+      { name: "Epsilon PLC", industry: "Education", description: "An education company", avatarUrl: "https://example.com/epsilon.png", website: "https://epsilon.com", totalRevenue: 500000, companySize: "500-2000", businessType: "B2B", address: "202 Epsilon Sq", city: "Tokyo", country: "Japan", salesOwnerId: 5 },
     ],
   });
 
