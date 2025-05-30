@@ -19,7 +19,7 @@ import { Button, Modal } from "antd";
 import type { QuotesGetQuoteQuery } from "@/graphql/types";
 import { currencyNumber } from "@/utilities";
 
-import { QUOTES_GET_QUOTE_QUERY } from "../queries";
+import { QUOTES_GET_QUOTE_QUERY } from "../quotes/queries";
 
 const PdfExport = () => {
   const { modalProps, show } = useModal();

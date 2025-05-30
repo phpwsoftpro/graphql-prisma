@@ -132,6 +132,30 @@ export const resources: IResourceItem[] = [
     },
   },
   {
+    name: "invoices",
+    list: "/invoices",
+    create: "/invoices/create",
+    edit: "/invoices/edit/:id",
+    show: "/invoices/show/:id",
+    meta: {
+      label: "Invoices",
+      // @ts-expect-error Ant Design Icon's v5.0.1 has an issue with @types/react@^18.2.66
+      icon: <ShopOutlined />,
+    },
+  },
+  {
+    name: "products",
+    list: "/products",
+    create: "/products/create",
+    edit: "/products/edit/:id",
+    show: "/products/show/:id",
+    meta: {
+      label: "Products",
+      // @ts-expect-error Ant Design Icon's v5.0.1 has an issue with @types/react@^18.2.66
+      icon: < ShopOutlined/>,
+    },
+  },
+  {
     name: "administration",
     meta: {
       label: "Administration",

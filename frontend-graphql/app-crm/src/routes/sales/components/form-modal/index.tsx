@@ -23,7 +23,9 @@ import { useUsersSelect } from "@/hooks/useUsersSelect";
 import {
   QUOTES_CREATE_QUOTE_MUTATION,
   QUOTES_UPDATE_QUOTE_MUTATION,
-} from "../../queries";
+} from "../../quotes/queries";
+
+import { SelectOptionWithAvatar } from "@/components/select-option-with-avatar";
 
 type Props = {
   action: "create" | "edit";
@@ -66,23 +68,23 @@ export const QuotesFormModal: FC<Props> = ({
 
   const {
     selectProps: selectPropsCompanies,
-    queryResult: { isLoading: isLoadingCompanies },
   } = useCompaniesSelect();
 
   const {
-    selectProps: selectPropsContacts,
-    queryResult: { isLoading: isLoadingContact },
+    options: contactOptions,
+    isLoading: isContactLoading,
   } = useContactsSelect();
 
   const {
-    selectProps: selectPropsSalesOwners,
-    queryResult: { isLoading: isLoadingSalesOwners },
+    options: userOptions,
+    isLoading: isUserLoading,
   } = useUsersSelect();
 
-  const loading =
-    isLoadingCompanies || isLoadingContact || isLoadingSalesOwners;
+  const loading = isUserLoading;
 
   const isHaveOverModal = pathname.includes("company-create");
+
+  console.log(userOptions);
 
   return (
     <Modal
@@ -112,12 +114,15 @@ export const QuotesFormModal: FC<Props> = ({
           <Form.Item
             rules={[{ required: true }]}
             name={["salesOwnerId"]}
-            initialValue={formProps?.initialValues?.salesOwner?.id}
+            initialValue={formProps?.initialValues?.salesOwner?._id}
             label="Sales owner"
           >
             <Select
-              {...selectPropsSalesOwners}
+              style={{ width: "100%" }}
+              options={userOptions}
+              loading={isUserLoading}
               placeholder="Please select user"
+              mode="multiple"
             />
           </Form.Item>
           <Form.Item
@@ -152,7 +157,19 @@ export const QuotesFormModal: FC<Props> = ({
             label="Quote Contact"
           >
             <Select
-              {...selectPropsContacts}
+              style={{ width: "100%" }}
+              options={
+                (contactOptions ?? []).map((contact: any) => ({
+                  value: contact.value,
+                  label: (
+                    <SelectOptionWithAvatar
+                      name={contact.label}
+                      avatarUrl={contact.avatarUrl ?? undefined}
+                    />
+                  ),
+                }))
+              }
+              loading={isContactLoading}
               placeholder="Please select contact"
             />
           </Form.Item>

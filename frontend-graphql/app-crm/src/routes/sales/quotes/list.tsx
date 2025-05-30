@@ -1,5 +1,4 @@
 import type { FC, PropsWithChildren } from "react";
-
 import {
   DeleteButton,
   EditButton,
@@ -11,12 +10,10 @@ import {
 } from "@refinedev/antd";
 import { getDefaultFilter, type HttpError } from "@refinedev/core";
 import type { GetFieldsFromList } from "@refinedev/nestjs-query";
-
 import { SearchOutlined } from "@ant-design/icons";
 import { Form, Grid, Input, Select, Space, Spin, Table } from "antd";
 import dayjs from "dayjs";
 import debounce from "lodash/debounce";
-
 import {
   CustomAvatar,
   ListTitleButton,
@@ -30,24 +27,14 @@ import type { QuotesTableQuery } from "@/graphql/types";
 import { useCompaniesSelect } from "@/hooks/useCompaniesSelect";
 import { useUsersSelect } from "@/hooks/useUsersSelect";
 import { currencyNumber } from "@/utilities";
-
 import { QUOTES_TABLE_QUERY } from "./queries";
 
 type Quote = GetFieldsFromList<QuotesTableQuery>;
 
 const statusOptions: { label: string; value: QuoteStatus }[] = [
-  {
-    label: "Draft",
-    value: "DRAFT",
-  },
-  {
-    label: "Sent",
-    value: "SENT",
-  },
-  {
-    label: "Accepted",
-    value: "ACCEPTED",
-  },
+  { label: "Draft", value: "DRAFT" },
+  { label: "Sent", value: "SENT" },
+  { label: "Accepted", value: "ACCEPTED" },
 ];
 
 export const QuotesListPage: FC<PropsWithChildren> = ({ children }) => {
@@ -61,99 +48,85 @@ export const QuotesListPage: FC<PropsWithChildren> = ({ children }) => {
     tableQuery: tableQueryResult,
   } = useTable<Quote, HttpError, { title: string }>({
     resource: "quotes",
-    onSearch: (values) => {
-      return [
-        {
-          field: "title",
-          operator: "contains",
-          value: values.title,
-        },
-      ];
-    },
+    onSearch: (values) => [
+      {
+        field: "title",
+        operator: "contains",
+        value: values.title,
+      },
+    ],
     filters: {
       initial: [
-        {
-          field: "title",
-          value: "",
-          operator: "contains",
-        },
-        {
-          field: "status",
-          value: undefined,
-          operator: "in",
-        },
+        { field: "title", value: "", operator: "contains" },
+        { field: "status", value: undefined, operator: "in" },
       ],
     },
     sorters: {
-      initial: [
-        {
-          field: "createdAt",
-          order: "desc",
-        },
-      ],
+      initial: [{ field: "createdAt", order: "desc" }],
     },
     meta: {
       gqlQuery: QUOTES_TABLE_QUERY,
     },
   });
 
-  const { selectProps: selectPropsCompanies } = useCompaniesSelect();
+  // Lấy selectProps từ custom hook
+  const selectPropsCompanies = useCompaniesSelect().selectProps;
+  const selectPropsUsers = useUsersSelect().selectProps;
 
-  const { selectProps: selectPropsUsers } = useUsersSelect();
   const onSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
     searchFormProps?.onFinish?.({
       title: e.target.value ?? "",
     });
   };
-
   const debouncedOnChange = debounce(onSearch, 500);
+
+  // Đảm bảo dataSource luôn là mảng, không undefined
+  const dataSource = Array.isArray(tableProps.dataSource)
+    ? tableProps.dataSource.map((quote: any) => ({
+        ...quote,
+        id: quote._id ?? quote.id,
+        company: quote.company
+          ? { ...quote.company, id: quote.company._id ?? quote.company.id }
+          : undefined,
+        salesOwner: quote.salesOwner
+          ? { ...quote.salesOwner, id: quote.salesOwner._id ?? quote.salesOwner.id }
+          : undefined,
+      }))
+    : [];
 
   return (
     <div className="page-container">
       <List
         breadcrumb={false}
-        headerButtons={() => {
-          return (
-            <Space
-              style={{
-                marginTop: screens.xs ? "1.6rem" : undefined,
+        headerButtons={() => (
+          <Space style={{ marginTop: screens.xs ? "1.6rem" : undefined }}>
+            <Form
+              {...searchFormProps}
+              initialValues={{
+                title: getDefaultFilter("title", filters, "contains"),
               }}
+              layout="inline"
             >
-              <Form
-                {...searchFormProps}
-                initialValues={{
-                  title: getDefaultFilter("title", filters, "contains"),
-                }}
-                layout="inline"
-              >
-                <Form.Item name="title" noStyle>
-                  <Input
-                    size="large"
-                    // @ts-expect-error Ant Design Icon's v5.0.1 has an issue with @types/react@^18.2.66
-                    prefix={<SearchOutlined className="anticon tertiary" />}
-                    suffix={
-                      <Spin
-                        size="small"
-                        spinning={tableQueryResult.isFetching}
-                      />
-                    }
-                    placeholder="Search by name"
-                    onChange={debouncedOnChange}
-                  />
-                </Form.Item>
-              </Form>
-            </Space>
-          );
-        }}
-        contentProps={{
-          style: {
-            marginTop: "28px",
-          },
-        }}
+              <Form.Item name="title" noStyle>
+                <Input
+                  size="large"
+                  prefix={<SearchOutlined className="anticon tertiary" />}
+                  suffix={
+                    <Spin size="small" spinning={tableQueryResult.isFetching} />
+                  }
+                  placeholder="Search by name"
+                  onChange={debouncedOnChange}
+                />
+              </Form.Item>
+            </Form>
+          </Space>
+        )}
+        contentProps={{ style: { marginTop: "28px" } }}
         title={<ListTitleButton buttonText="Add quote" toPath="quotes" />}
       >
         <Table
           {...tableProps}
+          dataSource={dataSource}
           pagination={{
             ...tableProps.pagination,
             showTotal: (total) => (
@@ -185,8 +158,8 @@ export const QuotesListPage: FC<PropsWithChildren> = ({ children }) => {
                 />
               </FilterDropdown>
             )}
-            render={(_, record) => {
-              return (
+            render={(_, record) =>
+              record.company ? (
                 <Space>
                   <CustomAvatar
                     shape="square"
@@ -197,24 +170,20 @@ export const QuotesListPage: FC<PropsWithChildren> = ({ children }) => {
                     {record.company.name}
                   </Text>
                 </Space>
-              );
-            }}
+              ) : (
+                "—"
+              )
+            }
           />
           <Table.Column
             dataIndex="total"
             title="Total Amount"
             sorter
-            render={(value) => {
-              return (
-                <Text
-                  style={{
-                    whiteSpace: "nowrap",
-                  }}
-                >
-                  {currencyNumber(value)}
-                </Text>
-              );
-            }}
+            render={(value) => (
+              <Text style={{ whiteSpace: "nowrap" }}>
+                {currencyNumber(value)}
+              </Text>
+            )}
           />
           <Table.Column<Quote>
             dataIndex="status"
@@ -230,76 +199,64 @@ export const QuotesListPage: FC<PropsWithChildren> = ({ children }) => {
                 />
               </FilterDropdown>
             )}
-            render={(value) => {
-              return <QuoteStatusTag status={value} />;
-            }}
+            render={(value) => <QuoteStatusTag status={value} />}
           />
           <Table.Column<Quote>
             dataIndex={["salesOwner", "id"]}
             title="Participants"
-            filterDropdown={(props) => {
-              return (
-                <FilterDropdown {...props}>
-                  <Select
-                    style={{ width: "200px" }}
-                    placeholder="Select Sales Owner"
-                    {...selectPropsUsers}
-                  />
-                </FilterDropdown>
-              );
-            }}
-            render={(_, record) => {
-              return (
+            filterDropdown={(props) => (
+              <FilterDropdown {...props}>
+                <Select
+                  style={{ width: "200px" }}
+                  placeholder="Select Sales Owner"
+                  {...selectPropsUsers}
+                />
+              </FilterDropdown>
+            )}
+            render={(_, record) =>
+              record.salesOwner ? (
                 <Participants
                   userOne={record.salesOwner}
                   userTwo={record.contact}
                 />
-              );
-            }}
+              ) : (
+                "—"
+              )
+            }
           />
           <Table.Column<Quote>
             dataIndex={"createdAt"}
             title="Created at"
             sorter
             defaultSortOrder={getDefaultSortOrder("createdAt", sorters)}
-            render={(value) => {
-              return <Text>{dayjs(value).fromNow()}</Text>;
-            }}
+            render={(value) => <Text>{dayjs(value).fromNow()}</Text>}
           />
           <Table.Column<Quote>
             fixed="right"
             title="Actions"
             dataIndex="actions"
-            render={(_, record) => {
-              return (
-                <Space>
-                  <ShowButton
-                    hideText
-                    size="small"
-                    recordItemId={record.id}
-                    style={{
-                      backgroundColor: "transparent",
-                    }}
-                  />
-                  <EditButton
-                    hideText
-                    size="small"
-                    recordItemId={record.id}
-                    style={{
-                      backgroundColor: "transparent",
-                    }}
-                  />
-                  <DeleteButton
-                    hideText
-                    size="small"
-                    recordItemId={record.id}
-                    style={{
-                      backgroundColor: "transparent",
-                    }}
-                  />
-                </Space>
-              );
-            }}
+            render={(_, record) => (
+              <Space>
+                <ShowButton
+                  hideText
+                  size="small"
+                  recordItemId={record.id}
+                  style={{ backgroundColor: "transparent" }}
+                />
+                <EditButton
+                  hideText
+                  size="small"
+                  recordItemId={record.id}
+                  style={{ backgroundColor: "transparent" }}
+                />
+                <DeleteButton
+                  hideText
+                  size="small"
+                  recordItemId={record.id}
+                  style={{ backgroundColor: "transparent" }}
+                />
+              </Space>
+            )}
           />
         </Table>
       </List>

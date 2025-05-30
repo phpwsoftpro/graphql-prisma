@@ -8,7 +8,7 @@ import { Form, Spin } from "antd";
 
 import type { Quote, QuoteUpdateInput } from "@/graphql/schema.types";
 
-import { QUOTES_UPDATE_QUOTE_MUTATION } from "../queries";
+import { QUOTES_UPDATE_QUOTE_MUTATION } from "../quotes/queries";
 
 const MDEditor = lazy(() => import("@uiw/react-md-editor"));
 
