@@ -16,22 +16,22 @@ async function main() {
   // Company
   await prisma.company.createMany({
     data: [
-      { name: "Acme Corp", industry: "Tech", description: "A tech company", avatarUrl: "https://example.com/acme.png", website: "https://acme.com", companySize: "100-500", businessType: "B2B", address: "123 Acme St", city: "New York", country: "USA", salesOwnerId: 1 },
-      { name: "Beta Ltd", industry: "Finance", description: "A finance company", avatarUrl: "https://example.com/beta.png", website: "https://beta.com", companySize: "50-100", businessType: "B2C", address: "456 Beta Ave", city: "London", country: "UK", salesOwnerId: 2 },
-      { name: "Gamma Inc", industry: "Health", description: "A health company", avatarUrl: "https://example.com/gamma.png", website: "https://gamma.com", companySize: "200-1000", businessType: "B2B", address: "789 Gamma Rd", city: "Berlin", country: "Germany", salesOwnerId: 3 },
-      { name: "Delta LLC", industry: "Retail", description: "A retail company", avatarUrl: "https://example.com/delta.png", website: "https://delta.com", companySize: "10-50", businessType: "B2C", address: "101 Delta Blvd", city: "Paris", country: "France", salesOwnerId: 4 },
-      { name: "Epsilon PLC", industry: "Education", description: "An education company", avatarUrl: "https://example.com/epsilon.png", website: "https://epsilon.com", companySize: "500-2000", businessType: "B2B", address: "202 Epsilon Sq", city: "Tokyo", country: "Japan", salesOwnerId: 5 },
+      { name: "Acme Corp", industry: "Tech", description: "A tech company", avatarUrl: "https://example.com/acme.png", website: "https://acme.com", totalRevenue: 100000, companySize: "100-500", businessType: "B2B", address: "123 Acme St", city: "New York", country: "USA", salesOwnerId: 1 },
+      { name: "Beta Ltd", industry: "Finance", description: "A finance company", avatarUrl: "https://example.com/beta.png", website: "https://beta.com", totalRevenue: 200000, companySize: "50-100", businessType: "B2C", address: "456 Beta Ave", city: "London", country: "UK", salesOwnerId: 2 },
+      { name: "Gamma Inc", industry: "Health", description: "A health company", avatarUrl: "https://example.com/gamma.png", website: "https://gamma.com", totalRevenue: 300000, companySize: "200-1000", businessType: "B2B", address: "789 Gamma Rd", city: "Berlin", country: "Germany", salesOwnerId: 3 },
+      { name: "Delta LLC", industry: "Retail", description: "A retail company", avatarUrl: "https://example.com/delta.png", website: "https://delta.com", totalRevenue: 400000, companySize: "10-50", businessType: "B2C", address: "101 Delta Blvd", city: "Paris", country: "France", salesOwnerId: 4 },
+      { name: "Epsilon PLC", industry: "Education", description: "An education company", avatarUrl: "https://example.com/epsilon.png", website: "https://epsilon.com", totalRevenue: 500000, companySize: "500-2000", businessType: "B2B", address: "202 Epsilon Sq", city: "Tokyo", country: "Japan", salesOwnerId: 5 },
     ],
   });
 
   // Contact
   await prisma.contact.createMany({
     data: [
-      { name: "Contact 1", email: "c1@example.com", phone: "111-111-1111", description: "Main contact", companyId: 1, status: "active", jobTitle: "CEO", salesOwnerId: 1 },
-      { name: "Contact 2", email: "c2@example.com", phone: "222-222-2222", description: "Secondary contact", companyId: 2, status: "inactive", jobTitle: "CTO", salesOwnerId: 2 },
-      { name: "Contact 3", email: "c3@example.com", phone: "333-333-3333", description: "Support contact", companyId: 3, status: "active", jobTitle: "CFO", salesOwnerId: 3 },
-      { name: "Contact 4", email: "c4@example.com", phone: "444-444-4444", description: "Sales contact", companyId: 4, status: "active", jobTitle: "COO", salesOwnerId: 4 },
-      { name: "Contact 5", email: "c5@example.com", phone: "555-555-5555", description: "HR contact", companyId: 5, status: "inactive", jobTitle: "CMO", salesOwnerId: 5 },
+      { name: "Contact 1", email: "c1@example.com", phone: "111-111-1111", description: "Main contact", companyId: 1, status: "active", jobTitle: "CEO", avatarUrl: "https://example.com/contact1.png", salesOwnerId: 1 },
+      { name: "Contact 2", email: "c2@example.com", phone: "222-222-2222", description: "Secondary contact", companyId: 2, status: "inactive", jobTitle: "CTO", avatarUrl: "https://example.com/contact2.png", salesOwnerId: 2 },
+      { name: "Contact 3", email: "c3@example.com", phone: "333-333-3333", description: "Support contact", companyId: 3, status: "active", jobTitle: "CFO", avatarUrl: "https://example.com/contact3.png", salesOwnerId: 3 },
+      { name: "Contact 4", email: "c4@example.com", phone: "444-444-4444", description: "Sales contact", companyId: 4, status: "active", jobTitle: "COO", avatarUrl: "https://example.com/contact4.png", salesOwnerId: 4 },
+      { name: "Contact 5", email: "c5@example.com", phone: "555-555-5555", description: "HR contact", companyId: 5, status: "inactive", jobTitle: "CMO", avatarUrl: "https://example.com/contact5.png", salesOwnerId: 5 },
     ],
   });
 

@@ -1,4 +1,5 @@
 import { Field, ID, ObjectType } from "type-graphql";
+import { User } from "./User";
 
 @ObjectType()
 export class Audit {
@@ -19,6 +20,9 @@ export class Audit {
 
   @Field({ nullable: true })
   userId?: number;
+
+  @Field(() => User, { nullable: true })
+  user?: User;
 
   @Field()
   createdAt: Date;

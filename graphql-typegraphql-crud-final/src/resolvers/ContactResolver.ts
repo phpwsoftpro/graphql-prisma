@@ -47,6 +47,7 @@ export class ContactResolver {
     const updateData = Object.fromEntries(
       Object.entries(data).filter(([, value]) => value !== undefined)
     ) as UpdateContactInput;
+
     return prisma.contact.update({
       where: { id },
       data: updateData,

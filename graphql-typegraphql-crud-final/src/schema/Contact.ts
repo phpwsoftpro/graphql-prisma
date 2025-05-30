@@ -29,13 +29,13 @@ export class Contact {
   companyId?: number;
 
   @Field({ nullable: true })
+  salesOwnerId?: number;
+
+  @Field({ nullable: true })
   status?: string;
 
   @Field({ nullable: true })
   jobTitle?: string;
-
-  @Field({ nullable: true })
-  salesOwnerId?: number;
 
   @Field(() => Company, { nullable: true })
   company?: Company;

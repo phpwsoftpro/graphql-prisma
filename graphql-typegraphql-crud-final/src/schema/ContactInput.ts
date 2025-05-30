@@ -30,6 +30,9 @@ export class CreateContactInput {
   jobTitle?: string;
 
   @Field({ nullable: true })
+  avatarUrl?: string;
+
+  @Field({ nullable: true })
   salesOwnerId?: number;
 }
 
@@ -61,6 +64,9 @@ export class UpdateContactInput {
 
   @Field({ nullable: true })
   jobTitle?: string;
+
+  @Field({ nullable: true })
+  avatarUrl?: string;
 
   @Field({ nullable: true })
   salesOwnerId?: number;
