@@ -1,5 +1,6 @@
 import "reflect-metadata";
-import { ApolloServer } from "apollo-server";
+import { ApolloServer } from "apollo-server-express";
+import express from "express";
 import { buildSchema } from "type-graphql";
 import { PrismaClient } from "@prisma/client";
 import { TodoResolver } from "./resolvers/TodoResolver";
@@ -57,8 +58,27 @@ async function bootstrap() {
     context: () => ({ prisma }),
   });
 
-  const { url } = await server.listen(8000);
-  console.log(`🚀 Server ready at ${url}`);
+  await server.start();
+
+  const app = express();
+
+  app.get("/dashboard/counts", async (_req, res) => {
+    const [companies, contacts, deals] = await Promise.all([
+      prisma.company.count(),
+      prisma.contact.count(),
+      prisma.deal.count(),
+    ]);
+
+    res.json({ companies, contacts, deals });
+  });
+
+  server.applyMiddleware({ app });
+
+  app.listen(8000, () => {
+    console.log(
+      `🚀 Server ready at http://localhost:8000${server.graphqlPath}`
+    );
+  });
 }
 
 bootstrap();
