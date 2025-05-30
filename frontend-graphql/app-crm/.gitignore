@@ -10,8 +10,12 @@
 
 # production
 /build
-
+#add docker ignore
+/docker-compose.yml
+/docker-compose.override.yml
+/prisma/migrations
 # misc
+
 .DS_Store
 .env.local
 .env.development.local

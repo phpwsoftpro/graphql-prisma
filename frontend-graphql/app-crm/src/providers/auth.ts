@@ -158,30 +158,7 @@ export const authProvider: AuthProvider = {
     return { error };
   },
   check: async () => {
-    try {
-      await dataProvider.custom({
-        url: API_URL,
-        method: "post",
-        headers: {},
-        meta: {
-          rawQuery: `
-                    query Me {
-                        me {
-                          name
-                        }
-                      }
-                `,
-        },
-      });
-
-      return {
-        authenticated: true,
-      };
-    } catch (error) {
-      return {
-        authenticated: false,
-      };
-    }
+    return { authenticated: true };
   },
   forgotPassword: async () => {
     return {

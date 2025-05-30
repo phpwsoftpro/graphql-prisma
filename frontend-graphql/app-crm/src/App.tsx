@@ -42,7 +42,7 @@ import {
   QuotesEditPage,
   QuotesListPage,
   QuotesShowPage,
-} from "./routes/quotes";
+} from "./routes/sales/quotes";
 import { RegisterPage } from "./routes/register";
 import {
   KanbanCreatePage,
@@ -60,7 +60,8 @@ import {
   SalesPage,
 } from "./routes/scrumboard/sales";
 import { UpdatePasswordPage } from "./routes/update-password";
-
+import { ProductsListPage, ProductsCreatePage } from "./routes/sales/products";
+import { InvoicesListPage, InvoicesShowPage } from "./routes/sales/invoices";
 import "./utilities/init-dayjs";
 import "@refinedev/antd/dist/reset.css";
 import "./styles/antd.css";
@@ -93,6 +94,7 @@ const App: React.FC = () => {
                   liveMode: "auto",
                   syncWithLocation: true,
                   warnWhenUnsavedChanges: true,
+                  projectId: "r3Zwje-S0Pydf-0MT4ni"
                 }}
               >
                 <Routes>
@@ -232,11 +234,13 @@ const App: React.FC = () => {
                           </QuotesCreatePage>
                         }
                       >
+                        
                         <Route
                           path="company-create"
                           element={<CompanyCreatePage isOverModal />}
                         />
                       </Route>
+                    
                       <Route
                         path="edit/:id"
                         element={
@@ -255,6 +259,17 @@ const App: React.FC = () => {
                       path="/quotes/show/:id"
                       element={<QuotesShowPage />}
                     />
+                    <Route
+                      path="/products"
+                      element={<ProductsListPage />}
+                    >
+                      <Route path="create" element={<ProductsCreatePage />} />
+                    </Route>
+                    <Route path="/invoices" element={<InvoicesListPage />}>
+                        {/* for invoices */}
+                        {/* <Route path="create" element={<InvoicesCreatePage />} /> */}
+                    </Route>
+                    <Route path="/invoices/show/:id" element={<InvoicesShowPage />} />
                     <Route path="/administration" element={<Outlet />}>
                       <Route path="settings" element={<SettingsPage />} />
                       <Route path="audit-log" element={<AuditLogPage />} />
