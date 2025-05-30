@@ -1,6 +1,7 @@
 import { Arg, ID, Mutation, Query, Resolver } from "type-graphql";
 import { PrismaClient } from "@prisma/client";
 import { Comment } from "../schema/Comment";
+import { TaskCommentsResponse } from "../schema/TaskCommentsResponse";
 import { CreateCommentInput, UpdateCommentInput } from "../schema/CommentInput";
 
 const prisma = new PrismaClient();
@@ -15,6 +16,20 @@ export class CommentResolver {
   @Query(() => Comment, { nullable: true })
   async comment(@Arg("id", () => ID) id: number) {
     return prisma.comment.findUnique({ where: { id } });
+  }
+
+  @Query(() => TaskCommentsResponse)
+  async commentsByTask(@Arg("taskId", () => ID) taskId: number) {
+    const [comments, totalCount] = await prisma.$transaction([
+      prisma.comment.findMany({
+        where: { taskId },
+        include: { createdBy: true },
+        orderBy: { createdAt: "desc" },
+      }),
+      prisma.comment.count({ where: { taskId } }),
+    ]);
+
+    return { comments, totalCount };
   }
 
   @Mutation(() => Comment)

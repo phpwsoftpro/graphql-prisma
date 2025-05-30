@@ -14,7 +14,14 @@ export class EventResolver {
 
   @Query(() => Event, { nullable: true })
   async event(@Arg("id", () => ID) id: number) {
-    return prisma.event.findUnique({ where: { id } });
+    return prisma.event.findUnique({
+      where: { id },
+      include: {
+        createdBy: true,
+        category: true,
+        participants: true,
+      },
+    });
   }
 
   @Mutation(() => Event)
