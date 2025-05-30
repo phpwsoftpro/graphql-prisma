@@ -1,4 +1,6 @@
 import { Field, ID, ObjectType } from "type-graphql";
+import { Contact } from "./Contact";
+import { User } from "./User";
 
 @ObjectType()
 export class Company {
@@ -37,6 +39,12 @@ export class Company {
 
   @Field({ nullable: true })
   salesOwnerId?: number;
+
+  @Field(() => User, { nullable: true })
+  salesOwner?: User;
+
+  @Field(() => [Contact])
+  contacts!: Contact[];
 
   @Field()
   createdAt: Date;
