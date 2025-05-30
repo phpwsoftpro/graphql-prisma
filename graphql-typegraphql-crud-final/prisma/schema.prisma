@@ -40,6 +40,7 @@ model Company {
   description  String?
   avatarUrl    String?
   website      String?
+  totalRevenue Int?
   companySize  String?
   businessType String?
   address      String?
@@ -68,6 +69,7 @@ model Contact {
   company     Company? @relation("CompanyContacts", fields: [companyId], references: [id])
   status      String?
   jobTitle    String?
+  avatarUrl   String?
   deals       Deal[]    @relation("DealContact")
 
   salesOwnerId Int?
