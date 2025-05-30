@@ -9,12 +9,12 @@ const prisma = new PrismaClient();
 export class AuditResolver {
   @Query(() => [Audit])
   async audits() {
-    return prisma.audit.findMany();
+    return prisma.audit.findMany({ include: { user: true } });
   }
 
   @Query(() => Audit, { nullable: true })
   async audit(@Arg("id", () => ID) id: number) {
-    return prisma.audit.findUnique({ where: { id } });
+    return prisma.audit.findUnique({ where: { id }, include: { user: true } });
   }
 
   @Mutation(() => Audit)
