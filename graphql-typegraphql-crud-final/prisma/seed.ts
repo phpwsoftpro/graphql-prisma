@@ -27,11 +27,11 @@ async function main() {
   // Contact
   await prisma.contact.createMany({
     data: [
-      { name: "Contact 1", email: "c1@example.com", phone: "111-111-1111", description: "Main contact", companyId: 1, status: "active", jobTitle: "CEO", salesOwnerId: 1 },
-      { name: "Contact 2", email: "c2@example.com", phone: "222-222-2222", description: "Secondary contact", companyId: 2, status: "inactive", jobTitle: "CTO", salesOwnerId: 2 },
-      { name: "Contact 3", email: "c3@example.com", phone: "333-333-3333", description: "Support contact", companyId: 3, status: "active", jobTitle: "CFO", salesOwnerId: 3 },
-      { name: "Contact 4", email: "c4@example.com", phone: "444-444-4444", description: "Sales contact", companyId: 4, status: "active", jobTitle: "COO", salesOwnerId: 4 },
-      { name: "Contact 5", email: "c5@example.com", phone: "555-555-5555", description: "HR contact", companyId: 5, status: "inactive", jobTitle: "CMO", salesOwnerId: 5 },
+      { name: "Contact 1", email: "c1@example.com", phone: "111-111-1111", description: "Main contact", companyId: 1, status: "active", jobTitle: "CEO", avatarUrl: "https://example.com/contact1.png", salesOwnerId: 1 },
+      { name: "Contact 2", email: "c2@example.com", phone: "222-222-2222", description: "Secondary contact", companyId: 2, status: "inactive", jobTitle: "CTO", avatarUrl: "https://example.com/contact2.png", salesOwnerId: 2 },
+      { name: "Contact 3", email: "c3@example.com", phone: "333-333-3333", description: "Support contact", companyId: 3, status: "active", jobTitle: "CFO", avatarUrl: "https://example.com/contact3.png", salesOwnerId: 3 },
+      { name: "Contact 4", email: "c4@example.com", phone: "444-444-4444", description: "Sales contact", companyId: 4, status: "active", jobTitle: "COO", avatarUrl: "https://example.com/contact4.png", salesOwnerId: 4 },
+      { name: "Contact 5", email: "c5@example.com", phone: "555-555-5555", description: "HR contact", companyId: 5, status: "inactive", jobTitle: "CMO", avatarUrl: "https://example.com/contact5.png", salesOwnerId: 5 },
     ],
   });
 

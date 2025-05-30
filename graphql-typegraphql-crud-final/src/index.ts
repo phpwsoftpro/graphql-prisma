@@ -62,7 +62,9 @@ async function bootstrap() {
 
   const app = express();
   app.use(express.json());
+  server.applyMiddleware({ app });
 
+  // GET /task/:id
   app.get("/task/:id", async (req, res) => {
     const id = parseInt(req.params.id, 10);
     if (Number.isNaN(id)) {
@@ -113,12 +115,59 @@ async function bootstrap() {
     }
   });
 
-  server.applyMiddleware({ app });
+  // GET /tasks
+  app.get("/tasks", async (_req, res) => {
+    const tasks = await prisma.task.findMany({
+      select: {
+        id: true,
+        title: true,
+        description: true,
+        dueDate: true,
+        completed: true,
+        stageId: true,
+        checklists: {
+          select: { title: true, checked: true },
+        },
+        users: {
+          select: { id: true, name: true, avatarUrl: true },
+        },
+        comments: { select: { id: true } },
+      },
+    });
 
-  app.listen(8000, () => {
-    console.log(
-      `🚀 Server ready at http://localhost:8000${server.graphqlPath}`
-    );
+    const formatted = tasks.map((task) => ({
+      id: task.id,
+      title: task.title,
+      description: task.description,
+      dueDate: task.dueDate,
+      completed: task.completed,
+      stageId: task.stageId,
+      checklist: task.checklists,
+      users: task.users,
+      comments: { totalCount: task.comments.length },
+    }));
+
+    res.json(formatted);
+  });
+
+  // GET /events
+  app.get("/events", async (_req, res) => {
+    const events = await prisma.event.findMany({
+      select: {
+        id: true,
+        title: true,
+        color: true,
+        startDate: true,
+        endDate: true,
+      },
+    });
+
+    res.setHeader("Content-Type", "application/json");
+    res.json({ nodes: events, totalCount: events.length });
+  });
+
+  app.listen({ port: 8000 }, () => {
+    console.log(`🚀 Server ready at http://localhost:8000${server.graphqlPath}`);
   });
 }
 
