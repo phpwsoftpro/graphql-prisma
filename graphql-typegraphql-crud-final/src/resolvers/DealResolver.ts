@@ -2,6 +2,7 @@ import { Arg, ID, Mutation, Query, Resolver } from "type-graphql";
 import { PrismaClient } from "@prisma/client";
 import { Deal } from "../schema/Deal";
 import { CreateDealInput, UpdateDealInput } from "../schema/DealInput";
+import { DealDetail, CompanyWithContacts } from "../schema/DealDetail";
 
 const prisma = new PrismaClient();
 
@@ -15,6 +16,39 @@ export class DealResolver {
   @Query(() => Deal, { nullable: true })
   async deal(@Arg("id", () => ID) id: number) {
     return prisma.deal.findUnique({ where: { id } });
+  }
+
+  @Query(() => DealDetail, { nullable: true })
+  async dealDetail(@Arg("id", () => ID) id: number) {
+    const result = await prisma.deal.findUnique({
+      where: { id },
+      include: {
+        company: {
+          include: {
+            contacts: true,
+          },
+        },
+        contact: {
+          select: { id: true },
+        },
+      },
+    });
+
+    if (!result) {
+      return null;
+    }
+
+    return {
+      id: result.id,
+      title: result.title,
+      stageId: result.stageId ?? undefined,
+      value: result.amount,
+      dealOwnerId: result.salesOwnerId ?? undefined,
+      company: result.company
+        ? { id: result.company.id, contacts: result.company.contacts }
+        : null,
+      dealContact: result.contact ? { id: result.contact.id } : null,
+    } as DealDetail;
   }
 
   @Mutation(() => Deal)
