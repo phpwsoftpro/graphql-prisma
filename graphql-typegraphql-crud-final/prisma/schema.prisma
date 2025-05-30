@@ -63,6 +63,8 @@ model Contact {
   name        String
   email       String?
   phone       String?
+  timezone    String?
+  avatarUrl   String?
   description String?
   companyId   Int?
   company     Company? @relation("CompanyContacts", fields: [companyId], references: [id])

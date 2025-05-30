@@ -12,6 +12,12 @@ export class CreateContactInput {
   phone?: string;
 
   @Field({ nullable: true })
+  timezone?: string;
+
+  @Field({ nullable: true })
+  avatarUrl?: string;
+
+  @Field({ nullable: true })
   description?: string;
 
   @Field({ nullable: true })
@@ -37,6 +43,12 @@ export class UpdateContactInput {
 
   @Field({ nullable: true })
   phone?: string;
+
+  @Field({ nullable: true })
+  timezone?: string;
+
+  @Field({ nullable: true })
+  avatarUrl?: string;
 
   @Field({ nullable: true })
   description?: string;

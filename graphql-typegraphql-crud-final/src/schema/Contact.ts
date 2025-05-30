@@ -1,4 +1,6 @@
 import { Field, ID, ObjectType } from "type-graphql";
+import { Company } from "./Company";
+import { User } from "./User";
 
 @ObjectType()
 export class Contact {
@@ -15,6 +17,12 @@ export class Contact {
   phone?: string;
 
   @Field({ nullable: true })
+  timezone?: string;
+
+  @Field({ nullable: true })
+  avatarUrl?: string;
+
+  @Field({ nullable: true })
   description?: string;
 
   @Field({ nullable: true })
@@ -28,6 +36,12 @@ export class Contact {
 
   @Field({ nullable: true })
   salesOwnerId?: number;
+
+  @Field(() => Company, { nullable: true })
+  company?: Company;
+
+  @Field(() => User, { nullable: true })
+  salesOwner?: User;
 
   @Field()
   createdAt: Date;
