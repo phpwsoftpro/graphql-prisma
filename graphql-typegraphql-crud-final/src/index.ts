@@ -1,5 +1,6 @@
 import "reflect-metadata";
-import { ApolloServer } from "apollo-server";
+import express from "express";
+import { ApolloServer } from "apollo-server-express";
 import { buildSchema } from "type-graphql";
 import { PrismaClient } from "@prisma/client";
 import { TodoResolver } from "./resolvers/TodoResolver";
@@ -57,8 +58,50 @@ async function bootstrap() {
     context: () => ({ prisma }),
   });
 
-  const { url } = await server.listen(8000);
-  console.log(`🚀 Server ready at ${url}`);
+  await server.start();
+
+  const app = express();
+  server.applyMiddleware({ app });
+
+  app.get("/tasks", async (_req, res) => {
+    const tasks = await prisma.task.findMany({
+      select: {
+        id: true,
+        title: true,
+        description: true,
+        dueDate: true,
+        completed: true,
+        stageId: true,
+        checklists: {
+          select: { title: true, checked: true },
+        },
+        users: {
+          select: { id: true, name: true, avatarUrl: true },
+        },
+        comments: { select: { id: true } },
+      },
+    });
+
+    const formatted = tasks.map((task) => ({
+      id: task.id,
+      title: task.title,
+      description: task.description,
+      dueDate: task.dueDate,
+      completed: task.completed,
+      stageId: task.stageId,
+      checklist: task.checklists,
+      users: task.users,
+      comments: { totalCount: task.comments.length },
+    }));
+
+    res.json(formatted);
+  });
+
+  app.listen({ port: 8000 }, () => {
+    console.log(
+      `🚀 Server ready at http://localhost:8000${server.graphqlPath}`
+    );
+  });
 }
 
 bootstrap();
