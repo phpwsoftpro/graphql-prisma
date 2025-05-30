@@ -1,6 +1,6 @@
 import "reflect-metadata";
-import { ApolloServer } from "apollo-server";
-import { IncomingMessage, ServerResponse } from "http";
+import express from "express";
+import { ApolloServer } from "apollo-server-express";
 import { buildSchema } from "type-graphql";
 import { PrismaClient } from "@prisma/client";
 import { TodoResolver } from "./resolvers/TodoResolver";
@@ -58,29 +58,66 @@ async function bootstrap() {
     context: () => ({ prisma }),
   });
 
-  const { url, server: httpServer } = await server.listen(8000);
+  await server.start();
 
-  httpServer.prependListener(
-    "request",
-    async (req: IncomingMessage, res: ServerResponse) => {
-      if (req.method === "GET" && req.url === "/events") {
-        const events = await prisma.event.findMany({
-          select: {
-            id: true,
-            title: true,
-            color: true,
-            startDate: true,
-            endDate: true,
-          },
-        });
-        res.setHeader("Content-Type", "application/json");
-        res.end(JSON.stringify({ nodes: events, totalCount: events.length }));
-        return;
-      }
-    }
-  );
+  const app = express();
+  server.applyMiddleware({ app });
 
-  console.log(`🚀 Server ready at ${url}`);
+  // Endpoint /tasks
+  app.get("/tasks", async (_req, res) => {
+    const tasks = await prisma.task.findMany({
+      select: {
+        id: true,
+        title: true,
+        description: true,
+        dueDate: true,
+        completed: true,
+        stageId: true,
+        checklists: {
+          select: { title: true, checked: true },
+        },
+        users: {
+          select: { id: true, name: true, avatarUrl: true },
+        },
+        comments: { select: { id: true } },
+      },
+    });
+
+    const formatted = tasks.map((task) => ({
+      id: task.id,
+      title: task.title,
+      description: task.description,
+      dueDate: task.dueDate,
+      completed: task.completed,
+      stageId: task.stageId,
+      checklist: task.checklists,
+      users: task.users,
+      comments: { totalCount: task.comments.length },
+    }));
+
+    res.json(formatted);
+  });
+
+  // Endpoint /events
+  app.get("/events", async (_req, res) => {
+    const events = await prisma.event.findMany({
+      select: {
+        id: true,
+        title: true,
+        color: true,
+        startDate: true,
+        endDate: true,
+      },
+    });
+    res.setHeader("Content-Type", "application/json");
+    res.json({ nodes: events, totalCount: events.length });
+  });
+
+  app.listen({ port: 8000 }, () => {
+    console.log(
+      `🚀 Server ready at http://localhost:8000${server.graphqlPath}`
+    );
+  });
 }
 
 bootstrap();
