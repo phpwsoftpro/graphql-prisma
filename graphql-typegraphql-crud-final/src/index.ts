@@ -1,5 +1,6 @@
 import "reflect-metadata";
 import { ApolloServer } from "apollo-server";
+import { IncomingMessage, ServerResponse } from "http";
 import { buildSchema } from "type-graphql";
 import { PrismaClient } from "@prisma/client";
 import { TodoResolver } from "./resolvers/TodoResolver";
@@ -57,7 +58,28 @@ async function bootstrap() {
     context: () => ({ prisma }),
   });
 
-  const { url } = await server.listen(8000);
+  const { url, server: httpServer } = await server.listen(8000);
+
+  httpServer.prependListener(
+    "request",
+    async (req: IncomingMessage, res: ServerResponse) => {
+      if (req.method === "GET" && req.url === "/events") {
+        const events = await prisma.event.findMany({
+          select: {
+            id: true,
+            title: true,
+            color: true,
+            startDate: true,
+            endDate: true,
+          },
+        });
+        res.setHeader("Content-Type", "application/json");
+        res.end(JSON.stringify({ nodes: events, totalCount: events.length }));
+        return;
+      }
+    }
+  );
+
   console.log(`🚀 Server ready at ${url}`);
 }
 
