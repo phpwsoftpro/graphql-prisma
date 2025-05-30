@@ -62,7 +62,20 @@ async function bootstrap() {
 
   const app = express();
   app.use(express.json());
-  server.applyMiddleware({ app });
+
+  // GET /users
+  app.get("/users", async (_req, res) => {
+    const users = await prisma.user.findMany({
+      select: {
+        id: true,
+        name: true,
+        jobTitle: true,
+        role: true,
+        avatarUrl: true,
+      },
+    });
+    res.json(users);
+  });
 
   // GET /task/:id
   app.get("/task/:id", async (req, res) => {
@@ -166,8 +179,11 @@ async function bootstrap() {
     res.json({ nodes: events, totalCount: events.length });
   });
 
-  app.listen({ port: 8000 }, () => {
-    console.log(`🚀 Server ready at http://localhost:8000${server.graphqlPath}`);
+  server.applyMiddleware({ app });
+
+  const port = 8000;
+  app.listen(port, () => {
+    console.log(`🚀 Server ready at http://localhost:${port}${server.graphqlPath}`);
   });
 }
 
