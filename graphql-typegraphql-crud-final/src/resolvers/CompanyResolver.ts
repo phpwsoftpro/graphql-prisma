@@ -11,6 +11,7 @@ const prisma = new PrismaClient();
 
 @Resolver(() => Company)
 export class CompanyResolver {
+
   @Query(() => CompanyListResponse)
   async companies(
     @Arg("filter", () => CompanyFilter, { nullable: true }) filter: CompanyFilter,
@@ -57,11 +58,15 @@ export class CompanyResolver {
     );
 
     return { nodes: nodesWithAggregate as any, totalCount };
+
   }
 
   @Query(() => Company, { nullable: true })
   async company(@Arg("id", () => ID) id: number) {
-    return prisma.company.findUnique({ where: { id } });
+    return prisma.company.findUnique({
+      where: { id },
+      include: { contacts: true, salesOwner: true },
+    });
   }
 
   @Mutation(() => Company)

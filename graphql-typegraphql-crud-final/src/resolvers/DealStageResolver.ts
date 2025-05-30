@@ -1,6 +1,7 @@
 import { Arg, ID, Mutation, Query, Resolver } from "type-graphql";
 import { PrismaClient } from "@prisma/client";
 import { DealStage } from "../schema/DealStage";
+import { DealStageSummary } from "../schema/DealStageSummary";
 import { CreateDealStageInput, UpdateDealStageInput } from "../schema/DealStageInput";
 
 const prisma = new PrismaClient();
@@ -10,6 +11,29 @@ export class DealStageResolver {
   @Query(() => [DealStage])
   async dealStages() {
     return prisma.dealStage.findMany();
+  }
+
+  @Query(() => [DealStageSummary])
+  async dealStageSummaries() {
+    const stages = await prisma.dealStage.findMany({ select: { id: true, title: true } });
+
+    const sums = await prisma.deal.groupBy({
+      by: ["stageId"],
+      _sum: { amount: true },
+    });
+
+    const sumMap = new Map<number, number>();
+    for (const item of sums) {
+      if (item.stageId !== null) {
+        sumMap.set(item.stageId, item._sum.amount ?? 0);
+      }
+    }
+
+    return stages.map((stage) => ({
+      id: stage.id,
+      title: stage.title,
+      totalAmount: sumMap.get(stage.id) ?? 0,
+    }));
   }
 
   @Query(() => DealStage, { nullable: true })

@@ -20,3 +20,12 @@ export class TaskStage {
   @Field()
   updatedAt: Date;
 }
+
+@ObjectType()
+export class TaskStageConnection {
+  @Field(() => [TaskStage])
+  nodes: TaskStage[];
+
+  @Field()
+  totalCount: number;
+}

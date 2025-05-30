@@ -6,8 +6,11 @@
     "outDir": "dist",
     "rootDir": "src",
     "strict": true,
+    "strictPropertyInitialization": false,
     "esModuleInterop": true,
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true
-  }
+  },
+  "include": ["src/**/*.ts"],
+  "exclude": ["node_modules", "prisma"]
 }

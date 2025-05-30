@@ -1,4 +1,5 @@
 import { Field, ID, ObjectType } from "type-graphql";
+import { User } from "./User";
 
 @ObjectType()
 export class Note {
@@ -16,6 +17,9 @@ export class Note {
 
   @Field({ nullable: true })
   createdById?: number;
+
+  @Field(() => User, { nullable: true })
+  createdBy?: User;
 
   @Field()
   createdAt: Date;

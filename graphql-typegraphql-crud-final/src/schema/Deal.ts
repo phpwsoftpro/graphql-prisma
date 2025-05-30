@@ -1,4 +1,6 @@
 import { Field, ID, ObjectType } from "type-graphql";
+import { Company } from "./Company";
+import { User } from "./User";
 
 @ObjectType()
 export class Deal {
@@ -8,7 +10,7 @@ export class Deal {
   @Field()
   title: string;
 
-  @Field()
+  @Field({ name: "value" })
   amount: number;
 
   @Field({ name: "value" })
@@ -25,11 +27,17 @@ export class Deal {
   @Field({ nullable: true })
   companyId?: number;
 
+  @Field(() => Company, { nullable: true })
+  company?: Company;
+
   @Field({ nullable: true })
   contactId?: number;
 
   @Field({ nullable: true })
   salesOwnerId?: number;
+
+  @Field(() => User, { nullable: true, name: "dealOwner" })
+  salesOwner?: User;
 
   @Field()
   createdAt: Date;
