@@ -21,6 +21,9 @@ export class Company {
   website?: string;
 
   @Field({ nullable: true })
+  totalRevenue?: number;
+
+  @Field({ nullable: true })
   companySize?: string;
 
   @Field({ nullable: true })
