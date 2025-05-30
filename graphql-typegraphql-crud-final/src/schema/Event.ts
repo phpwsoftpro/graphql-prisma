@@ -1,4 +1,6 @@
 import { Field, ID, ObjectType } from "type-graphql";
+import { User } from "./User";
+import { EventCategory } from "./EventCategory";
 
 @ObjectType()
 export class Event {
@@ -25,6 +27,15 @@ export class Event {
 
   @Field({ nullable: true })
   categoryId?: number;
+
+  @Field(() => User, { nullable: true })
+  createdBy?: User | null;
+
+  @Field(() => EventCategory, { nullable: true })
+  category?: EventCategory | null;
+
+  @Field(() => [User])
+  participants: User[];
 
   @Field()
   createdAt: Date;

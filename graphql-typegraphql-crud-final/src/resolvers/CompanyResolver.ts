@@ -9,12 +9,17 @@ const prisma = new PrismaClient();
 export class CompanyResolver {
   @Query(() => [Company])
   async companies() {
-    return prisma.company.findMany();
+    return prisma.company.findMany({
+      include: { contacts: true, salesOwner: true },
+    });
   }
 
   @Query(() => Company, { nullable: true })
   async company(@Arg("id", () => ID) id: number) {
-    return prisma.company.findUnique({ where: { id } });
+    return prisma.company.findUnique({
+      where: { id },
+      include: { contacts: true, salesOwner: true },
+    });
   }
 
   @Mutation(() => Company)
