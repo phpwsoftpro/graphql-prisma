@@ -119,6 +119,15 @@ export const resources: IResourceItem[] = [
       icon: <TeamOutlined />,
     },
   },
+  //parent menu sales for quotes, invoices and products
+  {
+    name: "sales",
+    meta: {
+      label: "Sales",
+      // @ts-expect-error Ant Design Icon's v5.0.1 has an issue with @types/react@^18.2.66
+      icon: <ShopOutlined />,
+    },
+  },
   {
     name: "quotes",
     list: "/quotes",
@@ -127,8 +136,8 @@ export const resources: IResourceItem[] = [
     show: "/quotes/show/:id",
     meta: {
       label: "Quotes",
-      // @ts-expect-error Ant Design Icon's v5.0.1 has an issue with @types/react@^18.2.66
-      icon: <ContainerOutlined />,
+     
+      parent: "sales",
     },
   },
   {
@@ -139,8 +148,8 @@ export const resources: IResourceItem[] = [
     show: "/invoices/show/:id",
     meta: {
       label: "Invoices",
-      // @ts-expect-error Ant Design Icon's v5.0.1 has an issue with @types/react@^18.2.66
-      icon: <ShopOutlined />,
+      
+      parent: "sales",
     },
   },
   {
@@ -151,8 +160,9 @@ export const resources: IResourceItem[] = [
     show: "/products/show/:id",
     meta: {
       label: "Products",
-      // @ts-expect-error Ant Design Icon's v5.0.1 has an issue with @types/react@^18.2.66
-      icon: < ShopOutlined/>,
+      
+      
+      parent: "sales",
     },
   },
   {
