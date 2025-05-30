@@ -1,15 +1,20 @@
 import { Arg, ID, Mutation, Query, Resolver } from "type-graphql";
 import { PrismaClient } from "@prisma/client";
 import { EventCategory } from "../schema/EventCategory";
+import { EventCategoryConnection } from "../schema/EventCategoryConnection";
 import { CreateEventCategoryInput, UpdateEventCategoryInput } from "../schema/EventCategoryInput";
 
 const prisma = new PrismaClient();
 
 @Resolver(() => EventCategory)
 export class EventCategoryResolver {
-  @Query(() => [EventCategory])
+  @Query(() => EventCategoryConnection)
   async eventCategories() {
-    return prisma.eventCategory.findMany();
+    const [nodes, totalCount] = await Promise.all([
+      prisma.eventCategory.findMany(),
+      prisma.eventCategory.count(),
+    ]);
+    return { nodes, totalCount };
   }
 
   @Query(() => EventCategory, { nullable: true })

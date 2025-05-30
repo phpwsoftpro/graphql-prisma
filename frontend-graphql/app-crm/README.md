@@ -79,11 +79,13 @@ refine is a React-based powerful framework for building low-code applications. I
   - `name`
   - `avatarUrl`
   - `dealsAggregate.sum.value`
+
 - `salesOwner` (user info)
 - `contacts` (basic contact info)
 
 `salesOwner` and `contacts` are relationships that reference the owner
 of the company and its related contacts.
+
 
 ## Try this example on your local
 
@@ -96,3 +98,25 @@ npm create refine-app@latest -- --example app-crm
 <br/>
 
 [![Open app-crm example from refine](https://codesandbox.io/static/img/play-codesandbox.svg)](https://codesandbox.io/embed/github/refinedev/refine/tree/master/examples/app-crm?view=preview&theme=dark&codemirror=1)
+
+## API Endpoints
+
+### List Quotes
+
+**Endpoint:** `GET /quotes`
+
+Returns the following fields for each quote:
+
+- `id`
+- `title`
+- `status`
+- `description`
+- `subTotal`
+- `total`
+- `tax`
+- `createdAt`
+- `items` (array of product or service details)
+- `company`
+- `salesOwner`
+- `contact`
+
