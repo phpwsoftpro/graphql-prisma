@@ -1,42 +1,34 @@
 import { Arg, ID, Mutation, Query, Resolver } from "type-graphql";
 import { PrismaClient } from "@prisma/client";
 import { Contact } from "../schema/Contact";
+import { ContactConnection } from "../schema/ContactConnection";
 import { CreateContactInput, UpdateContactInput } from "../schema/ContactInput";
 
 const prisma = new PrismaClient();
 
 @Resolver(() => Contact)
 export class ContactResolver {
-  @Query(() => [Contact])
+  @Query(() => ContactConnection)
   async contacts() {
-    return prisma.contact.findMany({
-      include: {
-        company: true,
-        salesOwner: true,
-      },
-    });
+
+    const nodes = await prisma.contact.findMany({ include: { company: true } });
+    const totalCount = await prisma.contact.count();
+    return { nodes, totalCount };
+
   }
 
   @Query(() => Contact, { nullable: true })
   async contact(@Arg("id", () => ID) id: number) {
-    return prisma.contact.findUnique({
-      where: { id },
-      include: {
-        company: true,
-        salesOwner: true,
-      },
-    });
+
+    return prisma.contact.findUnique({ where: { id }, include: { company: true } });
+
   }
 
   @Mutation(() => Contact)
   async createContact(@Arg("data") data: CreateContactInput) {
-    return prisma.contact.create({
-      data,
-      include: {
-        company: true,
-        salesOwner: true,
-      },
-    });
+
+    return prisma.contact.create({ data, include: { company: true } });
+
   }
 
   @Mutation(() => Contact, { nullable: true })
@@ -48,14 +40,8 @@ export class ContactResolver {
       Object.entries(data).filter(([, value]) => value !== undefined)
     ) as UpdateContactInput;
 
-    return prisma.contact.update({
-      where: { id },
-      data: updateData,
-      include: {
-        company: true,
-        salesOwner: true,
-      },
-    });
+    return prisma.contact.update({ where: { id }, data: updateData, include: { company: true } });
+
   }
 
   @Mutation(() => Boolean)
