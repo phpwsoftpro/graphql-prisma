@@ -23,7 +23,7 @@ export class CompanyResolver {
       where.name = { contains: filter.name };
     }
 
-    const orderBy = sorting?.map((s) => ({ [s.field]: s.direction }));
+    const orderBy = sorting?.map((s) => ({ [s.field]: s.direction.toLowerCase() })) ?? [{ createdAt: "desc" }];
 
     const skip = paging?.offset ?? 0;
     const take = paging?.limit ?? 10;
@@ -44,15 +44,26 @@ export class CompanyResolver {
 
     const nodesWithAggregate = await Promise.all(
       nodes.map(async (company) => {
-        const sum = await prisma.deal.aggregate({
-          where: { companyId: company.id },
-          _sum: { amount: true },
-        });
+        const [sum, contacts] = await Promise.all([
+          prisma.deal.aggregate({
+            where: { companyId: company.id },
+            _sum: { amount: true },
+          }),
+          prisma.contact.findMany({
+            where: { companyId: company.id },
+            include: { salesOwner: true },
+          }),
+        ]);
+
         return {
           ...company,
           dealsAggregate: [
             { sum: { value: sum._sum.amount ?? 0 } },
           ],
+          contacts: {
+            nodes: contacts,
+            totalCount: contacts.length,
+          },
         } as any;
       })
     );
@@ -63,10 +74,34 @@ export class CompanyResolver {
 
   @Query(() => Company, { nullable: true })
   async company(@Arg("id", () => ID) id: number) {
-    return prisma.company.findUnique({
+    const company = await prisma.company.findUnique({
       where: { id },
       include: { contacts: true, salesOwner: true },
     });
+
+    if (!company) return null;
+
+    const [sum, contacts] = await Promise.all([
+      prisma.deal.aggregate({
+        where: { companyId: company.id },
+        _sum: { amount: true },
+      }),
+      prisma.contact.findMany({
+        where: { companyId: company.id },
+        include: { salesOwner: true },
+      }),
+    ]);
+
+    return {
+      ...company,
+      dealsAggregate: [
+        { sum: { value: sum._sum.amount ?? 0 } },
+      ],
+      contacts: {
+        nodes: contacts,
+        totalCount: contacts.length,
+      },
+    } as any;
   }
 
   @Mutation(() => Company)

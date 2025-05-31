@@ -1,6 +1,7 @@
 import { Field, ID, ObjectType } from "type-graphql";
 import { Contact } from "./Contact";
 import { User } from "./User";
+import { ContactListResponse } from "./ContactListResponse";
 
 
 @ObjectType()
@@ -58,11 +59,10 @@ export class Company {
   salesOwnerId?: number;
 
   @Field(() => User, { nullable: true })
-
   salesOwner?: User | null;
 
-  @Field(() => [Contact])
-  contacts?: Contact[];
+  @Field(() => ContactListResponse)
+  contacts?: ContactListResponse;
 
   @Field(() => [DealAggregate], { nullable: true })
   dealsAggregate?: DealAggregate[];

@@ -1,6 +1,30 @@
 import { Field, InputType } from "type-graphql";
 
 @InputType()
+export class EventInput {
+  @Field()
+  title: string;
+
+  @Field()
+  description: string;
+
+  @Field()
+  startDate: Date;
+
+  @Field({ nullable: true })
+  endDate?: Date;
+
+  @Field({ nullable: true })
+  color?: string;
+
+  @Field({ nullable: true })
+  categoryId?: number;
+
+  @Field({ nullable: true })
+  createdById?: number;
+}
+
+@InputType()
 export class CreateEventInput {
   @Field()
   title: string;

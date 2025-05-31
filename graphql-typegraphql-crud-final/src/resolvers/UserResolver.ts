@@ -4,14 +4,71 @@ import { randomBytes } from "crypto";
 import { User } from "../schema/User";
 import { CreateUserInput, UpdateUserInput } from "../schema/UserInput";
 import { LoginPayload } from "../schema/LoginPayload";
+import { UserListResponse } from "../schema/UserListResponse";
+import { UserFilter } from "../schema/UserFilter";
+import { UserSort } from "../schema/UserSort";
+import { OffsetPaging } from "../schema/PagingInput";
 
 const prisma = new PrismaClient();
 
 @Resolver(() => User)
 export class UserResolver {
-  @Query(() => [User])
-  async users() {
-    return prisma.user.findMany();
+  @Query(() => UserListResponse)
+  async users(
+    @Arg("filter", () => UserFilter, { nullable: true }) filter: UserFilter,
+    @Arg("sorting", () => [UserSort], { nullable: true }) sorting: UserSort[],
+    @Arg("paging", () => OffsetPaging, { nullable: true }) paging: OffsetPaging
+  ) {
+    const where: any = {};
+    
+    if (filter) {
+      if (filter.name) {
+        if (filter.name.iLike) {
+          where.name = { contains: filter.name.iLike, mode: 'insensitive' };
+        } else if (filter.name.contains) {
+          where.name = { contains: filter.name.contains };
+        } else if (filter.name.equals) {
+          where.name = filter.name.equals;
+        }
+      }
+      
+      if (filter.email) {
+        if (filter.email.iLike) {
+          where.email = { contains: filter.email.iLike, mode: 'insensitive' };
+        } else if (filter.email.contains) {
+          where.email = { contains: filter.email.contains };
+        } else if (filter.email.equals) {
+          where.email = filter.email.equals;
+        }
+      }
+      
+      if (filter.role) {
+        if (filter.role.iLike) {
+          where.role = { contains: filter.role.iLike, mode: 'insensitive' };
+        } else if (filter.role.contains) {
+          where.role = { contains: filter.role.contains };
+        } else if (filter.role.equals) {
+          where.role = filter.role.equals;
+        }
+      }
+    }
+
+    const orderBy = sorting?.map((s) => ({ [s.field]: s.direction.toLowerCase() })) ?? [{ id: "desc" }];
+
+    const skip = paging?.offset ?? 0;
+    const take = paging?.limit ?? 10;
+
+    const [nodes, totalCount] = await prisma.$transaction([
+      prisma.user.findMany({
+        where,
+        orderBy,
+        skip,
+        take,
+      }),
+      prisma.user.count({ where }),
+    ]);
+
+    return { nodes, totalCount };
   }
 
   @Query(() => User, { nullable: true })
