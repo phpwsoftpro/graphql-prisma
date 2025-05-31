@@ -11,13 +11,13 @@ export class Event {
   title: string;
 
   @Field()
+  description: string;
+
+  @Field()
   startDate: Date;
 
   @Field({ nullable: true })
   endDate?: Date;
-
-  @Field({ nullable: true })
-  description?: string;
 
   @Field({ nullable: true })
   color?: string;
