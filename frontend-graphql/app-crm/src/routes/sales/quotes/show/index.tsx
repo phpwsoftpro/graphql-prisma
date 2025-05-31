@@ -41,43 +41,24 @@ export const QuotesShowPage = () => {
   if (isLoading || !data?.data) {
     return <FullScreenLoading />;
   }
-  const mockData={
-    id: "S00013",
-    title: "S00013",
-    createdAt: "2025-05-23",
-    company: { 
-      name: "Bouwsoft, Groensoft & Archisoft" ,
-      country: "Belgium",
-      website: "https://www.bouwsoft.be",
-      avatarUrl: "https://refine-crm.ams3.cdn.digitaloceanspaces.com/companies/11.png"
-    },
-    salesOwner: { name: "Administrator" },
-  
-    total: 20,
-    status: "ACCEPTED",
-   
-    contact: { name: "John Doe" },
-    expiration: "2025-05-23",
-    paymentTerm: "2025-05-23",
-    fiscalPosition: "2025-05-23",
-    analyticAccount: "2025-05-23",
-    tracking: {
-      sourceDocument: "2025-05-23",
-    },
-    projects:{
-      totalCount: 1,
-    },
-    tasks:{
-      totalCount: 1,
-    },
-    activities:{
-      totalCount: 1,
-    },
-    invoices:{
-      totalCount: 1,
-    }
-  }
-  const { title, id, status, company, contact, salesOwner, expiration, paymentTerm, fiscalPosition, analyticAccount, tracking,projects,tasks,activities,invoices } = mockData;
+
+  const {
+    title,
+    id,
+    status,
+    company,
+    contact,
+    salesOwner,
+    expiration,
+    paymentTerm,
+    fiscalPosition,
+    analyticAccount,
+    tracking,
+    projects,
+    tasks,
+    activities,
+    invoices,
+  } = (data.data as any);
 
   // Helper to safely get name or fallback to '_'
   const safeName = (obj: any) => obj?.name ?? '_';
