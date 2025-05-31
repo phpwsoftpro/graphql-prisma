@@ -125,20 +125,58 @@ npm create refine-app@latest -- --example app-crm
 
 ### List Quotes
 
-**Endpoint:** `GET /quotes`
 
-Returns the following fields for each quote:
+Quotes are fetched via GraphQL using the `quotes` query. A typical request
+might look like the following:
 
-- `id`
-- `title`
-- `status`
-- `description`
-- `subTotal`
-- `total`
-- `tax`
-- `createdAt`
-- `items` (array of product or service details)
-- `company`
-- `salesOwner`
-- `contact`
+```graphql
+query QuotesTable($filter: QuoteFilter!, $sorting: [QuoteSort!], $paging: OffsetPaging!) {
+  quotes(filter: $filter, sorting: $sorting, paging: $paging) {
+    nodes {
+      id
+      title
+      status
+      description
+      subTotal
+      total
+      tax
+      createdAt
+      items {
+        title
+        unitPrice
+        quantity
+        discount
+        totalPrice
+      }
+      company {
+        id
+        name
+        country
+        website
+        avatarUrl
+      }
+      salesOwner {
+        id
+        name
+      }
+      contact {
+        id
+        name
+      }
+    }
+    totalCount
+  }
+}
+```
+
+The `$filter` variable uses the `QuoteFilter` input type. Example:
+
+```json
+{
+  "title": { "iLike": "%sample%" },
+  "status": { "in": ["DRAFT", "SENT"] }
+}
+```
+
+This allows searching quotes by title and filtering by multiple statuses.
 
