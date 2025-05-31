@@ -11,8 +11,12 @@ const QUOTE_FRAGMENT = gql`
         tax
         createdAt
         items {
-            title
-            unitPrice
+            id
+            product {
+                id
+                title
+                unitPrice
+            }
             quantity
             discount
             totalPrice

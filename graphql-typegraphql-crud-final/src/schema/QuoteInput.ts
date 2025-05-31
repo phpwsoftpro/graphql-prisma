@@ -9,6 +9,9 @@ export class CreateQuoteInput {
   description?: string;
 
   @Field()
+  status: string;
+
+  @Field()
   subTotal: number;
 
   @Field()
@@ -33,10 +36,10 @@ export class UpdateQuoteInput {
   title?: string;
 
   @Field({ nullable: true })
-  status?: string;
+  description?: string;
 
   @Field({ nullable: true })
-  description?: string;
+  status?: string;
 
   @Field({ nullable: true })
   subTotal?: number;

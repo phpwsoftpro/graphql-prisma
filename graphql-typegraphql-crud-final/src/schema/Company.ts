@@ -1,4 +1,21 @@
 import { Field, ID, ObjectType } from "type-graphql";
+import { Contact } from "./Contact";
+import { User } from "./User";
+import { ContactListResponse } from "./ContactListResponse";
+
+
+@ObjectType()
+export class DealSum {
+  @Field()
+  value: number;
+}
+
+@ObjectType()
+export class DealAggregate {
+  @Field(() => DealSum)
+  sum: DealSum;
+}
+
 
 @ObjectType()
 export class Company {
@@ -21,6 +38,9 @@ export class Company {
   website?: string;
 
   @Field({ nullable: true })
+  totalRevenue?: number;
+
+  @Field({ nullable: true })
   companySize?: string;
 
   @Field({ nullable: true })
@@ -37,6 +57,16 @@ export class Company {
 
   @Field({ nullable: true })
   salesOwnerId?: number;
+
+  @Field(() => User, { nullable: true })
+  salesOwner?: User | null;
+
+  @Field(() => ContactListResponse)
+  contacts?: ContactListResponse;
+
+  @Field(() => [DealAggregate], { nullable: true })
+  dealsAggregate?: DealAggregate[];
+
 
   @Field()
   createdAt: Date;

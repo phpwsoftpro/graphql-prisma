@@ -6,13 +6,13 @@ export class Product {
   id: number;
 
   @Field()
-  name: string;
+  title: string;
 
   @Field({ nullable: true })
   description?: string;
 
   @Field()
-  price: number;
+  unitPrice: number;
 
   @Field({ nullable: true })
   categoryId?: number;

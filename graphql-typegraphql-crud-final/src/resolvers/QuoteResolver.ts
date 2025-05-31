@@ -1,25 +1,140 @@
 import { Arg, ID, Mutation, Query, Resolver } from "type-graphql";
 import { PrismaClient } from "@prisma/client";
 import { Quote } from "../schema/Quote";
+import { QuoteListResponse } from "../schema/QuoteListResponse";
+import { QuoteFilter } from "../schema/QuoteFilter";
+import { QuoteSort } from "../schema/QuoteSort";
+import { OffsetPaging } from "../schema/PagingInput";
 import { CreateQuoteInput, UpdateQuoteInput } from "../schema/QuoteInput";
 
 const prisma = new PrismaClient();
 
 @Resolver(() => Quote)
 export class QuoteResolver {
-  @Query(() => [Quote])
-  async quotes() {
-    return prisma.quote.findMany();
+  @Query(() => QuoteListResponse)
+  async quotes(
+    @Arg("filter", () => QuoteFilter, { nullable: true }) filter: QuoteFilter,
+    @Arg("sorting", () => [QuoteSort], { nullable: true }) sorting: QuoteSort[],
+    @Arg("paging", () => OffsetPaging, { nullable: true }) paging: OffsetPaging
+  ) {
+    const where: any = {};
+    if (filter?.title) {
+      where.title = { contains: filter.title };
+    }
+    if (filter?.description) {
+      where.description = { contains: filter.description };
+    }
+    if (filter?.status) {
+      where.status = filter.status;
+    }
+    if (filter?.companyId) {
+      where.companyId = filter.companyId;
+    }
+    if (filter?.salesOwnerId) {
+      where.salesOwnerId = filter.salesOwnerId;
+    }
+    if (filter?.contactId) {
+      where.contactId = filter.contactId;
+    }
+
+    const orderBy = sorting?.map((s) => ({ [s.field]: s.direction.toLowerCase() })) ?? [{ id: "desc" }];
+
+    const skip = paging?.offset ?? 0;
+    const take = paging?.limit ?? 10;
+
+    const [nodes, totalCount] = await prisma.$transaction([
+      prisma.quote.findMany({
+        where,
+        orderBy,
+        skip,
+        take,
+        include: {
+          company: true,
+          salesOwner: true,
+          contact: true,
+          items: {
+            include: {
+              product: true
+            }
+          }
+        },
+      }),
+      prisma.quote.count({ where }),
+    ]);
+
+    // Transform the data to match the expected format
+    const transformedNodes = nodes.map(quote => ({
+      ...quote,
+      items: quote.items.map(item => ({
+        id: item.id,
+        product: item.product,
+        quantity: item.quantity,
+        discount: item.discount,
+        totalPrice: item.totalPrice
+      }))
+    }));
+
+    return { nodes: transformedNodes, totalCount };
   }
 
   @Query(() => Quote, { nullable: true })
   async quote(@Arg("id", () => ID) id: number) {
-    return prisma.quote.findUnique({ where: { id } });
+    const quote = await prisma.quote.findUnique({
+      where: { id },
+      include: {
+        company: true,
+        salesOwner: true,
+        contact: true,
+        items: {
+          include: {
+            product: true
+          }
+        }
+      },
+    });
+
+    if (!quote) return null;
+
+    // Transform the data to match the expected format
+    return {
+      ...quote,
+      items: quote.items.map(item => ({
+        id: item.id,
+        product: item.product,
+        quantity: item.quantity,
+        discount: item.discount,
+        totalPrice: item.totalPrice
+      }))
+    };
   }
 
   @Mutation(() => Quote)
   async createQuote(@Arg("data") data: CreateQuoteInput) {
-    return prisma.quote.create({ data });
+    const quote = await prisma.quote.create({
+      data,
+      include: {
+        company: true,
+        salesOwner: true,
+        contact: true,
+        items: {
+          include: {
+            product: true
+          }
+        }
+      },
+    });
+
+    // Transform the data to match the expected format
+    return {
+      ...quote,
+      items: quote.items.map(item => ({
+        id: item.id,
+        product: item.product,
+        quantity: item.quantity,
+        discount: item.discount,
+        totalPrice: item.totalPrice
+      }))
+    };
   }
 
   @Mutation(() => Quote, { nullable: true })
@@ -29,8 +144,34 @@ export class QuoteResolver {
   ) {
     const updateData = Object.fromEntries(
       Object.entries(data).filter(([, value]) => value !== undefined)
-    ) as UpdateQuoteInput;
-    return prisma.quote.update({ where: { id }, data: updateData });
+    );
+
+    const quote = await prisma.quote.update({
+      where: { id },
+      data: updateData,
+      include: {
+        company: true,
+        salesOwner: true,
+        contact: true,
+        items: {
+          include: {
+            product: true
+          }
+        }
+      },
+    });
+
+    // Transform the data to match the expected format
+    return {
+      ...quote,
+      items: quote.items.map(item => ({
+        id: item.id,
+        product: item.product,
+        quantity: item.quantity,
+        discount: item.discount,
+        totalPrice: item.totalPrice
+      }))
+    };
   }
 
   @Mutation(() => Boolean)

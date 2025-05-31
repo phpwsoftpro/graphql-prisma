@@ -12,6 +12,12 @@ export class CreateContactInput {
   phone?: string;
 
   @Field({ nullable: true })
+  timezone?: string;
+
+  @Field({ nullable: true })
+  avatarUrl?: string;
+
+  @Field({ nullable: true })
   description?: string;
 
   @Field({ nullable: true })
@@ -22,6 +28,8 @@ export class CreateContactInput {
 
   @Field({ nullable: true })
   jobTitle?: string;
+
+  
 
   @Field({ nullable: true })
   salesOwnerId?: number;
@@ -39,6 +47,12 @@ export class UpdateContactInput {
   phone?: string;
 
   @Field({ nullable: true })
+  timezone?: string;
+
+  @Field({ nullable: true })
+  avatarUrl?: string;
+
+  @Field({ nullable: true })
   description?: string;
 
   @Field({ nullable: true })
@@ -49,6 +63,7 @@ export class UpdateContactInput {
 
   @Field({ nullable: true })
   jobTitle?: string;
+
 
   @Field({ nullable: true })
   salesOwnerId?: number;
