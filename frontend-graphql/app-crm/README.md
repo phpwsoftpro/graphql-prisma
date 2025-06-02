@@ -142,3 +142,27 @@ Returns the following fields for each quote:
 - `salesOwner`
 - `contact`
 
+### List Event Categories
+
+**Endpoint:** `GET /eventCategories`
+
+Returns the following fields for each event category:
+
+- `id`
+- `title`
+
+Example response:
+
+```json
+{
+  "data": {
+    "eventCategories": {
+      "nodes": [
+        { "id": 1, "title": "EventCat 1" }
+      ],
+      "totalCount": 5
+    }
+  }
+}
+```
+

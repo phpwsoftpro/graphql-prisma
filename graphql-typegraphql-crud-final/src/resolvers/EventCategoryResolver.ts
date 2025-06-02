@@ -5,6 +5,10 @@ import { EventCategoryListResponse } from "../schema/EventCategoryListResponse";
 import { EventCategoryFilter } from "../schema/EventCategoryFilter";
 import { EventCategorySort } from "../schema/EventCategorySort";
 import { OffsetPaging } from "../schema/PagingInput";
+import {
+  CreateEventCategoryInput,
+  UpdateEventCategoryInput,
+} from "../schema/EventCategoryInput";
 
 const prisma = new PrismaClient();
 
@@ -47,20 +51,24 @@ export class EventCategoryResolver {
   }
 
   @Mutation(() => EventCategory)
-  async createEventCategory(@Arg("title") title: string) {
-    return prisma.eventCategory.create({
-      data: { title },
-    });
+  async createEventCategory(
+    @Arg("data") data: CreateEventCategoryInput,
+  ): Promise<EventCategory> {
+    return prisma.eventCategory.create({ data });
   }
 
   @Mutation(() => EventCategory, { nullable: true })
   async updateEventCategory(
     @Arg("id", () => ID) id: number,
-    @Arg("title") title: string
-  ) {
+    @Arg("data") data: UpdateEventCategoryInput,
+  ): Promise<EventCategory | null> {
+    const updateData = Object.fromEntries(
+      Object.entries(data).filter(([, value]) => value !== undefined),
+    ) as UpdateEventCategoryInput;
+
     return prisma.eventCategory.update({
       where: { id },
-      data: { title },
+      data: updateData,
     });
   }
 
