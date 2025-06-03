@@ -387,11 +387,11 @@ export type CompanyQuotesTableQuery = {
 };
 
 export type CompanyTitleFormMutationVariables = Types.Exact<{
-  input: Types.UpdateOneCompanyInput;
-}>;
+  input: Types.UpdateCompanyInput;
+}>; 
 
 export type CompanyTitleFormMutation = {
-  updateOneCompany: Pick<Types.Company, "id" | "name" | "avatarUrl"> & {
+  updateCompany: Pick<Types.Company, "id" | "name" | "avatarUrl"> & {
     salesOwner: Pick<Types.User, "id" | "name" | "avatarUrl">;
   };
 };
@@ -407,11 +407,11 @@ export type CompanyTitleQuery = {
 };
 
 export type CreateCompanyMutationVariables = Types.Exact<{
-  input: Types.CreateOneCompanyInput;
-}>;
+  input: Types.CreateCompanyInput;
+}>; 
 
 export type CreateCompanyMutation = {
-  createOneCompany: Pick<Types.Company, "id" | "name"> & {
+  createCompany: Pick<Types.Company, "id" | "name"> & {
     salesOwner: Pick<Types.User, "id" | "name" | "avatarUrl">;
   };
 };
