@@ -86,8 +86,18 @@ export class ContactResolver {
   async createContact(
     @Arg("input", () => CreateContactInput) input: CreateContactInput
   ) {
+    const {
+      companyId,
+      salesOwnerId,
+      ...rest
+    } = input.contact;
+
     return prisma.contact.create({
-      data: input.contact,
+      data: {
+        ...rest,
+        company: companyId ? { connect: { id: companyId } } : undefined,
+        salesOwner: salesOwnerId ? { connect: { id: salesOwnerId } } : undefined,
+      },
       include: {
         company: true,
         salesOwner: true,
@@ -99,9 +109,27 @@ export class ContactResolver {
   async updateContact(
     @Arg("input", () => UpdateContactInput) input: UpdateContactInput
   ) {
-    const updateData = Object.fromEntries(
-      Object.entries(input.update).filter(([, value]) => value !== undefined)
-    ) as ContactInput;
+    const {
+      companyId,
+      salesOwnerId,
+      ...rest
+    } = input.update;
+
+    const updateData: any = Object.fromEntries(
+      Object.entries(rest).filter(([, value]) => value !== undefined)
+    );
+
+    if (companyId !== undefined) {
+      updateData.company = companyId
+        ? { connect: { id: companyId } }
+        : { disconnect: true };
+    }
+
+    if (salesOwnerId !== undefined) {
+      updateData.salesOwner = salesOwnerId
+        ? { connect: { id: salesOwnerId } }
+        : { disconnect: true };
+    }
 
     return prisma.contact.update({
       where: {
