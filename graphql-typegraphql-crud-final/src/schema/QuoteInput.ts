@@ -1,15 +1,15 @@
-import { Field, InputType } from "type-graphql";
+import { Field, InputType, ID } from "type-graphql";
 
 @InputType()
-export class CreateQuoteInput {
+export class QuoteInput {
   @Field()
   title: string;
 
   @Field({ nullable: true })
   description?: string;
 
-  @Field()
-  status: string;
+  @Field({ nullable: true })
+  status?: string;
 
   @Field()
   subTotal: number;
@@ -31,31 +31,16 @@ export class CreateQuoteInput {
 }
 
 @InputType()
+export class CreateQuoteInput {
+  @Field(() => QuoteInput)
+  quote: QuoteInput;
+}
+
+@InputType()
 export class UpdateQuoteInput {
-  @Field({ nullable: true })
-  title?: string;
+  @Field(() => ID)
+  id: number;
 
-  @Field({ nullable: true })
-  description?: string;
-
-  @Field({ nullable: true })
-  status?: string;
-
-  @Field({ nullable: true })
-  subTotal?: number;
-
-  @Field({ nullable: true })
-  total?: number;
-
-  @Field({ nullable: true })
-  tax?: number;
-
-  @Field({ nullable: true })
-  companyId?: number;
-
-  @Field({ nullable: true })
-  salesOwnerId?: number;
-
-  @Field({ nullable: true })
-  contactId?: number;
+  @Field(() => QuoteInput)
+  update: QuoteInput;
 }
