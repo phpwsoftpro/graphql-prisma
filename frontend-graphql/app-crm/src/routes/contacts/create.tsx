@@ -63,13 +63,11 @@ export const ContactCreatePage: React.FC<PropsWithChildren> = ({
           {...formProps}
           onFinish={(values) => {
             onFinish({
-              contact: {
-                ...values,
-                companyId: values.companyId
-                  ? Number(values.companyId)
-                  : undefined,
-                salesOwnerId: user?.id ? Number(user.id) : undefined,
-              },
+              ...values,
+              companyId: values.companyId
+                ? Number(values.companyId)
+                : undefined,
+              salesOwnerId: user?.id ? Number(user.id) : undefined,
             });
           }}
         >
