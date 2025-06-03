@@ -40,3 +40,12 @@ export const CONTACT_CREATE_MUTATION = gql`
     }
     ${CONTACT_FRAGMENT}
 `;
+
+export const CONTACT_UPDATE_MUTATION = gql`
+    mutation UpdateContact($input: UpdateContactInput!) {
+        updateContact(input: $input) {
+            ...ContactFragment
+        }
+    }
+    ${CONTACT_FRAGMENT}
+`;

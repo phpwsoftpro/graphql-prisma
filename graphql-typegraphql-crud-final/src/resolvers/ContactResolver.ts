@@ -2,7 +2,11 @@ import { Arg, ID, Mutation, Query, Resolver } from "type-graphql";
 import { PrismaClient } from "@prisma/client";
 import { Contact } from "../schema/Contact";
 import { ContactListResponse } from "../schema/ContactListResponse";
-import { CreateContactInput, UpdateContactInput } from "../schema/ContactInput";
+import {
+  ContactInput,
+  CreateContactInput,
+  UpdateContactInput,
+} from "../schema/ContactInput";
 import { ContactFilter } from "../schema/ContactFilter";
 import { ContactSort } from "../schema/ContactSort";
 import { OffsetPaging } from "../schema/PagingInput";
@@ -91,23 +95,22 @@ export class ContactResolver {
     });
   }
 
-  @Mutation(() => Contact, { nullable: true })
+  @Mutation(() => Contact)
   async updateContact(
-    @Arg("id", () => ID) id: number | string,
-    @Arg("data") data: UpdateContactInput
+    @Arg("input", () => UpdateContactInput) input: UpdateContactInput
   ) {
     const updateData = Object.fromEntries(
-      Object.entries(data).filter(([, value]) => value !== undefined)
-    ) as UpdateContactInput;
+      Object.entries(input.update).filter(([, value]) => value !== undefined)
+    ) as ContactInput;
 
     return prisma.contact.update({
       where: {
-        id: typeof id === "string" ? Number(id) : id,
+        id: typeof input.id === "string" ? Number(input.id) : input.id,
       },
       data: updateData,
-      include: { 
+      include: {
         company: true,
-        salesOwner: true
+        salesOwner: true,
       },
     });
   }
