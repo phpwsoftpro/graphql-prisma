@@ -180,3 +180,27 @@ The `$filter` variable uses the `QuoteFilter` input type. Example:
 
 This allows searching quotes by title and filtering by multiple statuses.
 
+### List Event Categories
+
+**Endpoint:** `GET /eventCategories`
+
+Returns the following fields for each event category:
+
+- `id`
+- `title`
+
+Example response:
+
+```json
+{
+  "data": {
+    "eventCategories": {
+      "nodes": [
+        { "id": 1, "title": "EventCat 1" }
+      ],
+      "totalCount": 5
+    }
+  }
+}
+```
+
