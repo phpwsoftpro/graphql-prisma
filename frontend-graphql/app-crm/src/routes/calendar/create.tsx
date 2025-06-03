@@ -8,8 +8,9 @@ import dayjs from "dayjs";
 
 import type { Event, EventCreateInput } from "@/graphql/schema.types";
 
-import { CalendarForm } from "./components";
 
+import { CalendarForm } from "./components";
+import { CALENDAR_CREATE_EVENT_MUTATION } from "./queries";
 type FormValues = EventCreateInput & {
   rangeDate: [dayjs.Dayjs, dayjs.Dayjs];
   date: dayjs.Dayjs;
@@ -25,7 +26,16 @@ export const CalendarCreatePage: React.FC = () => {
     Event,
     HttpError,
     EventCreateInput
-  >();
+   
+  >({
+    queryOptions: {
+      enabled: false,
+    },
+    action: "create",
+    meta: {
+      gqlMutation: CALENDAR_CREATE_EVENT_MUTATION,
+    },
+  });
 
   const handleOnFinish = async (values: FormValues) => {
     const { rangeDate, date, time, color, ...otherValues } = values;
@@ -49,10 +59,12 @@ export const CalendarCreatePage: React.FC = () => {
     }
 
     await onFinish({
-      ...otherValues,
-      startDate: startDate.toISOString(),
-      endDate: endDate.toISOString(),
-      color: typeof color === "object" ? `#${color.toHex()}` : color,
+    ...otherValues,
+    categoryId: Number(otherValues.categoryId),
+    participantIds: otherValues.participantIds?.map(Number),
+    startDate: startDate.toISOString(),
+    endDate: endDate.toISOString(),
+    color: typeof color === "object" ? `#${color.toHex()}` : color,
     });
   };
 

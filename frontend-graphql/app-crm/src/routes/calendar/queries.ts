@@ -25,8 +25,8 @@ const EVENT_FRAGMENT = gql`
 `;
 
 export const CALENDAR_UPDATE_EVENT_MUTATION = gql`
-    mutation UpdateEvent($input: UpdateOneEventInput!) {
-        updateOneEvent(input: $input) {
+    mutation UpdateEvent( $input: UpdateEventInput!) {
+        updateEvent( input: $input) {
             ...EventFragment
         }
     }
@@ -36,6 +36,15 @@ export const CALENDAR_UPDATE_EVENT_MUTATION = gql`
 export const CALENDAR_GET_EVENT_QUERY = gql`
     query GetEvent($id: ID!) {
         event(id: $id) {
+            ...EventFragment
+        }
+    }
+    ${EVENT_FRAGMENT}
+`;
+//
+export const CALENDAR_CREATE_EVENT_MUTATION = gql`
+    mutation CreateEvent($input: CreateEventInput!) {
+        createEvent(input: $input) {
             ...EventFragment
         }
     }

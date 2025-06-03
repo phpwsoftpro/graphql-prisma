@@ -24,9 +24,8 @@ type Event = GetFields<GetEventQuery>;
 export const CalendarShowPage: React.FC = () => {
   const { id } = useResource();
   const { list } = useNavigation();
-
   const { query: queryResult } = useShow<Event>({
-    id,
+    id: Number(id),
     meta: {
       gqlQuery: CALENDAR_GET_EVENT_QUERY,
     },

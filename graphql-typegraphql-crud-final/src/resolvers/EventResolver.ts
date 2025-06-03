@@ -5,7 +5,7 @@ import { EventListResponse } from "../schema/EventListResponse";
 import { EventFilter } from "../schema/EventFilter";
 import { EventSort } from "../schema/EventSort";
 import { OffsetPaging } from "../schema/PagingInput";
-import { EventInput } from "../schema/EventInput";
+import { EventInput, CreateEventInput, UpdateEventInput } from "../schema/EventInput";
 
 const prisma = new PrismaClient();
 
@@ -73,41 +73,60 @@ export class EventResolver {
   }
 
   @Query(() => Event, { nullable: true })
-  async event(@Arg("id", () => ID) id: number) {
-    return prisma.event.findUnique({
-      where: { id },
-      include: {
-        createdBy: true,
-        category: true,
-        participants: true,
-      },
-    });
-  }
+async event(@Arg("id", () => ID) id: number | string) {
+  return prisma.event.findUnique({
+    where: {
+      id: typeof id === "string" ? Number(id) : id, // Ép kiểu về số
+    },
+    include: {
+      createdBy: true,
+      category: true,
+      participants: true,
+    },
+  });
+}
 
   @Mutation(() => Event)
-  async createEvent(@Arg("data") data: EventInput) {
-    return prisma.event.create({
-      data,
-      include: {
-        createdBy: true,
-        category: true,
-        participants: true,
-      },
-    });
-  }
+async createEvent(
+  @Arg("input", () => CreateEventInput) input: CreateEventInput
+) {
+  return prisma.event.create({
+    data: {
+      title: input.event.title,
+      description: input.event.description,
+      startDate: input.event.startDate,
+      endDate: input.event.endDate,
+      color: input.event.color,
+      category: input.event.categoryId ? { connect: { id: input.event.categoryId } } : undefined,
+      participants: input.event.participantIds?.length
+        ? { connect: input.event.participantIds.map(id => ({ id })) }
+        : undefined,
+      // ... các trường khác nếu có
+    },
+    include: {
+      createdBy: true,
+      category: true,
+      participants: true,
+    },
+  });
+}
 
-  @Mutation(() => Event, { nullable: true })
-  async updateEvent(
-    @Arg("id", () => ID) id: number,
-    @Arg("data") data: EventInput
-  ) {
-    const updateData = Object.fromEntries(
-      Object.entries(data).filter(([, value]) => value !== undefined)
-    );
-
+  
+  @Mutation(() => Event)
+  async updateEvent( @Arg("input", () => UpdateEventInput) input: UpdateEventInput) {
     return prisma.event.update({
-      where: { id },
-      data: updateData,
+      where: { id: input.id },
+      data: {
+        title: input.update.title,
+        description: input.update.description,
+        startDate: input.update.startDate,
+        endDate: input.update.endDate,
+        color: input.update.color,
+        category: input.update.categoryId ? { connect: { id: input.update.categoryId } } : undefined,
+        participants: input.update.participantIds
+        ? { set: input.update.participantIds.map(id => ({ id })) }
+        : undefined,
+      },
       include: {
         createdBy: true,
         category: true,
@@ -115,10 +134,9 @@ export class EventResolver {
       },
     });
   }
-
   @Mutation(() => Boolean)
   async deleteEvent(@Arg("id", () => ID) id: number) {
-    await prisma.event.delete({ where: { id } });
+    await prisma.event.delete({ where: { id: Number(id) } });
     return true;
   }
 }

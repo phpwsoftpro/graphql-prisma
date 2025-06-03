@@ -26,7 +26,7 @@ export const CalendarEditPage: React.FC = () => {
     query: queryResult,
   } = useForm<Event>({
     action: "edit",
-    id,
+    id: Number(id),
     queryOptions: {
       enabled: true,
     },
@@ -84,13 +84,15 @@ export const CalendarEditPage: React.FC = () => {
         .set("minute", time[1].minute())
         .set("second", 0);
     }
-
+    //
     await onFinish({
       ...otherValues,
+      categoryId: Number(otherValues.categoryId),
+      participantIds: otherValues.participantIds?.map(Number),
       startDate: startDate.toISOString(),
       endDate: endDate.toISOString(),
       color: typeof color === "object" ? `#${color.toHex()}` : color,
-    });
+      });
   };
 
   return (

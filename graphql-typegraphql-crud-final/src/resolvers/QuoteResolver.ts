@@ -19,13 +19,35 @@ export class QuoteResolver {
   ) {
     const where: any = {};
     if (filter?.title) {
-      where.title = { contains: filter.title };
+      if (filter.title.contains) {
+        where.title = { contains: filter.title.contains };
+      } else if (filter.title.equals) {
+        where.title = { equals: filter.title.equals };
+      } else if (filter.title.startsWith) {
+        where.title = { startsWith: filter.title.startsWith };
+      } else if (filter.title.endsWith) {
+        where.title = { endsWith: filter.title.endsWith };
+      } else if (filter.title.iLike) {
+        where.title = { contains: filter.title.iLike, mode: 'insensitive' };
+      }
     }
     if (filter?.description) {
-      where.description = { contains: filter.description };
+      if (filter.description.contains) {
+        where.description = { contains: filter.description.contains };
+      } else if (filter.description.equals) {
+        where.description = { equals: filter.description.equals };
+      } else if (filter.description.startsWith) {
+        where.description = { startsWith: filter.description.startsWith };
+      } else if (filter.description.endsWith) {
+        where.description = { endsWith: filter.description.endsWith };
+      } else if (filter.description.iLike) {
+        where.description = { contains: filter.description.iLike, mode: 'insensitive' };
+      }
     }
     if (filter?.status) {
-      where.status = filter.status;
+      if (filter.status.equals) {
+        where.status = filter.status.equals;
+      }
     }
     if (filter?.companyId) {
       where.companyId = filter.companyId;
@@ -37,7 +59,7 @@ export class QuoteResolver {
       where.contactId = filter.contactId;
     }
 
-    const orderBy = sorting?.map((s) => ({ [s.field]: s.direction.toLowerCase() })) ?? [{ id: "desc" }];
+    const orderBy = sorting?.map((s) => ({ [s.field]: s.direction.toLowerCase() })) ?? [{ createdAt: "desc" }];
 
     const skip = paging?.offset ?? 0;
     const take = paging?.limit ?? 10;
@@ -57,9 +79,9 @@ export class QuoteResolver {
               product: true
             }
           }
-        },
+        }
       }),
-      prisma.quote.count({ where }),
+      prisma.quote.count({ where })
     ]);
 
     // Transform the data to match the expected format
