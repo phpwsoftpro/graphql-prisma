@@ -30,21 +30,18 @@ import {
 } from "antd";
 
 import { SelectOptionWithAvatar } from "@/components";
-import type {
-  CreateCompanyMutation,
-  CreateCompanyMutationVariables,
-} from "@/graphql/types";
+import type { CompanyCreateInput, Company } from "@/graphql/schema.types";
 import { useUsersSelect } from "@/hooks/useUsersSelect";
 
 import { COMPANY_CREATE_MUTATION } from "./queries";
 
-type Company = GetFields<CreateCompanyMutation>;
+type CompanyType = Company;
 
 type Props = {
   isOverModal?: boolean;
 };
 
-type FormValues = GetVariables<CreateCompanyMutationVariables> & {
+type FormValues = CompanyCreateInput & {
   contacts?: {
     name?: string;
     email?: string;
@@ -58,7 +55,7 @@ export const CompanyCreatePage = ({ isOverModal }: Props) => {
   const go = useGo();
 
   const { formProps, modalProps, close, onFinish } = useModalForm<
-    Company,
+    CompanyType,
     HttpError,
     FormValues
   >({
@@ -113,8 +110,12 @@ export const CompanyCreatePage = ({ isOverModal }: Props) => {
         onFinish={async (values) => {
           try {
             const data = await onFinish({
-              name: values.name,
-              salesOwnerId: values.salesOwnerId,
+              input: {
+                company: {
+                  name: values.name,
+                  salesOwnerId: values.salesOwnerId,
+                },
+              },
             });
 
             const createdCompany = (data as CreateResponse<Company>)?.data;

@@ -108,6 +108,38 @@ Example response:
   }
 }
 
+### 2. Create Company
+
+Companies are created via GraphQL using the `createCompany` mutation.
+
+```graphql
+mutation CreateCompany($input: CreateCompanyInput!) {
+  createCompany(input: $input) {
+    id
+    name
+    salesOwner {
+      id
+      name
+      avatarUrl
+    }
+  }
+}
+```
+
+Example variables:
+
+```json
+{
+  "input": {
+    "company": {
+      "name": "Acme",
+      "salesOwnerId": 1,
+      "website": "https://acme.com"
+    }
+  }
+}
+```
+
 
 ## Try this example on your local
 

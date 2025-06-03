@@ -5,7 +5,7 @@ import { CompanyListResponse } from "../schema/CompanyListResponse";
 import { OffsetPaging } from "../schema/PagingInput";
 import { CompanyFilter } from "../schema/CompanyFilter";
 import { CompanySort } from "../schema/CompanySort";
-import { CreateCompanyInput, UpdateCompanyInput } from "../schema/CompanyInput";
+import { CompanyInput, CreateCompanyInput, UpdateCompanyInput } from "../schema/CompanyInput";
 
 const prisma = new PrismaClient();
 
@@ -105,19 +105,18 @@ export class CompanyResolver {
   }
 
   @Mutation(() => Company)
-  async createCompany(@Arg("data") data: CreateCompanyInput) {
-    return prisma.company.create({ data });
+  async createCompany(@Arg("input", () => CreateCompanyInput) input: CreateCompanyInput) {
+    return prisma.company.create({ data: input.company });
   }
 
   @Mutation(() => Company, { nullable: true })
   async updateCompany(
-    @Arg("id", () => ID) id: number,
-    @Arg("data") data: UpdateCompanyInput
+    @Arg("input", () => UpdateCompanyInput) input: UpdateCompanyInput
   ) {
     const updateData = Object.fromEntries(
-      Object.entries(data).filter(([, value]) => value !== undefined)
-    ) as UpdateCompanyInput;
-    return prisma.company.update({ where: { id }, data: updateData });
+      Object.entries(input.update).filter(([, value]) => value !== undefined)
+    ) as CompanyInput;
+    return prisma.company.update({ where: { id: input.id }, data: updateData });
   }
 
   @Mutation(() => Boolean)
