@@ -7,6 +7,7 @@ import {
   ContactUpdateInput,
   CreateContactInput,
   UpdateContactInput,
+  DeleteContactInput,
 } from "../schema/ContactInput";
 import { ContactFilter } from "../schema/ContactFilter";
 import { ContactSort } from "../schema/ContactSort";
@@ -148,6 +149,17 @@ export class ContactResolver {
   async deleteContact(@Arg("id", () => ID) id: number | string) {
     await prisma.contact.delete({
       where: { id: typeof id === "string" ? Number(id) : id },
+    });
+    return true;
+  }
+
+  // Temporary alias for older clients
+  @Mutation(() => Boolean)
+  async deleteOneContact(
+    @Arg("input", () => DeleteContactInput) input: DeleteContactInput
+  ) {
+    await prisma.contact.delete({
+      where: { id: typeof input.id === "string" ? Number(input.id) : input.id },
     });
     return true;
   }

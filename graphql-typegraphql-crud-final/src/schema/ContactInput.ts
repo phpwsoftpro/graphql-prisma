@@ -81,3 +81,9 @@ export class UpdateContactInput {
   @Field(() => ContactUpdateInput)
   update: ContactUpdateInput;
 }
+
+@InputType()
+export class DeleteContactInput {
+  @Field(() => ID)
+  id: number;
+}
