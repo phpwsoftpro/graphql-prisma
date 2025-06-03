@@ -49,3 +49,9 @@ export const CONTACT_UPDATE_MUTATION = gql`
     }
     ${CONTACT_FRAGMENT}
 `;
+
+export const CONTACT_DELETE_MUTATION = gql`
+    mutation DeleteContact($id: ID!) {
+        deleteContact(id: $id)
+    }
+`;

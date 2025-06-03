@@ -3,7 +3,8 @@ import { PrismaClient } from "@prisma/client";
 import { Contact } from "../schema/Contact";
 import { ContactListResponse } from "../schema/ContactListResponse";
 import {
-  ContactInput,
+  ContactCreateInput,
+  ContactUpdateInput,
   CreateContactInput,
   UpdateContactInput,
 } from "../schema/ContactInput";

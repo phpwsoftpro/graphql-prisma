@@ -43,7 +43,7 @@ import { useUsersSelect } from "@/hooks/useUsersSelect";
 import { ContactComment, ContactStatus } from "../components";
 import styles from "./index.module.css";
 import { CONTACT_SHOW_QUERY } from "./queries";
-import { CONTACT_UPDATE_MUTATION } from "../queries";
+import { CONTACT_UPDATE_MUTATION, CONTACT_DELETE_MUTATION } from "../queries";
 
 const timezoneOptions = Object.keys(TimezoneEnum).map((key) => ({
   label: TimezoneEnum[key as keyof typeof TimezoneEnum],
@@ -401,6 +401,7 @@ export const ContactShowPage: React.FC = () => {
                 {
                   id,
                   resource: "contacts",
+                  meta: { gqlMutation: CONTACT_DELETE_MUTATION },
                 },
                 {
                   onSuccess: () => closeModal(),
