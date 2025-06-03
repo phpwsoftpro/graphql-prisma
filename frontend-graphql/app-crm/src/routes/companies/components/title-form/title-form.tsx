@@ -18,8 +18,9 @@ import { getNameInitials } from "@/utilities";
 
 import { COMPANY_TITLE_FORM_MUTATION, COMPANY_TITLE_QUERY } from "./queries";
 import styles from "./title-form.module.css";
-
+import { useResource } from "@refinedev/core";
 export const CompanyTitleForm = () => {
+  const { id } = useResource();
   const {
     formProps,
     query: queryResult,
@@ -29,13 +30,14 @@ export const CompanyTitleForm = () => {
     HttpError,
     GetVariables<CompanyTitleFormMutationVariables>
   >({
+    id: Number(id),
     redirect: false,
     meta: {
       gqlMutation: COMPANY_TITLE_FORM_MUTATION,
       gqlQuery: COMPANY_TITLE_QUERY,
     },
   });
-
+ 
   const company = queryResult?.data?.data;
   const loading = queryResult?.isLoading;
 
@@ -73,7 +75,7 @@ export const CompanyTitleForm = () => {
             loading={loading}
             onChange={(value) => {
               onFinish?.({
-                salesOwnerId: value,
+                salesOwnerId: Number(value),
               });
             }}
           />

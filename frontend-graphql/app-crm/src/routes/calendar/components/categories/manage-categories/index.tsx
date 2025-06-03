@@ -11,7 +11,7 @@ import { EVENT_CATEGORIES_QUERY } from "@/graphql/queries";
 import type { EventCategoriesQuery } from "@/graphql/types";
 
 import styles from "./index.module.css";
-import { CALENDAR_CREATE_EVENT_CATEGORIES_MUTATION } from "./queries";
+import { CALENDAR_CREATE_EVENT_CATEGORIES_MUTATION, CALENDAR_DELETE_EVENT_CATEGORIES_MUTATION } from "./queries";
 
 type CalendarManageCategoriesProps = {
   saveSuccces?: () => void;
@@ -71,7 +71,10 @@ export const CalendarManageCategories: React.FC<CalendarManageCategoriesProps> =
                 onConfirm={() => {
                   deleteMutation({
                     resource: "eventCategories",
-                    id: category.id,
+                    id: Number(category.id),
+                    meta: {
+                      gqlMutation: CALENDAR_DELETE_EVENT_CATEGORIES_MUTATION,
+                    },
                     successNotification: () => ({
                       key: "event-category-delete",
                       message: "Successfully deleted category",

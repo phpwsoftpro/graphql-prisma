@@ -75,7 +75,7 @@ export class CompanyResolver {
   @Query(() => Company, { nullable: true })
   async company(@Arg("id", () => ID) id: number) {
     const company = await prisma.company.findUnique({
-      where: { id },
+      where: { id: Number(id) },
       include: { contacts: true, salesOwner: true },
     });
 

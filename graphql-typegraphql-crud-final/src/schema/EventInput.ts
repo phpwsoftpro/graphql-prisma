@@ -1,5 +1,5 @@
 import { Field, InputType } from "type-graphql";
-
+import { Int } from "type-graphql";
 @InputType()
 export class EventInput {
   @Field()
@@ -22,52 +22,23 @@ export class EventInput {
 
   @Field({ nullable: true })
   createdById?: number;
+
+  @Field(() => [Int], { nullable: true })
+  participantIds?: number[];
 }
+
 
 @InputType()
 export class CreateEventInput {
-  @Field()
-  title: string;
-
-  @Field()
-  startDate: Date;
-
-  @Field({ nullable: true })
-  endDate?: Date;
-
-  @Field({ nullable: true })
-  description?: string;
-
-  @Field({ nullable: true })
-  color?: string;
-
-  @Field({ nullable: true })
-  createdById?: number;
-
-  @Field({ nullable: true })
-  categoryId?: number;
+  @Field(() => EventInput)
+  event: EventInput;
 }
-
 @InputType()
 export class UpdateEventInput {
-  @Field({ nullable: true })
-  title?: string;
-
-  @Field({ nullable: true })
-  startDate?: Date;
-
-  @Field({ nullable: true })
-  endDate?: Date;
-
-  @Field({ nullable: true })
-  description?: string;
-
-  @Field({ nullable: true })
-  color?: string;
-
-  @Field({ nullable: true })
-  createdById?: number;
-
-  @Field({ nullable: true })
-  categoryId?: number;
+  @Field()
+  id: number;
+  @Field()
+  update: EventInput;
 }
+
+
