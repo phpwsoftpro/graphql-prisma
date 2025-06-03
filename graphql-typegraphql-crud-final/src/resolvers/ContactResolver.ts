@@ -33,6 +33,15 @@ export class ContactResolver {
     if (filter?.status) {
       where.status = filter.status;
     }
+    if (filter?.description) {
+      where.description = { contains: filter.description };
+    }
+    if (filter?.jobTitle) {
+      where.jobTitle = { contains: filter.jobTitle };
+    }
+    if (filter?.salesOwnerId) {
+      where.salesOwnerId = filter.salesOwnerId;
+    }
 
     const orderBy = sorting?.map((s) => ({ [s.field]: s.direction.toLowerCase() })) ?? [{ createdAt: "desc" }];
 
@@ -57,9 +66,11 @@ export class ContactResolver {
   }
 
   @Query(() => Contact, { nullable: true })
-  async contact(@Arg("id", () => ID) id: number) {
+  async contact(@Arg("id", () => ID) id: number | string) {
     return prisma.contact.findUnique({
-      where: { id },
+      where: {
+        id: typeof id === "string" ? Number(id) : id,
+      },
       include: { 
         company: true,
         salesOwner: true
@@ -68,19 +79,21 @@ export class ContactResolver {
   }
 
   @Mutation(() => Contact)
-  async createContact(@Arg("data") data: CreateContactInput) {
+  async createContact(
+    @Arg("input", () => CreateContactInput) input: CreateContactInput
+  ) {
     return prisma.contact.create({
-      data,
-      include: { 
+      data: input.contact,
+      include: {
         company: true,
-        salesOwner: true
+        salesOwner: true,
       },
     });
   }
 
   @Mutation(() => Contact, { nullable: true })
   async updateContact(
-    @Arg("id", () => ID) id: number,
+    @Arg("id", () => ID) id: number | string,
     @Arg("data") data: UpdateContactInput
   ) {
     const updateData = Object.fromEntries(
@@ -88,7 +101,9 @@ export class ContactResolver {
     ) as UpdateContactInput;
 
     return prisma.contact.update({
-      where: { id },
+      where: {
+        id: typeof id === "string" ? Number(id) : id,
+      },
       data: updateData,
       include: { 
         company: true,
@@ -98,8 +113,10 @@ export class ContactResolver {
   }
 
   @Mutation(() => Boolean)
-  async deleteContact(@Arg("id", () => ID) id: number) {
-    await prisma.contact.delete({ where: { id } });
+  async deleteContact(@Arg("id", () => ID) id: number | string) {
+    await prisma.contact.delete({
+      where: { id: typeof id === "string" ? Number(id) : id },
+    });
     return true;
   }
 }
