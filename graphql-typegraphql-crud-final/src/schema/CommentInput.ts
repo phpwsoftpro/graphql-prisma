@@ -5,11 +5,12 @@ export class CreateCommentInput {
   @Field()
   comment: string;
 
-  @Field({ nullable: true })
-  createdById?: number;
+  @Field()
+  createdById: number;
 
-  @Field({ nullable: true })
-  taskId?: number;
+  // taskId is required in Prisma schema
+  @Field()
+  taskId: number;
 }
 
 @InputType()

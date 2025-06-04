@@ -1,7 +1,7 @@
-import { Field, InputType } from "type-graphql";
+import { Field, ID, InputType } from "type-graphql";
 
 @InputType()
-export class CreateContactInput {
+export class ContactCreateInput {
   @Field()
   name: string;
 
@@ -29,14 +29,13 @@ export class CreateContactInput {
   @Field({ nullable: true })
   jobTitle?: string;
 
-  
 
   @Field({ nullable: true })
   salesOwnerId?: number;
 }
 
 @InputType()
-export class UpdateContactInput {
+export class ContactUpdateInput {
   @Field({ nullable: true })
   name?: string;
 
@@ -60,11 +59,32 @@ export class UpdateContactInput {
 
   @Field({ nullable: true })
   status?: string;
-
+  @Field({ nullable: true })
+  stage?: string;
   @Field({ nullable: true })
   jobTitle?: string;
 
-
   @Field({ nullable: true })
   salesOwnerId?: number;
+}
+
+@InputType()
+export class CreateContactInput {
+  @Field(() => ContactCreateInput)
+  contact: ContactCreateInput;
+}
+
+@InputType()
+export class UpdateContactInput {
+  @Field(() => ID)
+  id: number;
+
+  @Field(() => ContactUpdateInput)
+  update: ContactUpdateInput;
+}
+
+@InputType()
+export class DeleteContactInput {
+  @Field(() => ID)
+  id: number;
 }

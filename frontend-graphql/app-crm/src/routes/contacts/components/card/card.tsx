@@ -12,6 +12,7 @@ import { Button, Dropdown, type MenuProps } from "antd";
 
 import { ContactStatusTag, CustomAvatar, Text } from "@/components";
 import type { ContactsListQuery } from "@/graphql/types";
+import { CONTACT_DELETE_MUTATION } from "../../queries";
 
 import styles from "./index.module.css";
 import { ContactCardSkeleton } from "./skeleton";
@@ -47,6 +48,7 @@ export const ContactCard: React.FC<ContactCardProps> = ({ contact }) => {
         deleteMutate({
           resource: "contacts",
           id,
+          meta: { gqlMutation: CONTACT_DELETE_MUTATION },
         });
       },
     },

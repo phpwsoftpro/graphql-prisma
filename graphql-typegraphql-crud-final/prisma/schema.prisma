@@ -1,5 +1,5 @@
 generator client {
-  provider = "prisma-client-js"
+  provider = "pripriprisma-client-js"
 }
 
 datasource db {
@@ -70,6 +70,7 @@ model Contact {
   companyId   Int?
   company     Company? @relation("CompanyContacts", fields: [companyId], references: [id])
   status      String?
+  stage       String?
   jobTitle    String?
   deals       Deal[]    @relation("DealContact")
 

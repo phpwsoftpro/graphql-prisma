@@ -192,6 +192,174 @@ async function bootstrap() {
     res.json({ nodes: events, totalCount: events.length });
   });
 
+  // GET /quotes
+  app.get("/quotes", async (_req, res) => {
+    const quotes = await prisma.quote.findMany({
+      include: {
+        company: true,
+        salesOwner: true,
+        contact: true,
+        items: {
+          include: {
+            product: true,
+          },
+        },
+      },
+      orderBy: { createdAt: "desc" },
+    });
+
+    const formatted = quotes.map((quote) => ({
+      ...quote,
+      items: quote.items.map((item) => ({
+        id: item.id,
+        product: item.product,
+        quantity: item.quantity,
+        discount: item.discount,
+        totalPrice: item.totalPrice,
+      })),
+    }));
+
+    res.json(formatted);
+  });
+
+  // GET /quotes/:id
+  app.get("/quotes/:id", async (req, res) => {
+    const id = parseInt(req.params.id, 10);
+    if (Number.isNaN(id)) {
+      res.status(400).json({ message: "Invalid id" });
+      return;
+    }
+
+    try {
+      const quote = await prisma.quote.findUnique({
+        where: { id },
+        include: {
+          company: true,
+          salesOwner: true,
+          contact: true,
+          items: {
+            include: {
+              product: true,
+            },
+          },
+        },
+      });
+
+      if (!quote) {
+        res.status(404).json({ message: "Quote not found" });
+        return;
+      }
+
+      const formatted = {
+        ...quote,
+        items: quote.items.map((item) => ({
+          id: item.id,
+          product: item.product,
+          quantity: item.quantity,
+          discount: item.discount,
+          totalPrice: item.totalPrice,
+        })),
+      };
+
+      res.json(formatted);
+    } catch (e) {
+      res.status(500).json({ message: "Server error" });
+    }
+  });
+
+  // POST /quotes
+  app.post("/quotes", async (req, res) => {
+    try {
+      const data = req.body;
+      const quote = await prisma.quote.create({
+        data,
+        include: {
+          company: true,
+          salesOwner: true,
+          contact: true,
+          items: {
+            include: {
+              product: true,
+            },
+          },
+        },
+      });
+
+      const formatted = {
+        ...quote,
+        items: quote.items.map((item) => ({
+          id: item.id,
+          product: item.product,
+          quantity: item.quantity,
+          discount: item.discount,
+          totalPrice: item.totalPrice,
+        })),
+      };
+
+      res.status(201).json(formatted);
+    } catch (e) {
+      res.status(500).json({ message: "Server error" });
+    }
+  });
+
+  // PUT /quotes/:id
+  app.put("/quotes/:id", async (req, res) => {
+    const id = parseInt(req.params.id, 10);
+    if (Number.isNaN(id)) {
+      res.status(400).json({ message: "Invalid id" });
+      return;
+    }
+
+    try {
+      const updateData = req.body;
+      const quote = await prisma.quote.update({
+        where: { id },
+        data: updateData,
+        include: {
+          company: true,
+          salesOwner: true,
+          contact: true,
+          items: {
+            include: {
+              product: true,
+            },
+          },
+        },
+      });
+
+      const formatted = {
+        ...quote,
+        items: quote.items.map((item) => ({
+          id: item.id,
+          product: item.product,
+          quantity: item.quantity,
+          discount: item.discount,
+          totalPrice: item.totalPrice,
+        })),
+      };
+
+      res.json(formatted);
+    } catch (e) {
+      res.status(500).json({ message: "Server error" });
+    }
+  });
+
+  // DELETE /quotes/:id
+  app.delete("/quotes/:id", async (req, res) => {
+    const id = parseInt(req.params.id, 10);
+    if (Number.isNaN(id)) {
+      res.status(400).json({ message: "Invalid id" });
+      return;
+    }
+
+    try {
+      await prisma.quote.delete({ where: { id } });
+      res.json({ success: true });
+    } catch (e) {
+      res.status(500).json({ message: "Server error" });
+    }
+  });
+
   server.applyMiddleware({ app });
 
   const port = 8000;

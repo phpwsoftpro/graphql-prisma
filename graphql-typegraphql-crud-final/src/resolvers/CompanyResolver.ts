@@ -5,7 +5,7 @@ import { CompanyListResponse } from "../schema/CompanyListResponse";
 import { OffsetPaging } from "../schema/PagingInput";
 import { CompanyFilter } from "../schema/CompanyFilter";
 import { CompanySort } from "../schema/CompanySort";
-import { CreateCompanyInput, UpdateCompanyInput } from "../schema/CompanyInput";
+import { CreateCompanyInput, UpdateCompanyInput, DeleteCompanyInput } from "../schema/CompanyInput";
 
 const prisma = new PrismaClient();
 
@@ -104,25 +104,31 @@ export class CompanyResolver {
     } as any;
   }
 
+  @Mutation(() => [Company])
+  async createCompany(@Arg("input", () => CreateCompanyInput) input: CreateCompanyInput) {
+    const companies = await Promise.all(
+      input.companies.map(company =>
+        prisma.company.create({
+          data: company
+        })
+      )
+    );
+    return companies;
+  }
+
   @Mutation(() => Company)
-  async createCompany(@Arg("data") data: CreateCompanyInput) {
-    return prisma.company.create({ data });
+  async updateCompany(@Arg("input", () => UpdateCompanyInput) input: UpdateCompanyInput) {
+    return prisma.company.update({
+      where: { id: Number(input.id) },
+      data: input.company
+    });
   }
 
-  @Mutation(() => Company, { nullable: true })
-  async updateCompany(
-    @Arg("id", () => ID) id: number,
-    @Arg("data") data: UpdateCompanyInput
-  ) {
-    const updateData = Object.fromEntries(
-      Object.entries(data).filter(([, value]) => value !== undefined)
-    ) as UpdateCompanyInput;
-    return prisma.company.update({ where: { id }, data: updateData });
-  }
-
-  @Mutation(() => Boolean)
-  async deleteCompany(@Arg("id", () => ID) id: number) {
-    await prisma.company.delete({ where: { id } });
-    return true;
+  @Mutation(() => Company)
+  async deleteCompany(@Arg("input", () => DeleteCompanyInput) input: DeleteCompanyInput) {
+    const company = await prisma.company.delete({
+      where: { id: Number(input.id) }
+    });
+    return company;
   }
 }

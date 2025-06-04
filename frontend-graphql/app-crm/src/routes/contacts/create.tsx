@@ -2,13 +2,14 @@ import React, { type PropsWithChildren, useEffect } from "react";
 import { useLocation, useSearchParams } from "react-router-dom";
 
 import { useForm } from "@refinedev/antd";
-import { useGetIdentity, useNavigation } from "@refinedev/core";
+import { type HttpError, useGetIdentity, useNavigation } from "@refinedev/core";
 
 import { PlusCircleOutlined } from "@ant-design/icons";
 import { Button, Form, Input, Modal, Select } from "antd";
 
 import { SelectOptionWithAvatar } from "@/components";
-import type { User } from "@/graphql/schema.types";
+import type { Contact, CreateContactInput, User } from "@/graphql/schema.types";
+import { CONTACT_CREATE_MUTATION } from "./queries";
 import { useCompaniesSelect } from "@/hooks/useCompaniesSelect";
 
 export const ContactCreatePage: React.FC<PropsWithChildren> = ({
@@ -18,8 +19,15 @@ export const ContactCreatePage: React.FC<PropsWithChildren> = ({
   const { pathname } = useLocation();
   const { data: user } = useGetIdentity<User>();
   const [searchParams] = useSearchParams();
-  const { formProps, saveButtonProps, onFinish } = useForm({
+  const { formProps, saveButtonProps, onFinish } = useForm<
+    Contact,
+    HttpError,
+    CreateContactInput
+  >({
     redirect: "list",
+    meta: {
+      gqlMutation: CONTACT_CREATE_MUTATION,
+    },
   });
   const { selectProps, queryResult } = useCompaniesSelect();
 
@@ -56,7 +64,10 @@ export const ContactCreatePage: React.FC<PropsWithChildren> = ({
           onFinish={(values) => {
             onFinish({
               ...values,
-              salesOwnerId: user?.id,
+              companyId: values.companyId
+                ? Number(values.companyId)
+                : undefined,
+              salesOwnerId: user?.id ? Number(user.id) : undefined,
             });
           }}
         >
