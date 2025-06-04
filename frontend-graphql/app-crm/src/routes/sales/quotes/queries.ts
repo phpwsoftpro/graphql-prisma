@@ -65,8 +65,8 @@ export const QUOTES_GET_QUOTE_QUERY = gql`
 `;
 
 export const QUOTES_CREATE_QUOTE_MUTATION = gql`
-    mutation QuotesCreateQuote($input: CreateOneQuoteInput!) {
-        createOneQuote(input: $input) {
+    mutation QuotesCreateQuote($input: CreateQuoteInput!) {
+        createQuote(input: $input) {
             ...QuoteFields
         }
     }
@@ -74,8 +74,8 @@ export const QUOTES_CREATE_QUOTE_MUTATION = gql`
 `;
 
 export const QUOTES_UPDATE_QUOTE_MUTATION = gql`
-    mutation QuotesUpdateQuote($input: UpdateOneQuoteInput!) {
-        updateOneQuote(input: $input) {
+    mutation QuotesUpdateQuote($input: UpdateQuoteInput!) {
+        updateQuote(input: $input) {
             ...QuoteFields
         }
     }

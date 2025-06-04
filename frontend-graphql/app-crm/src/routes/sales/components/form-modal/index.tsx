@@ -45,7 +45,7 @@ export const QuotesFormModal: FC<Props> = ({
   const { list, replace } = useNavigation();
   const [searchParams] = useSearchParams();
 
-  const { formProps, modalProps, close } = useModalForm<
+  const { formProps, modalProps, close, onFinish } = useModalForm<
     GetFields<QuotesCreateQuoteMutation>,
     HttpError,
     GetVariables<QuotesCreateQuoteMutationVariables>
@@ -84,7 +84,17 @@ export const QuotesFormModal: FC<Props> = ({
 
   const isHaveOverModal = pathname.includes("company-create");
 
-  console.log(userOptions);
+  const handleOnFinish = async (values: any) => {
+    await onFinish({
+      quote: {
+        ...values,
+        salesOwnerId: Array.isArray(values.salesOwnerId)
+          ? values.salesOwnerId[0]
+          : values.salesOwnerId,
+        status: values.status ?? "DRAFT",
+      },
+    });
+  };
 
   return (
     <Modal
@@ -103,7 +113,7 @@ export const QuotesFormModal: FC<Props> = ({
       }}
     >
       <Spin spinning={loading}>
-        <Form {...formProps} layout="vertical">
+        <Form {...formProps} layout="vertical" onFinish={handleOnFinish}>
           <Form.Item
             rules={[{ required: true }]}
             name="title"

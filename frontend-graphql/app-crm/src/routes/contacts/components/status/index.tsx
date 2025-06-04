@@ -18,7 +18,7 @@ import type { ContactStatus as ContactStatusType } from "@/graphql/schema.types"
 import type { ContactShowQuery } from "@/graphql/types";
 
 import styles from "./index.module.css";
-
+import { CONTACT_UPDATE_MUTATION } from "../../queries";
 type ContactStatusProps = {
   contact: GetFields<ContactShowQuery>;
 };
@@ -103,6 +103,9 @@ export const ContactStatus: React.FC<ContactStatusProps> = ({ contact }) => {
     resource: "contacts",
     mutationMode: "optimistic",
     id: contact.id,
+    meta: {
+      gqlMutation: CONTACT_UPDATE_MUTATION,
+    },
   });
   const { status } = contact;
 

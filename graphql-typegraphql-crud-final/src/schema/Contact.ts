@@ -33,6 +33,8 @@ export class Contact {
 
   @Field({ nullable: true })
   status?: string;
+  @Field({ nullable: true })
+  stage?: string;
 
   @Field({ nullable: true })
   jobTitle?: string;
