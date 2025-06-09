@@ -24,24 +24,25 @@ export const SALES_COMPANIES_SELECT_QUERY = gql`
 `;
 
 export const SALES_CREATE_DEAL_STAGE_MUTATION = gql`
-    mutation SalesCreateDealStage($input: CreateOneDealStageInput!) {
-        createOneDealStage(input: $input) {
+    mutation SalesCreateDealStage($input: CreateDealStageInput!) {
+        createDealStage(input: $input) {
             id
+            title
         }
     }
 `;
 
 export const SALES_CREATE_CONTACT_MUTATION = gql`
-    mutation SalesCreateContact($input: CreateOneContactInput!) {
-        createOneContact(input: $input) {
+    mutation SalesCreateContact($input: CreateContactInput!) {
+        createContact(input: $input) {
             id
         }
     }
 `;
 
 export const SALES_UPDATE_DEAL_STAGE_MUTATION = gql`
-    mutation SalesUpdateDealStage($input: UpdateOneDealStageInput!) {
-        updateOneDealStage(input: $input) {
+    mutation SalesUpdateDealStage($input: UpdateDealStageInput!) {
+        updateDealStage(input: $input) {
             id
             title
         }
@@ -49,8 +50,8 @@ export const SALES_UPDATE_DEAL_STAGE_MUTATION = gql`
 `;
 
 export const SALES_UPDATE_DEAL_MUTATION = gql`
-    mutation SalesUpdateDeal($input: UpdateOneDealInput!) {
-        updateOneDeal(input: $input) {
+    mutation SalesUpdateDeal($input: UpdateDealInput!) {
+        updateDeal(input: $input) {
             id
             title
             stageId
@@ -74,8 +75,8 @@ export const SALES_UPDATE_DEAL_MUTATION = gql`
 `;
 
 export const SALES_FINALIZE_DEAL_MUTATION = gql`
-    mutation SalesFinalizeDeal($input: UpdateOneDealInput!) {
-        updateOneDeal(input: $input) {
+    mutation SalesFinalizeDeal($input: UpdateDealInput!) {
+        updateDeal(input: $input) {
             id
             notes
             closeDateYear
@@ -130,6 +131,27 @@ export const SALES_DEALS_QUERY = gql`
                     avatarUrl
                 }
             }
+        }
+    }
+`;
+//delete stages 
+export const SALES_DELETE_DEAL_STAGE_MUTATION = gql`
+    mutation SalesDeleteDealStage($input: DeleteDealStageInput!) {
+        deleteDealStage(input: $input) 
+    }
+`;
+export const SALES_CREATE_DEAL_MUTATION = gql`
+    mutation SalesCreateDeal($input: CreateDealInput!) {
+        createDeal(input: $input) {
+            id
+        }
+    }
+`;
+//delete deal
+export const SALES_DELETE_DEAL_MUTATION = gql`
+    mutation SalesDeleteDeal($input: DeleteDealInput!) {
+        deleteDeal(input: $input) {
+            id
         }
     }
 `;

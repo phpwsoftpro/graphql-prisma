@@ -12,6 +12,7 @@ import { currencyNumber } from "@/utilities";
 
 import { AvatarGroup } from "../../avatar-group";
 import { CompanyCardSkeleton } from "./skeleton";
+import { DELETE_COMPANY_MUTATION } from "@/routes/companies/queries";
 
 type Props = {
   company: GetFieldsFromList<CompaniesTableQuery> | null;
@@ -111,8 +112,12 @@ export const CompanyCard: FC<Props> = ({ company }) => {
                 icon: <DeleteOutlined />,
                 onClick: () => {
                   mutate({
-                    resource: "company",
+                    resource: "companies",
                     id: company.id,
+                    meta: {
+                      gqlMutation: DELETE_COMPANY_MUTATION,
+                      
+                    },
                   });
                 },
               },

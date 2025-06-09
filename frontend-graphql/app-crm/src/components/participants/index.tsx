@@ -25,17 +25,17 @@ export const Participants: FC<Props> = ({ userOne, userTwo }) => {
       <Tooltip title={userOne.name}>
         <CustomAvatar
           size="small"
-          src={userOne.avatarUrl}
-          name={userOne.name}
+          src={userOne?.avatarUrl}
+          name={userOne?.name}
         />
       </Tooltip>
       {/* @ts-expect-error Ant Design Icon's v5.0.1 has an issue with @types/react@^18.2.66 */}
       <PlusCircleOutlined className="xs tertiary" />
-      <Tooltip title={userTwo.name}>
+      <Tooltip title={userTwo?.name}>
         <CustomAvatar
           size="small"
-          src={userTwo.avatarUrl}
-          name={userTwo.name}
+          src={userTwo?.avatarUrl}
+          name={userTwo?.name}
         />
       </Tooltip>
     </Space>

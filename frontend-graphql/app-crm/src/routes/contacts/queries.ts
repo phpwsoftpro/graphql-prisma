@@ -51,7 +51,7 @@ export const CONTACT_UPDATE_MUTATION = gql`
 `;
 
 export const CONTACT_DELETE_MUTATION = gql`
-    mutation DeleteContact($id: ID!) {
-        deleteContact(id: $id)
+    mutation DeleteContact($input: DeleteContactInput!) {
+        deleteContact(input: $input)
     }
 `;

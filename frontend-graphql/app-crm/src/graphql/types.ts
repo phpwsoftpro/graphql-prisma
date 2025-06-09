@@ -463,7 +463,7 @@ export type ContactsContactNotesListQueryVariables = Types.Exact<{
 }>;
 
 export type ContactsContactNotesListQuery = {
-  contactNotes: Pick<Types.ContactNoteConnection, "totalCount"> & {
+  notes: Pick<Types.ContactNoteConnection, "totalCount"> & {
     nodes: Array<
       Pick<Types.ContactNote, "id" | "note" | "createdAt"> & {
         createdBy: Pick<Types.User, "id" | "name" | "avatarUrl">;

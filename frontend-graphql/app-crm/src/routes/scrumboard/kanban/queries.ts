@@ -1,8 +1,8 @@
 import gql from "graphql-tag";
 
 export const KANBAN_CREATE_STAGE_MUTATION = gql`
-    mutation KanbanCreateStage($input: CreateOneTaskStageInput!) {
-        createOneTaskStage(input: $input) {
+    mutation KanbanCreateStage($input: CreateTaskStageInput!) {
+        createTaskStage(input: $input) {
             id
             title
             createdAt
@@ -11,16 +11,16 @@ export const KANBAN_CREATE_STAGE_MUTATION = gql`
 `;
 
 export const KANBAN_CREATE_TASK_MUTATION = gql`
-    mutation KanbanCreateTask($input: CreateOneTaskInput!) {
-        createOneTask(input: $input) {
+    mutation KanbanCreateTask($input: CreateTaskInput!) {
+        createTask(input: $input) {
             id
         }
     }
 `;
 
 export const KANBAN_UPDATE_STAGE_MUTATION = gql`
-    mutation KanbanUpdateStage($input: UpdateOneTaskStageInput!) {
-        updateOneTaskStage(input: $input) {
+    mutation KanbanUpdateStage($input: UpdateTaskStageInput!) {
+        updateTaskStage(input: $input) {
             id
             title
         }
@@ -53,8 +53,8 @@ export const KANBAN_GET_TASK_QUERY = gql`
 `;
 
 export const KANBAN_UPDATE_TASK_MUTATION = gql`
-    mutation KanbanUpdateTask($input: UpdateOneTaskInput!) {
-        updateOneTask(input: $input) {
+    mutation UpdateTask($input: UpdateTaskInput!) {
+        updateTask(input: $input) {
             id
             title
             completed

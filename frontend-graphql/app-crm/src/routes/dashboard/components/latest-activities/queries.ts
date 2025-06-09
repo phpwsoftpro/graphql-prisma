@@ -37,11 +37,6 @@ export const AUDITS_QUERY = gql`
                 targetEntity
                 targetId
                 createdAt
-                changes {
-                    field
-                    from
-                    to
-                }
                 user {
                     id
                     name

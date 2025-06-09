@@ -20,11 +20,11 @@ export const CONTACTS_UPDATE_CONTACT_NOTE_MUTATION = gql`
 
 export const CONTACTS_CONTACT_NOTES_LIST_QUERY = gql`
     query ContactsContactNotesList(
-        $filter: ContactNoteFilter!
-        $sorting: [ContactNoteSort!]
+        $filter: NoteFilter!
+        $sorting: [NoteSort!]
         $paging: OffsetPaging!
     ) {
-        contactNotes(filter: $filter, sorting: $sorting, paging: $paging) {
+        notes(filter: $filter, sorting: $sorting, paging: $paging) {
             totalCount
             nodes {
                 id

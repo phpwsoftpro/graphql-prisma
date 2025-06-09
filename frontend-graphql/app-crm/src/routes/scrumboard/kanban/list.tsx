@@ -28,7 +28,7 @@ import {
   ProjectCardMemo,
   ProjectCardSkeleton,
 } from "../components";
-import { KANBAN_TASK_STAGES_QUERY, KANBAN_TASKS_QUERY } from "./queries";
+import { KANBAN_TASK_STAGES_QUERY, KANBAN_TASKS_QUERY, KANBAN_UPDATE_TASK_MUTATION } from "./queries";
 
 type Task = GetFieldsFromList<KanbanTasksQuery>;
 
@@ -90,7 +90,7 @@ export const KanbanPage: FC<PropsWithChildren> = ({ children }) => {
     // prepare unassigned stage
     const grouped = stages.data.map((stage) => ({
       ...stage,
-      tasks: tasks.data.filter((task) => task.stageId?.toString() === stage.id),
+      tasks: tasks.data.filter((task) => Number(task.stageId) === Number(stage.id)),
     }));
 
     return {
@@ -124,9 +124,12 @@ export const KanbanPage: FC<PropsWithChildren> = ({ children }) => {
     }
 
     updateTask({
-      id: taskId,
+      id: Number(taskId),
       values: {
-        stageId: stageId,
+        stageId: Number(stageId),
+      },
+      meta: {
+        gqlMutation: KANBAN_UPDATE_TASK_MUTATION,
       },
     });
   };
@@ -179,7 +182,7 @@ export const KanbanPage: FC<PropsWithChildren> = ({ children }) => {
         key: "1",
         // @ts-expect-error Ant Design Icon's v5.0.1 has an issue with @types/react@^18.2.66
         icon: <EditOutlined />,
-        onClick: () => handleEditStage({ stageId: column.id }),
+        onClick: () => handleEditStage({ stageId: Number(column.id)}),
       },
       {
         label: "Clear all cards",

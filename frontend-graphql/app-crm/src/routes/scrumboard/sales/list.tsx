@@ -12,6 +12,7 @@ import type { GetFieldsFromList } from "@refinedev/nestjs-query";
 import { ClearOutlined, DeleteOutlined, EditOutlined } from "@ant-design/icons";
 import type { DragEndEvent } from "@dnd-kit/core";
 import type { MenuProps } from "antd";
+import type { UniqueIdentifier } from "@dnd-kit/core";
 
 import { Text } from "@/components";
 import type { SalesDealsQuery, SalesDealStagesQuery } from "@/graphql/types";
@@ -29,7 +30,7 @@ import {
   KanbanColumnSkeleton,
   KanbanItem,
 } from "../components";
-import { SALES_DEAL_STAGES_QUERY, SALES_DEALS_QUERY } from "./queries";
+import { SALES_DEAL_STAGES_QUERY, SALES_DEALS_QUERY, SALES_DELETE_DEAL_STAGE_MUTATION, SALES_UPDATE_DEAL_MUTATION } from "./queries";
 
 const lastMonth = new Date(new Date().setMonth(new Date().getMonth() - 1));
 
@@ -45,20 +46,27 @@ export const SalesPage: FC<PropsWithChildren> = ({ children }) => {
   const { replace, edit, create } = useNavigation();
 
   const { data: stages, isLoading: isLoadingStages } = useList<DealStage>({
-    resource: "dealStages",
-    pagination: {
-      mode: "off",
+  resource: "dealStages",
+  pagination: { mode: "off" },
+  sorters: [
+    {
+      field: "createdAt",
+      order: "asc",
     },
-    sorters: [
-      {
-        field: "createdAt",
-        order: "asc",
-      },
-    ],
-    meta: {
-      gqlQuery: SALES_DEAL_STAGES_QUERY,
+  ],
+  meta: {
+    gqlQuery: SALES_DEAL_STAGES_QUERY,
+    // Custom mapping sorters nếu refine hỗ trợ
+    variables: {
+      sorting: [
+        {
+          field: "createdAt",
+          direction: "asc", // ép chắc chắn là chữ thường
+        },
+      ],
     },
-  });
+  },
+});
 
   const { data: deals, isLoading: isLoadingDeals } = useList<Deal>({
     resource: "deals",
@@ -86,7 +94,8 @@ export const SalesPage: FC<PropsWithChildren> = ({ children }) => {
       gqlQuery: SALES_DEALS_QUERY,
     },
   });
-
+  console.log(deals?.data);
+  console.log("Stages data:", stages?.data);
   // its convert Deal[] to DealStage[] (group by stage) for kanban
   // its also group `won` and `lost` stages
   // uses `stages` and `tasks` from useList hooks
@@ -106,7 +115,7 @@ export const SalesPage: FC<PropsWithChildren> = ({ children }) => {
       return {
         ...stage,
         deals: dealsData
-          .filter((deal) => deal.stageId === stage.id)
+          .filter((deal) => Number(deal.stageId) === Number(stage.id))
           .sort((a, b) => {
             return (
               new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
@@ -114,13 +123,16 @@ export const SalesPage: FC<PropsWithChildren> = ({ children }) => {
           }),
       };
     });
-
+    
     const stageWon = grouped.find((stage) => stage.title === "WON");
     const stageLost = grouped.find((stage) => stage.title === "LOST");
     // remove won and lost from grouped
     const stageAll = grouped.filter(
       (stage) => stage.title !== "WON" && stage.title !== "LOST",
     );
+
+    console.log("Grouped:", grouped);
+    console.log("stageAll:", stageAll);
 
     return {
       stageUnassigned,
@@ -154,38 +166,41 @@ export const SalesPage: FC<PropsWithChildren> = ({ children }) => {
   }, [stageGrouped.stageUnassigned]);
 
   const handleOnDragEnd = (event: DragEndEvent) => {
-    let stageId = event.over?.id as undefined | string | null;
+    let stageId: UniqueIdentifier | undefined = event.over?.id;
     const dealId = event.active.id;
     const dealStageId = event.active.data.current?.stageId;
+
+    // Nếu stageId là string đặc biệt thì chuyển về id number hoặc null
+    if (stageId === 'won') {
+      stageId = stageGrouped.stageWon?.id;
+    } else if (stageId === 'lost') {
+      stageId = stageGrouped?.stageLost?.id;
+    } else if (stageId === 'unassigned') {
+      stageId = undefined;
+    }
 
     if (dealStageId === stageId) {
       return;
     }
 
-    if (stageId === "won") {
-      stageId = stageGrouped.stageWon?.id;
-    }
-
-    if (stageId === "lost") {
-      stageId = stageGrouped?.stageLost?.id;
-    }
-
-    if (stageId === "unassigned") {
-      stageId = null;
-    }
-
     updateDeal(
       {
-        id: dealId,
+        id: Number(dealId),
         values: {
-          stageId: stageId,
+          stageId: Number(stageId),
         },
+        meta:{
+          gqlMutation: SALES_UPDATE_DEAL_MUTATION
+        }
       },
       {
         onSuccess: () => {
-          const stage = event.over?.id as undefined | string | null;
-          if (stage === "won" || stage === "lost") {
-            edit("finalize-deals", dealId, "replace");
+          // Kiểm tra nếu vừa chuyển sang won/lost thì mở finalize
+          if (
+            event.over?.id === 'won' ||
+            event.over?.id === 'lost'
+          ) {
+            edit('finalize-deals', dealId, 'replace');
           }
         },
       },
@@ -196,14 +211,17 @@ export const SalesPage: FC<PropsWithChildren> = ({ children }) => {
     create("dealStages", "replace");
   };
 
-  const handleEditStage = (args: { stageId: string }) => {
+  const handleEditStage = (args: { stageId: number }) => {
     edit("dealStages", args.stageId);
   };
 
-  const handleDeleteStage = (args: { stageId: string }) => {
+  const handleDeleteStage = (args: { stageId: number }) => {
     deleteStage({
       resource: "dealStage",
-      id: args.stageId,
+      id: Number(args.stageId),
+      meta:{
+        gqlMutation: SALES_DELETE_DEAL_STAGE_MUTATION
+      },
       successNotification: () => ({
         key: "delete-stage",
         type: "success",
@@ -213,15 +231,15 @@ export const SalesPage: FC<PropsWithChildren> = ({ children }) => {
     });
   };
 
-  const handleAddCard = (args: { stageId: string }) => {
+  const handleAddCard = (args: { stageId: number | 'unassigned' }) => {
     const path =
-      args.stageId === "unassigned"
-        ? "create"
+      args.stageId === 'unassigned'
+        ? 'create'
         : `create?stageId=${args.stageId}`;
     replace(path);
   };
 
-  const handleClearCards = (args: { dealsIds: string[] }) => {
+  const handleClearCards = (args: { dealsIds: number[] }) => {
     updateManyDeal({
       ids: args.dealsIds,
       values: {
@@ -237,14 +255,12 @@ export const SalesPage: FC<PropsWithChildren> = ({ children }) => {
       {
         label: "Edit status",
         key: "1",
-        // @ts-expect-error Ant Design Icon's v5.0.1 has an issue with @types/react@^18.2.66
         icon: <EditOutlined />,
         onClick: () => handleEditStage({ stageId: column.id }),
       },
       {
         label: "Clear all cards",
         key: "2",
-        // @ts-expect-error Ant Design Icon's v5.0.1 has an issue with @types/react@^18.2.66
         icon: <ClearOutlined />,
         disabled: !hasItems,
         onClick: () =>
@@ -256,7 +272,6 @@ export const SalesPage: FC<PropsWithChildren> = ({ children }) => {
         danger: true,
         label: "Delete status",
         key: "3",
-        // @ts-expect-error Ant Design Icon's v5.0.1 has an issue with @types/react@^18.2.66
         icon: <DeleteOutlined />,
         disabled: hasItems,
         onClick: () => handleDeleteStage({ stageId: column.id }),
@@ -276,6 +291,7 @@ export const SalesPage: FC<PropsWithChildren> = ({ children }) => {
     <>
       <KanbanBoard onDragEnd={handleOnDragEnd}>
         <KanbanColumn
+          key={"unassigned"}
           id={"unassigned"}
           title={"unassigned"}
           count={stageGrouped.stageUnassigned?.length || 0}
@@ -284,18 +300,18 @@ export const SalesPage: FC<PropsWithChildren> = ({ children }) => {
               {currencyNumber(unassignedStageTotalValue)}
             </Text>
           }
-          onAddClick={() => handleAddCard({ stageId: "unassigned" })}
+          onAddClick={() => handleAddCard({ stageId: 'unassigned' })}
         >
           {stageGrouped.stageUnassigned?.map((deal) => {
             return (
               <KanbanItem
-                key={deal.id}
-                id={deal.id}
-                data={{ ...deal, stageId: "unassigned" }}
+                key={deal.id.toString()}
+                id={deal.id.toString()}
+                data={{ ...deal, stageId: 'unassigned' }}
               >
                 <DealKanbanCardMemo
-                  id={deal.id}
-                  key={deal.id}
+                  id={deal.id.toString()}
+                  key={deal.id.toString()}
                   title={deal.title}
                   company={{
                     name: deal.company.name,
@@ -310,7 +326,7 @@ export const SalesPage: FC<PropsWithChildren> = ({ children }) => {
           })}
           {!stageGrouped.stageUnassigned?.length && (
             <KanbanAddCardButton
-              onClick={() => handleAddCard({ stageId: "unassigned" })}
+              onClick={() => handleAddCard({ stageId: 'unassigned' })}
             />
           )}
         </KanbanColumn>
@@ -320,8 +336,8 @@ export const SalesPage: FC<PropsWithChildren> = ({ children }) => {
 
           return (
             <KanbanColumn
-              key={column.id}
-              id={column.id}
+              key={column.id.toString()}
+              id={column.id.toString()}
               title={column.title}
               description={
                 <Text size="md" disabled={sum === 0}>
@@ -335,21 +351,21 @@ export const SalesPage: FC<PropsWithChildren> = ({ children }) => {
               {column.deals.map((deal) => {
                 return (
                   <KanbanItem
-                    key={deal.id}
-                    id={deal.id}
+                    key={deal.id.toString()}
+                    id={deal.id.toString()}
                     data={{ ...deal, stageId: column.id }}
                   >
                     <DealKanbanCardMemo
-                      id={deal.id}
-                      key={deal.id}
+                      id={deal.id.toString()}
+                      key={deal.id.toString()}
                       title={deal.title}
                       company={{
                         name: deal.company.name,
                         avatarUrl: deal.company.avatarUrl as string,
                       }}
                       user={{
-                        name: deal.dealOwner.name,
-                        avatarUrl: deal.dealOwner.avatarUrl,
+                        name: deal.dealOwner?.name,
+                        avatarUrl: deal.dealOwner?.avatarUrl,
                       }}
                       date={deal.createdAt}
                       price={currencyNumber(deal.value || 0)}
@@ -368,8 +384,8 @@ export const SalesPage: FC<PropsWithChildren> = ({ children }) => {
         <KanbanAddStageButton onClick={handleAddStage} />
         {stageGrouped.stageWon && (
           <KanbanColumn
-            key={stageGrouped.stageWon.id}
-            id={stageGrouped.stageWon.id}
+            key={stageGrouped.stageWon.id.toString()}
+            id={stageGrouped.stageWon.id.toString()}
             title={stageGrouped.stageWon.title}
             description={
               <Text
@@ -389,24 +405,24 @@ export const SalesPage: FC<PropsWithChildren> = ({ children }) => {
             {stageGrouped.stageWon.deals.map((deal) => {
               return (
                 <KanbanItem
-                  key={deal.id}
-                  id={deal.id}
+                  key={deal.id.toString()}
+                  id={deal.id.toString()}
                   data={{
                     ...deal,
                     stageId: stageGrouped.stageWon?.id,
                   }}
                 >
                   <DealKanbanCardMemo
-                    id={deal.id}
-                    key={deal.id}
+                    id={deal.id.toString()}
+                    key={deal.id.toString()}
                     title={deal.title}
                     company={{
                       name: deal.company.name,
                       avatarUrl: deal.company.avatarUrl as string,
                     }}
                     user={{
-                      name: deal.dealOwner.name,
-                      avatarUrl: deal.dealOwner.avatarUrl,
+                      name: deal.dealOwner?.name,
+                      avatarUrl: deal.dealOwner?.avatarUrl,
                     }}
                     date={deal.createdAt}
                     price={currencyNumber(deal.value || 0)}
@@ -419,8 +435,8 @@ export const SalesPage: FC<PropsWithChildren> = ({ children }) => {
         )}
         {stageGrouped.stageLost && (
           <KanbanColumn
-            key={stageGrouped.stageLost.id}
-            id={stageGrouped.stageLost.id}
+            key={stageGrouped.stageLost.id.toString()}
+            id={stageGrouped.stageLost.id.toString()}
             title={stageGrouped.stageLost.title}
             description={
               <Text
@@ -440,24 +456,24 @@ export const SalesPage: FC<PropsWithChildren> = ({ children }) => {
             {stageGrouped.stageLost.deals.map((deal) => {
               return (
                 <KanbanItem
-                  key={deal.id}
-                  id={deal.id}
+                  key={deal.id.toString()}
+                  id={deal.id.toString()}
                   data={{
                     ...deal,
                     stageId: stageGrouped.stageLost?.id,
                   }}
                 >
                   <DealKanbanCardMemo
-                    id={deal.id}
-                    key={deal.id}
+                    id={deal.id.toString()}
+                    key={deal.id.toString()}
                     title={deal.title}
                     company={{
                       name: deal.company.name,
                       avatarUrl: deal.company.avatarUrl as string,
                     }}
                     user={{
-                      name: deal.dealOwner.name,
-                      avatarUrl: deal.dealOwner.avatarUrl,
+                      name: deal.dealOwner?.name,
+                      avatarUrl: deal.dealOwner?.avatarUrl,
                     }}
                     date={deal.createdAt}
                     price={currencyNumber(deal.value || 0)}

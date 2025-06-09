@@ -47,3 +47,10 @@ export const COMPANIES_TABLE_QUERY = gql`
         }
     }
 `;
+//delete company
+export const DELETE_COMPANY_MUTATION = gql`
+    mutation DeleteCompany($input: DeleteCompanyInput!) {
+        deleteCompany(input: $input)
+    }
+`;
+

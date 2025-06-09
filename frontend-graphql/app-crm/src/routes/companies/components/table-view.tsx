@@ -18,6 +18,7 @@ import { useUsersSelect } from "@/hooks/useUsersSelect";
 import { currencyNumber } from "@/utilities";
 
 import { AvatarGroup } from "./avatar-group";
+import { DELETE_COMPANY_MUTATION } from "@/routes/companies/queries";
 
 type Company = GetFieldsFromList<CompaniesTableQuery>;
 
@@ -154,7 +155,11 @@ export const CompaniesTableView: FC<Props> = ({ tableProps, filters }) => {
               recordItemId={value}
             />
 
-            <DeleteButton hideText size="small" recordItemId={value} />
+            <DeleteButton hideText size="small" recordItemId={value}
+            mutationMode="pessimistic"
+            meta={{
+              gqlMutation: DELETE_COMPANY_MUTATION,
+            }} />
           </Space>
         )}
       />

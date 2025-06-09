@@ -242,8 +242,8 @@ export const ContactShowPage: React.FC = () => {
                     width: "100%",
                   }}
                   defaultValue={{
-                    label: salesOwner.name,
-                    value: Number(salesOwner.id),
+                    label: salesOwner?.name,
+                    value: Number(salesOwner?.id),
                   }}
                   {...usersSelectProps}
                   options={
