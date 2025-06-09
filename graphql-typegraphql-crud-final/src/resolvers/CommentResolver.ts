@@ -3,14 +3,27 @@ import { PrismaClient } from "@prisma/client";
 import { Comment } from "../schema/Comment";
 import { TaskCommentsResponse } from "../schema/TaskCommentsResponse";
 import { CreateCommentInput, UpdateCommentInput } from "../schema/CommentInput";
+import { CommentConnection } from "../schema/CommentConnection";
+import { OffsetPaging } from "../schema/PagingInput";
 
 const prisma = new PrismaClient();
 
 @Resolver(() => Comment)
 export class CommentResolver {
-  @Query(() => [Comment])
-  async comments() {
-    return prisma.comment.findMany();
+  @Query(() => CommentConnection)
+  async comments(
+    @Arg("paging", () => OffsetPaging, { nullable: true }) paging: OffsetPaging
+  ): Promise<CommentConnection> {
+    const skip = paging?.offset ?? 0;
+    const take = paging?.limit ?? 10;
+    const [nodes, totalCount] = await prisma.$transaction([
+      prisma.comment.findMany({
+        skip,
+        take,
+      }),
+      prisma.comment.count(),
+    ]);
+    return { nodes, totalCount };
   }
 
   @Query(() => Comment, { nullable: true })

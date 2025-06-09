@@ -33,31 +33,30 @@ export const DashboardDealsChart: React.FC = () => {
   }
 
   const dealData = useMemo(() => {
-    const won = data?.data
-      .find((node) => node.title === "WON")
-      ?.dealsAggregate.map((item) => {
-        const { closeDateMonth, closeDateYear } = item.groupBy!;
-        const date = dayjs(`${closeDateYear}-${closeDateMonth}-01`);
-        return {
-          timeUnix: date.unix(),
-          timeText: date.format("MMM YYYY"),
-          value: item.sum?.value,
-          state: "Won",
-        };
-      });
+    const wonNode = data?.data.find((node) => node.title === "WON");
+    const lostNode = data?.data.find((node) => node.title === "LOST");
 
-    const lost = data?.data
-      .find((node) => node.title === "LOST")
-      ?.dealsAggregate.map((item) => {
-        const { closeDateMonth, closeDateYear } = item.groupBy!;
-        const date = dayjs(`${closeDateYear}-${closeDateMonth}-01`);
-        return {
-          timeUnix: date.unix(),
-          timeText: date.format("MMM YYYY"),
-          value: item.sum?.value,
-          state: "Lost",
-        };
-      });
+    const won = wonNode?.dealsAggregate?.groupBy?.map((group, idx) => {
+      const sumValue = wonNode.dealsAggregate?.sum?.value;
+      const date = dayjs(`${group.closeDateYear}-${group.closeDateMonth}-01`);
+      return {
+        timeUnix: date.unix(),
+        timeText: date.format("MMM YYYY"),
+        value: sumValue,
+        state: "Won",
+      };
+    });
+
+    const lost = lostNode?.dealsAggregate?.groupBy?.map((group, idx) => {
+      const sumValue = lostNode.dealsAggregate?.sum?.value;
+      const date = dayjs(`${group.closeDateYear}-${group.closeDateMonth}-01`);
+      return {
+        timeUnix: date.unix(),
+        timeText: date.format("MMM YYYY"),
+        value: sumValue,
+        state: "Lost",
+      };
+    });
 
     return [...(won || []), ...(lost || [])].sort(
       (a, b) => a.timeUnix - b.timeUnix,

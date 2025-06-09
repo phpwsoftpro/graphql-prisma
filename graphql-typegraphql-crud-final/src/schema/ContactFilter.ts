@@ -16,4 +16,13 @@ export class ContactFilter {
 
   @Field({ nullable: true })
   status?: string;
-} 
+
+  @Field({ nullable: true })
+  description?: string;
+
+  @Field({ nullable: true })
+  jobTitle?: string;
+
+  @Field({ nullable: true })
+  salesOwnerId?: number;
+}

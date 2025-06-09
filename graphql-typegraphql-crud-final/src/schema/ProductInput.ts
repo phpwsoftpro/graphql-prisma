@@ -3,13 +3,13 @@ import { Field, InputType } from "type-graphql";
 @InputType()
 export class CreateProductInput {
   @Field()
-  name: string;
+  title: string;
 
   @Field({ nullable: true })
   description?: string;
 
   @Field()
-  price: number;
+  unitPrice: number;
 
   @Field({ nullable: true })
   categoryId?: number;
@@ -18,13 +18,13 @@ export class CreateProductInput {
 @InputType()
 export class UpdateProductInput {
   @Field({ nullable: true })
-  name?: string;
+  title?: string;
 
   @Field({ nullable: true })
   description?: string;
 
   @Field({ nullable: true })
-  price?: number;
+  unitPrice?: number;
 
   @Field({ nullable: true })
   categoryId?: number;

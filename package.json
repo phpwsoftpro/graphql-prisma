@@ -1,0 +1,9 @@
+{
+  "devDependencies": {
+    "@prisma/client": "^6.9.0",
+    "prisma": "^6.9.0"
+  },
+  "dependencies": {
+    "type-graphql": "^2.0.0-rc.2"
+  }
+}

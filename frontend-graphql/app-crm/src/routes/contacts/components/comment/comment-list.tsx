@@ -169,18 +169,18 @@ const ContactCommentListItem = ({ item }: { item: ContactNote }) => {
 export const ContactCommentList = () => {
   const { id } = useParsed();
 
-  const { data } = useList<ContactNote>({
-    resource: "contactNotes",
-    filters: [{ field: "contact.id", operator: "eq", value: id }],
-    sorters: [{ field: "createdAt", order: "desc" }],
-    pagination: {
-      mode: "off",
-    },
-    meta: {
-      gqlQuery: CONTACTS_CONTACT_NOTES_LIST_QUERY,
-    },
+const { data, isLoading, error } = useList<ContactNote>({
+  resource: "contactNotes",
+  meta: {
+    gqlQuery: CONTACTS_CONTACT_NOTES_LIST_QUERY,
+    variables: {
+      filter: { contact: { id: { eq: Number(id) } } },
+      sorting: [{ field: "createdAt", direction: "DESC" }],
+      paging: { limit: 100, offset: 0 }
+    }
+  }
   });
-
+  console.log(data, isLoading, error);
   return (
     <Space
       size={16}
@@ -191,7 +191,7 @@ export const ContactCommentList = () => {
         width: "100%",
       }}
     >
-      {data?.data?.map((item) => (
+      {data?.notes?.nodes?.map((item) => (
         <ContactCommentListItem key={item.id} item={item} />
       ))}
     </Space>

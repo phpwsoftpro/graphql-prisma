@@ -43,6 +43,7 @@ import { useUsersSelect } from "@/hooks/useUsersSelect";
 import { ContactComment, ContactStatus } from "../components";
 import styles from "./index.module.css";
 import { CONTACT_SHOW_QUERY } from "./queries";
+import { CONTACT_UPDATE_MUTATION, CONTACT_DELETE_MUTATION } from "../queries";
 
 const timezoneOptions = Object.keys(TimezoneEnum).map((key) => ({
   label: TimezoneEnum[key as keyof typeof TimezoneEnum],
@@ -64,7 +65,10 @@ export const ContactShowPage: React.FC = () => {
   const { mutate } = useUpdate<Contact>({
     resource: "contacts",
     successNotification: false,
-    id: data?.data?.id,
+    id: Number(data?.data?.id),
+    meta: {
+      gqlMutation: CONTACT_UPDATE_MUTATION,
+    },
   });
   const { mutate: deleteMutation } = useDelete<Contact>();
 
@@ -169,6 +173,11 @@ export const ContactShowPage: React.FC = () => {
           <SingleElementForm
             // @ts-expect-error Ant Design Icon's v5.0.1 has an issue with @types/react@^18.2.66
             icon={<MailOutlined className="tertiary" />}
+            useFormProps={{
+              id: Number(data?.data?.id),
+              resource: "contacts",
+              meta: { gqlMutation: CONTACT_UPDATE_MUTATION },
+            }}
             state={
               activeForm && activeForm === "email"
                 ? "form"
@@ -191,6 +200,11 @@ export const ContactShowPage: React.FC = () => {
           <SingleElementForm
             // @ts-expect-error Ant Design Icon's v5.0.1 has an issue with @types/react@^18.2.66
             icon={<ShopOutlined className="tertiary" />}
+            useFormProps={{
+              id: Number(data?.data?.id),
+              resource: "contacts",
+              meta: { gqlMutation: CONTACT_UPDATE_MUTATION },
+            }}
             state={
               activeForm && activeForm === "companyId"
                 ? "form"
@@ -228,14 +242,14 @@ export const ContactShowPage: React.FC = () => {
                     width: "100%",
                   }}
                   defaultValue={{
-                    label: salesOwner.name,
-                    value: salesOwner.id,
+                    label: salesOwner?.name,
+                    value: Number(salesOwner?.id),
                   }}
                   {...usersSelectProps}
                   options={
                     usersSelectQueryResult.data?.data?.map(
                       ({ id, name, avatarUrl }) => ({
-                        value: id,
+                        value: Number(id),
                         label: (
                           <SelectOptionWithAvatar
                             name={name}
@@ -253,13 +267,13 @@ export const ContactShowPage: React.FC = () => {
               style={{ width: "100%" }}
               defaultValue={{
                 label: data.data.company.name,
-                value: data.data.company.id,
+                value: Number(data.data.company.id),
               }}
               {...companySelectProps}
               options={
                 companySelectQueryResult.data?.data?.map(
                   ({ id, name, avatarUrl }) => ({
-                    value: id,
+                    value: Number(id),
                     label: (
                       <SelectOptionWithAvatar
                         name={name}
@@ -274,6 +288,11 @@ export const ContactShowPage: React.FC = () => {
           <SingleElementForm
             // @ts-expect-error Ant Design Icon's v5.0.1 has an issue with @types/react@^18.2.66
             icon={<IdcardOutlined className="tertiary" />}
+            useFormProps={{
+              id: Number(data?.data?.id),
+              resource: "contacts",
+              meta: { gqlMutation: CONTACT_UPDATE_MUTATION },
+            }}
             state={
               activeForm && activeForm === "jobTitle"
                 ? "form"
@@ -295,6 +314,11 @@ export const ContactShowPage: React.FC = () => {
           <SingleElementForm
             // @ts-expect-error Ant Design Icon's v5.0.1 has an issue with @types/react@^18.2.66
             icon={<PhoneOutlined className="tertiary" />}
+            useFormProps={{
+              id: Number(data?.data?.id),
+              resource: "contacts",
+              meta: { gqlMutation: CONTACT_UPDATE_MUTATION },
+            }}
             state={
               activeForm && activeForm === "phone"
                 ? "form"
@@ -317,6 +341,11 @@ export const ContactShowPage: React.FC = () => {
             style={{ borderBottom: "none" }}
             // @ts-expect-error Ant Design Icon's v5.0.1 has an issue with @types/react@^18.2.66
             icon={<GlobalOutlined className="tertiary" />}
+            useFormProps={{
+              id: Number(data?.data?.id),
+              resource: "contacts",
+              meta: { gqlMutation: CONTACT_UPDATE_MUTATION },
+            }}
             state={
               activeForm && activeForm === "timezone"
                 ? "form"
@@ -372,6 +401,7 @@ export const ContactShowPage: React.FC = () => {
                 {
                   id,
                   resource: "contacts",
+                  meta: { gqlMutation: CONTACT_DELETE_MUTATION },
                 },
                 {
                   onSuccess: () => closeModal(),

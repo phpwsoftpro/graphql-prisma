@@ -131,9 +131,10 @@ export class QuoteResolver {
   }
 
   @Mutation(() => Quote)
-  async createQuote(@Arg("data") data: CreateQuoteInput) {
+  async createQuote(@Arg("input", () => CreateQuoteInput) input: CreateQuoteInput) {
+    const quoteData = input.quote;
     const quote = await prisma.quote.create({
-      data,
+      data: quoteData,
       include: {
         company: true,
         salesOwner: true,
@@ -161,11 +162,11 @@ export class QuoteResolver {
 
   @Mutation(() => Quote, { nullable: true })
   async updateQuote(
-    @Arg("id", () => ID) id: number,
-    @Arg("data") data: UpdateQuoteInput
+    @Arg("input", () => UpdateQuoteInput) input: UpdateQuoteInput
   ) {
+    const { id, update } = input;
     const updateData = Object.fromEntries(
-      Object.entries(data).filter(([, value]) => value !== undefined)
+      Object.entries(update).filter(([, value]) => value !== undefined)
     );
 
     const quote = await prisma.quote.update({

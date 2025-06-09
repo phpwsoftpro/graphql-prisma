@@ -1,4 +1,7 @@
-import { Field, ID, ObjectType } from "type-graphql";
+import { Field, ID, ObjectType, Int } from "type-graphql";
+import { DealAggregate } from "./DealAggregate";
+import { DealAggregateGroupBySum } from "./DealAggregateGroupBySum";
+
 
 @ObjectType()
 export class DealStage {
@@ -19,4 +22,7 @@ export class DealStage {
 
   @Field()
   updatedAt: Date;
+
+  @Field(() => [DealAggregateGroupBySum], { nullable: true })
+  dealsAggregate?: DealAggregateGroupBySum[];
 }

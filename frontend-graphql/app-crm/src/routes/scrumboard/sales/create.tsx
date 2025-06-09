@@ -36,16 +36,18 @@ import { useUsersSelect } from "@/hooks/useUsersSelect";
 import {
   SALES_COMPANIES_SELECT_QUERY,
   SALES_CREATE_CONTACT_MUTATION,
+  SALES_CREATE_DEAL_MUTATION,
 } from "./queries";
 
 type FormValues = {
-  stageId?: string | null;
-  companyId?: string;
-  dealContactId?: string;
-  dealOwnerId?: string;
+  stageId?: number | null;
+  companyId?: number;
+  dealContactId?: number;
+  dealOwnerId?: number;
   title?: string;
   contactName?: string;
   contactEmail?: string;
+  amount?: number;
 };
 
 export const SalesCreatePage: FC<PropsWithChildren> = ({ children }) => {
@@ -60,6 +62,10 @@ export const SalesCreatePage: FC<PropsWithChildren> = ({ children }) => {
   >({
     action: "create",
     defaultVisible: true,
+    resource: "deals",
+    meta: {
+      gqlMutation: SALES_CREATE_DEAL_MUTATION,
+    },
   });
 
   useEffect(() => {
@@ -68,13 +74,13 @@ export const SalesCreatePage: FC<PropsWithChildren> = ({ children }) => {
 
     if (stageId) {
       formProps.form?.setFieldsValue({
-        stageId,
+        stageId: Number(stageId),
       });
     }
 
     if (companyId && companyId !== "null") {
       formProps.form?.setFieldsValue({
-        companyId,
+        companyId: Number(companyId),
       });
     }
   }, [searchParams]);
@@ -115,7 +121,7 @@ export const SalesCreatePage: FC<PropsWithChildren> = ({ children }) => {
     }
 
     const selectedCompany = queryResult.data?.data?.find(
-      (company) => company.id === companyId,
+      (company) => company.id == Number(companyId),
     );
 
     const hasContact =
@@ -194,9 +200,10 @@ export const SalesCreatePage: FC<PropsWithChildren> = ({ children }) => {
                 values: {
                   name: values.contactName,
                   email: values.contactEmail,
-                  salesOwnerId: user?.id,
-                  companyId,
+                  salesOwnerId:Number( user?.id),
+                  companyId:Number(companyId),
                 },
+                
               });
 
               delete values.contactName;
@@ -205,12 +212,22 @@ export const SalesCreatePage: FC<PropsWithChildren> = ({ children }) => {
               if (data) {
                 formProps.onFinish?.({
                   ...values,
-                  dealContactId: data.id,
-                  dealOwnerId: user?.id,
+                  dealContactId: Number(data.id),
+                  dealOwnerId: Number(user?.id),
+                  amount: Number(values.amount),
+                  stageId: Number(values.stageId),
+                  companyId: Number(companyId),
                 });
               }
             } else {
-              formProps.onFinish?.(values);
+              formProps.onFinish?.({
+                ...values,
+                dealContactId: Number(values.dealContactId),
+                dealOwnerId: Number(values.dealOwnerId),
+                amount: Number(values.amount),
+                stageId: Number(values.stageId),
+                companyId: Number(values.companyId),
+              });
             }
           }}
         >
@@ -274,7 +291,7 @@ export const SalesCreatePage: FC<PropsWithChildren> = ({ children }) => {
               <Form.Item
                 rules={[{ required: true }]}
                 label="Deal value"
-                name="value"
+                name="amount"
               >
                 <InputNumber
                   min={0}

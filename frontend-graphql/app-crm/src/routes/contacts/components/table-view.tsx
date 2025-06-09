@@ -23,6 +23,7 @@ import {
 import { ContactStatusEnum } from "@/enums";
 import type { ContactsListQuery } from "@/graphql/types";
 import { useCompaniesSelect } from "@/hooks/useCompaniesSelect";
+import { CONTACT_DELETE_MUTATION } from "../queries";
 
 type Contact = GetFieldsFromList<ContactsListQuery>;
 
@@ -147,7 +148,14 @@ export const TableView: React.FC<Props> = ({
               // @ts-expect-error Ant Design Icon's v5.0.1 has an issue with @types/react@^18.2.66
               icon={<PhoneOutlined />}
             />
-            <DeleteButton hideText size="small" recordItemId={record.id} />
+            <DeleteButton 
+              hideText 
+              size="small" 
+              recordItemId={record.id}
+              meta={{
+                gqlMutation: CONTACT_DELETE_MUTATION
+              }}
+            />
           </Space>
         )}
       />

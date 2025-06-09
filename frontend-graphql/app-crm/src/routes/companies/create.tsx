@@ -56,7 +56,7 @@ export const CompanyCreatePage = ({ isOverModal }: Props) => {
   const [searchParams] = useSearchParams();
   const { pathname } = useLocation();
   const go = useGo();
-
+//map id to number 
   const { formProps, modalProps, close, onFinish } = useModalForm<
     Company,
     HttpError,
@@ -124,8 +124,8 @@ export const CompanyCreatePage = ({ isOverModal }: Props) => {
                 values:
                   values.contacts?.map((contact) => ({
                     ...contact,
-                    companyId: createdCompany.id,
-                    salesOwnerId: createdCompany.salesOwner.id,
+                    companyId: Number(createdCompany.id),
+                    salesOwnerId: Number(createdCompany.salesOwner.id),
                   })) ?? [],
               });
             }

@@ -2,7 +2,13 @@ import { Arg, ID, Mutation, Query, Resolver } from "type-graphql";
 import { PrismaClient } from "@prisma/client";
 import { Contact } from "../schema/Contact";
 import { ContactListResponse } from "../schema/ContactListResponse";
-import { CreateContactInput, UpdateContactInput } from "../schema/ContactInput";
+import {
+  ContactCreateInput,
+  ContactUpdateInput,
+  CreateContactInput,
+  UpdateContactInput,
+  DeleteContactInput,
+} from "../schema/ContactInput";
 import { ContactFilter } from "../schema/ContactFilter";
 import { ContactSort } from "../schema/ContactSort";
 import { OffsetPaging } from "../schema/PagingInput";
@@ -33,6 +39,15 @@ export class ContactResolver {
     if (filter?.status) {
       where.status = filter.status;
     }
+    if (filter?.description) {
+      where.description = { contains: filter.description };
+    }
+    if (filter?.jobTitle) {
+      where.jobTitle = { contains: filter.jobTitle };
+    }
+    if (filter?.salesOwnerId) {
+      where.salesOwnerId = filter.salesOwnerId;
+    }
 
     const orderBy = sorting?.map((s) => ({ [s.field]: s.direction.toLowerCase() })) ?? [{ createdAt: "desc" }];
 
@@ -57,9 +72,11 @@ export class ContactResolver {
   }
 
   @Query(() => Contact, { nullable: true })
-  async contact(@Arg("id", () => ID) id: number) {
+  async contact(@Arg("id", () => ID) id: number | string) {
     return prisma.contact.findUnique({
-      where: { id },
+      where: {
+        id: typeof id === "string" ? Number(id) : id,
+      },
       include: { 
         company: true,
         salesOwner: true
@@ -68,38 +85,73 @@ export class ContactResolver {
   }
 
   @Mutation(() => Contact)
-  async createContact(@Arg("data") data: CreateContactInput) {
+  async createContact(
+    @Arg("input", () => CreateContactInput) input: CreateContactInput
+  ) {
+    const {
+      companyId,
+      salesOwnerId,
+      ...rest
+    } = input.contact;
+
     return prisma.contact.create({
-      data,
-      include: { 
+      data: {
+        ...rest,
+        company: companyId ? { connect: { id: companyId } } : undefined,
+        salesOwner: salesOwnerId ? { connect: { id: salesOwnerId } } : undefined,
+      },
+      include: {
         company: true,
-        salesOwner: true
+        salesOwner: true,
       },
     });
   }
 
-  @Mutation(() => Contact, { nullable: true })
+  @Mutation(() => Contact)
   async updateContact(
-    @Arg("id", () => ID) id: number,
-    @Arg("data") data: UpdateContactInput
+    @Arg("input", () => UpdateContactInput) input: UpdateContactInput
   ) {
-    const updateData = Object.fromEntries(
-      Object.entries(data).filter(([, value]) => value !== undefined)
-    ) as UpdateContactInput;
+    const {
+      companyId,
+      salesOwnerId,
+      ...rest
+    } = input.update;
+
+    const updateData: any = Object.fromEntries(
+      Object.entries(rest).filter(([, value]) => value !== undefined)
+    );
+
+    if (companyId !== undefined) {
+      updateData.company = companyId
+        ? { connect: { id: companyId } }
+        : { disconnect: true };
+    }
+
+    if (salesOwnerId !== undefined) {
+      updateData.salesOwner = salesOwnerId
+        ? { connect: { id: salesOwnerId } }
+        : { disconnect: true };
+    }
 
     return prisma.contact.update({
-      where: { id },
+      where: {
+        id: typeof input.id === "string" ? Number(input.id) : input.id,
+      },
       data: updateData,
-      include: { 
+      include: {
         company: true,
-        salesOwner: true
+        salesOwner: true,
       },
     });
   }
 
   @Mutation(() => Boolean)
-  async deleteContact(@Arg("id", () => ID) id: number) {
-    await prisma.contact.delete({ where: { id } });
+  async deleteContact(@Arg("input", () => DeleteContactInput) input: DeleteContactInput) {
+    await prisma.contact.delete({
+      where: { id: Number(input.id) },
+    });
     return true;
   }
+
+  
 }

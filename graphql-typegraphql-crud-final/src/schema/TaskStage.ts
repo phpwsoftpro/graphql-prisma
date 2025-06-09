@@ -1,4 +1,4 @@
-import { Field, ID, ObjectType } from "type-graphql";
+import { Field, ID, ObjectType, Int } from "type-graphql";
 
 @ObjectType()
 export class TaskStage {
@@ -8,17 +8,19 @@ export class TaskStage {
   @Field()
   title: string;
 
-  @Field()
-  order: number;
+  @Field({ nullable: true })
+  order?: number;
 
-  @Field()
-  color: string;
+  @Field({ nullable: true })
+  color?: string;
 
   @Field()
   createdAt: Date;
 
   @Field()
   updatedAt: Date;
+
+ 
 }
 
 @ObjectType()

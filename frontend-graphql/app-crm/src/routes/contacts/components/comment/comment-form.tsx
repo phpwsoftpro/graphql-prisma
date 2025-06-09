@@ -59,7 +59,7 @@ export const ContactCommentForm = () => {
     try {
       await onFinish({
         ...values,
-        contactId: contactId as string,
+        contactId: Number(contactId),
       });
 
       form.resetFields();
