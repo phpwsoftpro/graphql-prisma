@@ -32,8 +32,8 @@ export class CompanyInput {
 
 @InputType()
 export class CreateCompanyInput {
-  @Field(() => [CompanyInput])
-  companies: CompanyInput[];
+  @Field(() => CompanyInput)
+  company: CompanyInput;
 }
 
 @InputType()

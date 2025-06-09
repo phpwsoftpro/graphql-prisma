@@ -1,5 +1,5 @@
 generator client {
-  provider = "pripriprisma-client-js"
+  provider = "prisma-client-js"
 }
 
 datasource db {
@@ -94,11 +94,11 @@ model Deal {
   companyId Int?
   company   Company? @relation("CompanyDeals", fields: [companyId], references: [id])
 
-  contactId Int?
-  contact   Contact? @relation("DealContact", fields: [contactId], references: [id])
+  dealContactId Int?
+  dealContact   Contact? @relation("DealContact", fields: [dealContactId], references: [id])
 
-  salesOwnerId Int?
-  salesOwner   User?    @relation("DealSalesOwner", fields: [salesOwnerId], references: [id])
+  dealOwnerId Int?
+  dealOwner   User?    @relation("DealSalesOwner", fields: [dealOwnerId], references: [id])
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
 }

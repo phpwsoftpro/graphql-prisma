@@ -1,4 +1,6 @@
 import { Field, ID, ObjectType } from "type-graphql";
+import { Company } from "./Company";
+import { Contact } from "./Contact";
 import { User } from "./User";
 
 @ObjectType()
@@ -9,14 +11,11 @@ export class Note {
   @Field()
   note: string;
 
-  @Field({ nullable: true })
-  companyId?: number;
+  @Field(() => Company, { nullable: true })
+  company?: Company;
 
-  @Field({ nullable: true })
-  contactId?: number;
-
-  @Field({ nullable: true })
-  createdById?: number;
+  @Field(() => Contact, { nullable: true })
+  contact?: Contact;
 
   @Field(() => User, { nullable: true })
   createdBy?: User;

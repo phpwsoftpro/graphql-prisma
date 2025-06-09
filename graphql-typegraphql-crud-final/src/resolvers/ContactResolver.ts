@@ -146,21 +146,12 @@ export class ContactResolver {
   }
 
   @Mutation(() => Boolean)
-  async deleteContact(@Arg("id", () => ID) id: number | string) {
+  async deleteContact(@Arg("input", () => DeleteContactInput) input: DeleteContactInput) {
     await prisma.contact.delete({
-      where: { id: typeof id === "string" ? Number(id) : id },
+      where: { id: Number(input.id) },
     });
     return true;
   }
 
-  // Temporary alias for older clients
-  @Mutation(() => Boolean)
-  async deleteOneContact(
-    @Arg("input", () => DeleteContactInput) input: DeleteContactInput
-  ) {
-    await prisma.contact.delete({
-      where: { id: typeof input.id === "string" ? Number(input.id) : input.id },
-    });
-    return true;
-  }
+  
 }

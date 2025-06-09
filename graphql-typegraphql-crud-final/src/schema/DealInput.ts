@@ -1,31 +1,8 @@
 import { Field, InputType } from "type-graphql";
 
-@InputType()
-export class CreateDealInput {
-  @Field()
-  title: string;
-
-  @Field()
-  amount: number;
-
-  @Field({ nullable: true })
-  description?: string;
-
-  @Field({ nullable: true })
-  stageId?: number;
-
-  @Field({ nullable: true })
-  companyId?: number;
-
-  @Field({ nullable: true })
-  contactId?: number;
-
-  @Field({ nullable: true })
-  salesOwnerId?: number;
-}
 
 @InputType()
-export class UpdateDealInput {
+export class DealInput {
   @Field({ nullable: true })
   title?: string;
 
@@ -42,8 +19,21 @@ export class UpdateDealInput {
   companyId?: number;
 
   @Field({ nullable: true })
-  contactId?: number;
+  dealContactId?: number;
 
   @Field({ nullable: true })
-  salesOwnerId?: number;
+  dealOwnerId?: number;
+}
+@InputType()
+export class CreateDealInput {
+  @Field(() => DealInput)
+  deal: DealInput;
+}
+
+@InputType()
+export class UpdateDealInput {
+  @Field()
+  id: number;
+  @Field(() => DealInput)
+  update: DealInput;
 }

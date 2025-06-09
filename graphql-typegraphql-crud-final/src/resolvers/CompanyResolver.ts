@@ -104,16 +104,21 @@ export class CompanyResolver {
     } as any;
   }
 
-  @Mutation(() => [Company])
+  @Mutation(() => Company )
   async createCompany(@Arg("input", () => CreateCompanyInput) input: CreateCompanyInput) {
-    const companies = await Promise.all(
-      input.companies.map(company =>
-        prisma.company.create({
-          data: company
-        })
-      )
-    );
-    return companies;
+    const { salesOwnerId, id, ...rest } = input.company;
+    const company = await prisma.company.create({
+      data: {
+        ...rest,
+        salesOwner: salesOwnerId ? { connect: { id: Number(salesOwnerId) } } : undefined,
+      },
+      include: {
+        salesOwner: true,
+        contacts: true,
+      },
+    });
+    
+    return company;
   }
 
   @Mutation(() => Company)
@@ -124,11 +129,11 @@ export class CompanyResolver {
     });
   }
 
-  @Mutation(() => Company)
+  @Mutation(() => Boolean)
   async deleteCompany(@Arg("input", () => DeleteCompanyInput) input: DeleteCompanyInput) {
-    const company = await prisma.company.delete({
+    await prisma.company.delete({
       where: { id: Number(input.id) }
     });
-    return company;
+    return true;
   }
 }
