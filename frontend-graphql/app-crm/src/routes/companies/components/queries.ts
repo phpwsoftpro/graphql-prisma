@@ -91,21 +91,22 @@ export const COMPANY_INFO_QUERY = gql`
 `;
 
 export const COMPANY_CREATE_COMPANY_NOTE_MUTATION = gql`
-    mutation CompanyCreateCompanyNote($input: CreateOneCompanyNoteInput!) {
-        createOneCompanyNote(input: $input) {
+    mutation CompanyCreateCompanyNote($input: CreateNoteInput!) {
+        createNote(input: $input) {
             id
             note
+            companyId
         }
     }
 `;
 
 export const COMPANY_COMPANY_NOTES_QUERY = gql`
     query CompanyCompanyNotes(
-        $filter: CompanyNoteFilter!
-        $sorting: [CompanyNoteSort!]
+        $filter: NoteFilter!
+        $sorting: [NoteSort!]
         $paging: OffsetPaging!
     ) {
-        companyNotes(filter: $filter, sorting: $sorting, paging: $paging) {
+        notes(filter: $filter, sorting: $sorting, paging: $paging) {
             nodes {
                 id
                 note
@@ -123,14 +124,21 @@ export const COMPANY_COMPANY_NOTES_QUERY = gql`
 `;
 
 export const COMPANY_UPDATE_COMPANY_NOTE_MUTATION = gql`
-    mutation CompanyUpdateCompanyNote($input: UpdateOneCompanyNoteInput!) {
-        updateOneCompanyNote(input: $input) {
+    mutation CompanyUpdateCompanyNote($input: UpdateNoteInput!) {
+        updateNote(input: $input) {
             id
             note
         }
     }
 `;
-
+//delete note mutation
+export const COMPANY_DELETE_COMPANY_NOTE_MUTATION = gql`
+    mutation CompanyDeleteCompanyNote($input: DeleteNoteInput!) {
+        deleteNote(input: $input) {
+            id
+        }
+    }
+`;
 export const COMPANY_QUOTES_TABLE_QUERY = gql`
     query CompanyQuotesTable(
         $filter: QuoteFilter!

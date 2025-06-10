@@ -27,10 +27,7 @@ export const DashboardDealsChart: React.FC = () => {
     },
   });
 
-  if (isError) {
-    console.error("Error fetching deals chart data", error);
-    return null;
-  }
+  
 
   const dealData = useMemo(() => {
     const wonNode = data?.data.find((node) => node.title === "WON");
@@ -62,7 +59,7 @@ export const DashboardDealsChart: React.FC = () => {
       (a, b) => a.timeUnix - b.timeUnix,
     );
   }, [data]);
-
+ 
   const config: AreaConfig = {
     isStack: false,
     data: dealData,

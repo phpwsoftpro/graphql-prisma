@@ -9,8 +9,8 @@ type Props = {
 };
 
 export const ChecklistHeader = ({ checklist = [] }: Props) => {
-  const completed = checklist.filter((item) => item?.checked).length;
-  const total = checklist.length;
+  const completed = checklist?.filter((item) => item?.checked).length;
+  const total = checklist?.length;
 
   return (
     <Space size={15} align="start" style={{ marginBottom: "12px" }}>

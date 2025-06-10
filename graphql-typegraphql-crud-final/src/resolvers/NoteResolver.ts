@@ -26,7 +26,17 @@ export class NoteResolver {
       where.id = filter.id;
     }
     if (filter?.note) {
-      where.note = { contains: filter.note };
+      if (typeof filter.note === 'string') {
+        if ((filter.note as string).trim() !== '' && filter.note !== '%%') {
+          where.note = { contains: filter.note as string };
+        }
+      } else if (typeof filter.note.iLike === 'string' && filter.note.iLike !== '%%' && filter.note.iLike.trim() !== '') {
+        where.note = { contains: filter.note.iLike, mode: 'insensitive' };
+      } else if (typeof filter.note.contains === 'string' && filter.note.contains.trim() !== '' && filter.note.contains !== '%%') {
+        where.note = { contains: filter.note.contains };
+      } else if (typeof filter.note.eq === 'string' && filter.note.eq.trim() !== '' && filter.note.eq !== '%%') {
+        where.note = filter.note.eq;
+      }
     }
     if (filter?.company?.id?.eq) {
       where.companyId = filter.company.id.eq;
@@ -79,7 +89,11 @@ export class NoteResolver {
   @Mutation(() => Note)
   async createNote(@Arg("input", () => CreateNoteInput) input: CreateNoteInput) {
     return prisma.note.create({
-      data: input,
+      data: {
+        ...input.note,
+        companyId: input.note.companyId ? Number(input.note.companyId) : undefined,
+        contactId: input.note.contactId ? Number(input.note.contactId) : undefined,
+      },
       include: {
         company: true,
         contact: true,
@@ -90,12 +104,15 @@ export class NoteResolver {
 
   @Mutation(() => Note)
   async updateNote(
-    @Arg("id", () => ID) id: string,
     @Arg("input", () => UpdateNoteInput) input: UpdateNoteInput
   ) {
     return prisma.note.update({
-      where: { id: parseInt(id) },
-      data: input,
+      where: { id: Number(input.id) },
+      data: {
+        ...input.update,
+        companyId: input.update.companyId ? Number(input.update.companyId) : undefined,
+        contactId: input.update.contactId ? Number(input.update.contactId) : undefined,
+      },
       include: {
         company: true,
         contact: true,

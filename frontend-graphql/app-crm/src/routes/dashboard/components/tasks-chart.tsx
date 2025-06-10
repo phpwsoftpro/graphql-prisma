@@ -27,10 +27,7 @@ export const DashboardTasksChart: React.FC = () => {
     meta: { gqlQuery: DASHBOARD_TASKS_CHART_QUERY },
   });
 
-  if (isError) {
-    console.error("Error fetching task chart data", error);
-    return null;
-  }
+  
 
   const tasksData = useMemo(() => {
     if (!data?.data?.length) {
@@ -80,6 +77,7 @@ export const DashboardTasksChart: React.FC = () => {
     },
   };
 
+  
   return (
     <Card
       style={{ height: "100%" }}
