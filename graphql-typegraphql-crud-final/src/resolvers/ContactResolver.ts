@@ -25,7 +25,17 @@ export class ContactResolver {
   ) {
     const where: any = {};
     if (filter?.name) {
-      where.name = { contains: filter.name };
+      if (typeof filter.name === 'string') {
+        if ((filter.name as string).trim() !== '') {
+          where.name = { contains: filter.name };
+        }
+      } else if (typeof filter.name.iLike === 'string' && filter.name.iLike !== '%%' && filter.name.iLike.trim() !== '') {
+        where.name = { contains: filter.name.iLike, mode: 'insensitive' };
+      } else if (typeof filter.name.contains === 'string' && filter.name.contains.trim() !== '') {
+        where.name = { contains: filter.name.contains };
+      } else if (typeof filter.name.eq === 'string' && filter.name.eq.trim() !== '') {
+        where.name = filter.name.eq;
+      }
     }
     if (filter?.email) {
       where.email = { contains: filter.email };
@@ -33,8 +43,8 @@ export class ContactResolver {
     if (filter?.phone) {
       where.phone = { contains: filter.phone };
     }
-    if (filter?.companyId) {
-      where.companyId = filter.companyId;
+    if (filter?.company?.id?.eq) {
+      where.companyId = Number(filter.company.id.eq);
     }
     if (filter?.status) {
       where.status = filter.status;
@@ -43,7 +53,17 @@ export class ContactResolver {
       where.description = { contains: filter.description };
     }
     if (filter?.jobTitle) {
-      where.jobTitle = { contains: filter.jobTitle };
+      if (typeof filter.jobTitle === 'string') {
+        if ((filter.jobTitle as string).trim() !== '') {
+          where.jobTitle = { contains: filter.jobTitle };
+        }
+      } else if (typeof filter.jobTitle.iLike === 'string' && filter.jobTitle.iLike !== '%%' && filter.jobTitle.iLike.trim() !== '') {
+        where.jobTitle = { contains: filter.jobTitle.iLike, mode: 'insensitive' };
+      } else if (typeof filter.jobTitle.contains === 'string' && filter.jobTitle.contains.trim() !== '') {
+        where.jobTitle = { contains: filter.jobTitle.contains };
+      } else if (typeof filter.jobTitle.eq === 'string' && filter.jobTitle.eq.trim() !== '') {
+        where.jobTitle = filter.jobTitle.eq;
+      }
     }
     if (filter?.salesOwnerId) {
       where.salesOwnerId = filter.salesOwnerId;

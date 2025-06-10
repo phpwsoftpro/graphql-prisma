@@ -2,7 +2,6 @@ import { Arg, ID, Mutation, Query, Resolver } from "type-graphql";
 import { PrismaClient } from "@prisma/client";
 import { Deal } from "../schema/Deal";
 import { CreateDealInput, UpdateDealInput } from "../schema/DealInput";
-import { DealDetail, CompanyWithContacts } from "../schema/DealDetail";
 import { DealFilter } from "../schema/DealFilter";
 import { DealSort } from "../schema/DealSort";
 import { OffsetPaging } from "../schema/PagingInput";
@@ -20,9 +19,37 @@ export class DealResolver {
     @Arg("paging", () => OffsetPaging, { nullable: true }) paging: OffsetPaging
   ): Promise<DealConnection> {
     const where: any = {};
-    if (filter?.title) where.title = { contains: filter.title };
-    if (filter?.stageId) where.stageId = filter.stageId;
-    // Thêm các filter khác nếu cần
+    // Xử lý filter cho company
+    if (filter?.company?.id?.eq) {
+      where.companyId = Number(filter.company.id.eq);
+    }
+    // Xử lý filter cho stage
+    if (
+      filter?.stage?.id?.in &&
+      Array.isArray(filter.stage.id.in) &&
+      filter.stage.id.in.filter((v) => v && v.trim() !== '').length > 0
+    ) {
+      where.stageId = {
+        in: filter.stage.id.in
+          .filter((v) => v && v.trim() !== '')
+          .map((v) => Number(v))
+          .filter((v) => !isNaN(v)),
+      };
+    }
+    // Xử lý filter cho title
+    if (filter?.title) {
+      if (typeof filter.title === 'string') {
+        if ((filter.title as string).trim() !== '' && filter.title !== '%%') {
+          where.title = { contains: filter.title as string };
+        }
+      } else if (typeof filter.title.iLike === 'string' && filter.title.iLike !== '%%' && filter.title.iLike.trim() !== '') {
+        where.title = { contains: filter.title.iLike, mode: 'insensitive' };
+      } else if (typeof filter.title.contains === 'string' && filter.title.contains.trim() !== '' && filter.title.contains !== '%%') {
+        where.title = { contains: filter.title.contains };
+      } else if (typeof filter.title.eq === 'string' && filter.title.eq.trim() !== '' && filter.title.eq !== '%%') {
+        where.title = filter.title.eq;
+      }
+    }
     if (filter?.createdAt) {
       where.createdAt = {};
       if (filter.createdAt.gte) where.createdAt.gte = filter.createdAt.gte;
@@ -51,30 +78,18 @@ export class DealResolver {
     return { nodes: nodes as any, totalCount };
   }
 
-  @Query(() => Deal, { nullable: true })
-  async deal(@Arg("id", () => ID) id: number) {
-    return prisma.deal.findUnique({
-      where: { id },
-      include: {
-        company: true,
-        dealOwner: true,
-      },
-    });
-  }
 
-  @Query(() => DealDetail, { nullable: true })
-  async dealDetail(@Arg("id", () => ID) id: number) {
+  @Query(() => Deal, { nullable: true })
+  async deal(@Arg("id", () => ID) id: string) {
     const result = await prisma.deal.findUnique({
-      where: { id },
+      where: { id: Number(id) },
       include: {
         company: {
           include: {
             contacts: true,
           },
         },
-        dealContact: {
-          select: { id: true },
-        },
+        dealContact: true,
       },
     });
 
@@ -83,16 +98,19 @@ export class DealResolver {
     }
 
     return {
-      id: result.id,
-      title: result.title,
-      stageId: result.stageId ?? undefined,
+      ...result,
       value: result.amount,
-      dealOwnerId: result.dealOwnerId ?? undefined,
       company: result.companyId && result.company
-        ? { id: result.companyId, contacts: result.company.contacts }
+        ? {
+            ...result.company,
+            contacts: {
+              nodes: result.company.contacts,
+              totalCount: result.company.contacts.length,
+            },
+          }
         : null,
-      dealContact: result.dealContactId ? { id: result.dealContactId } : null,
-    } as DealDetail;
+      dealContact: result.dealContactId ? result.dealContact : null,
+    };
   }
   //map id to number
   @Mutation(() => Deal)

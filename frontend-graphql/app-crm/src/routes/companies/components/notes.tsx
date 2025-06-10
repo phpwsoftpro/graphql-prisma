@@ -25,6 +25,7 @@ import type {
 import {
   COMPANY_COMPANY_NOTES_QUERY,
   COMPANY_CREATE_COMPANY_NOTE_MUTATION,
+  COMPANY_DELETE_COMPANY_NOTE_MUTATION,
   COMPANY_UPDATE_COMPANY_NOTE_MUTATION,
 } from "./queries";
 
@@ -73,7 +74,7 @@ export const CompanyNoteForm = () => {
     GetVariables<CompanyCreateCompanyNoteMutationVariables>
   >({
     action: "create",
-    resource: "companyNotes",
+    resource: "notes",
     queryOptions: {
       enabled: false,
     },
@@ -105,7 +106,7 @@ export const CompanyNoteForm = () => {
     try {
       await onFinish({
         ...values,
-        companyId: companyId as string,
+        companyId: Number(companyId),
       });
 
       form.resetFields();
@@ -159,14 +160,14 @@ export const CompanyNoteList = () => {
   const invalidate = useInvalidate();
 
   const { data: notes } = useList<CompanyNote>({
-    resource: "companyNotes",
+    resource: "notes",
     sorters: [
       {
         field: "updatedAt",
         order: "desc",
       },
     ],
-    filters: [{ field: "company.id", operator: "eq", value: params.id }],
+    filters: [{ field: "company.id", operator: "eq", value: Number(params.id )}],
     meta: {
       gqlQuery: COMPANY_COMPANY_NOTES_QUERY,
     },
@@ -177,7 +178,7 @@ export const CompanyNoteList = () => {
     HttpError,
     CompanyNote
   >({
-    resource: "companyNotes",
+    resource: "notes",
     action: "edit",
     queryOptions: {
       enabled: false,
@@ -187,7 +188,7 @@ export const CompanyNoteList = () => {
       setId(undefined);
       invalidate({
         invalidates: ["list"],
-        resource: "companyNotes",
+        resource: "notes",
       });
     },
     successNotification: () => ({
@@ -215,14 +216,14 @@ export const CompanyNoteList = () => {
       }}
     >
       {notes?.data?.map((item) => {
-        const isMe = me?.id === item.createdBy.id;
+        const isMe = me?.id == item.createdBy?.id;
 
         return (
           <div key={item.id} style={{ display: "flex", gap: "12px" }}>
             <CustomAvatar
               style={{ flexShrink: 0 }}
-              name={item.createdBy.name}
-              src={item.createdBy.avatarUrl}
+              name={item.createdBy?.name}
+              src={item.createdBy?.avatarUrl}
             />
 
             <div
@@ -240,13 +241,13 @@ export const CompanyNoteList = () => {
                   alignItems: "center",
                 }}
               >
-                <Text style={{ fontWeight: 500 }}>{item.createdBy.name}</Text>
+                <Text style={{ fontWeight: 500 }}>{item.createdBy?.name}</Text>
                 <Text size="xs" style={{ color: "#000000a6" }}>
-                  {dayjs(item.createdAt).format("MMMM D, YYYY - h:ma")}
+                  {dayjs(item?.createdAt).format("MMMM D, YYYY - h:ma")}
                 </Text>
               </div>
 
-              {id === item.id ? (
+              {id == item.id ? (
                 <Form {...formProps} initialValues={{ note: item.note }}>
                   <Form.Item
                     name="note"
@@ -296,13 +297,13 @@ export const CompanyNoteList = () => {
                     style={{
                       fontSize: "12px",
                     }}
-                    onClick={() => setId(item.id)}
+                    onClick={() => setId(Number(item.id))}
                   >
                     Edit
                   </Typography.Link>
                   <DeleteButton
-                    resource="companyNotes"
-                    recordItemId={item.id}
+                    resource="notes"
+                    recordItemId={Number(item.id)}
                     size="small"
                     type="link"
                     successNotification={() => ({
@@ -311,6 +312,9 @@ export const CompanyNoteList = () => {
                       description: "Successful",
                       type: "success",
                     })}
+                    meta={{
+                      gqlMutation: COMPANY_DELETE_COMPANY_NOTE_MUTATION,
+                    }}
                     icon={null}
                     className="ant-typography secondary"
                     style={{
@@ -320,7 +324,7 @@ export const CompanyNoteList = () => {
                 </Space>
               )}
 
-              {id === item.id && (
+              {id == item.id && (
                 <Space>
                   <Button size="small" onClick={() => setId(undefined)}>
                     Cancel

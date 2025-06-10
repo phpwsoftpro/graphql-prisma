@@ -1,4 +1,5 @@
-import { Field, InputType } from "type-graphql";
+import { Field, ID, InputType } from "type-graphql";
+import { StringFilter } from "./StringFilter";
 
 @InputType()
  class IdFilter {
@@ -23,8 +24,8 @@ export class NoteFilter {
   @Field({ nullable: true })
   id?: number;
 
-  @Field({ nullable: true })
-  note?: string;
+  @Field(() => StringFilter, { nullable: true })
+  note?: StringFilter;
 
   @Field(() => CompanyRelationFilter, { nullable: true })
   company?: CompanyRelationFilter;
@@ -46,14 +47,14 @@ export class NoteSort {
 }
 
 @InputType()
-export class CreateNoteInput {
+export class NoteInput {
   @Field()
   note: string;
 
-  @Field({ nullable: true })
+  @Field(() => ID, { nullable: true })
   companyId?: number;
 
-  @Field({ nullable: true })
+  @Field(() => ID, { nullable: true })
   contactId?: number;
 
   @Field({ nullable: true })
@@ -61,15 +62,18 @@ export class CreateNoteInput {
 }
 
 @InputType()
+export class CreateNoteInput {
+  @Field(() => NoteInput)
+  note: NoteInput;
+}
+
+@InputType()
 export class UpdateNoteInput {
-  @Field({ nullable: true })
-  note?: string;
+  @Field(() => ID)
+  id: number;
 
-  @Field({ nullable: true })
-  companyId?: number;
-
-  @Field({ nullable: true })
-  contactId?: number;
+  @Field(() => NoteInput)
+  update: NoteInput;
 }
 
 @InputType()

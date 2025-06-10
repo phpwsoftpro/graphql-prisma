@@ -13,9 +13,15 @@ export class Note {
 
   @Field(() => Company, { nullable: true })
   company?: Company;
+  //company id
+  @Field(() => ID, { nullable: true })
+  companyId?: number;
 
   @Field(() => Contact, { nullable: true })
   contact?: Contact;
+  //contact id
+  @Field(() => ID, { nullable: true })
+  contactId?: number;
 
   @Field(() => User, { nullable: true })
   createdBy?: User;

@@ -19,38 +19,46 @@ export class QuoteResolver {
   ) {
     const where: any = {};
     if (filter?.title) {
-      if (filter.title.contains) {
-        where.title = { contains: filter.title.contains };
-      } else if (filter.title.equals) {
-        where.title = { equals: filter.title.equals };
-      } else if (filter.title.startsWith) {
-        where.title = { startsWith: filter.title.startsWith };
-      } else if (filter.title.endsWith) {
-        where.title = { endsWith: filter.title.endsWith };
-      } else if (filter.title.iLike) {
+      if (typeof filter.title === 'string') {
+        if ((filter.title as string).trim() !== '' && filter.title !== '%%') {
+          where.title = { contains: filter.title as string };
+        }
+      } else if (typeof filter.title.iLike === 'string' && filter.title.iLike !== '%%' && filter.title.iLike.trim() !== '') {
         where.title = { contains: filter.title.iLike, mode: 'insensitive' };
+      } else if (typeof filter.title.contains === 'string' && filter.title.contains.trim() !== '' && filter.title.contains !== '%%') {
+        where.title = { contains: filter.title.contains };
+      } else if (typeof filter.title.eq === 'string' && filter.title.eq.trim() !== '' && filter.title.eq !== '%%') {
+        where.title = filter.title.eq;
       }
     }
     if (filter?.description) {
-      if (filter.description.contains) {
-        where.description = { contains: filter.description.contains };
-      } else if (filter.description.equals) {
-        where.description = { equals: filter.description.equals };
-      } else if (filter.description.startsWith) {
-        where.description = { startsWith: filter.description.startsWith };
-      } else if (filter.description.endsWith) {
-        where.description = { endsWith: filter.description.endsWith };
-      } else if (filter.description.iLike) {
+      if (typeof filter.description === 'string') {
+        if ((filter.description as string).trim() !== '' && filter.description !== '%%') {
+          where.description = { contains: filter.description as string };
+        }
+      } else if (typeof filter.description.iLike === 'string' && filter.description.iLike !== '%%' && filter.description.iLike.trim() !== '') {
         where.description = { contains: filter.description.iLike, mode: 'insensitive' };
+      } else if (typeof filter.description.contains === 'string' && filter.description.contains.trim() !== '' && filter.description.contains !== '%%') {
+        where.description = { contains: filter.description.contains };
+      } else if (typeof filter.description.eq === 'string' && filter.description.eq.trim() !== '' && filter.description.eq !== '%%') {
+        where.description = filter.description.eq;
       }
     }
     if (filter?.status) {
-      if (filter.status.equals) {
-        where.status = filter.status.equals;
+      if (typeof filter.status === 'string') {
+        if ((filter.status as string).trim() !== '' && filter.status !== '%%') {
+          where.status = { contains: filter.status as string };
+        }
+      } else if (typeof filter.status.iLike === 'string' && filter.status.iLike !== '%%' && filter.status.iLike.trim() !== '') {
+        where.status = { contains: filter.status.iLike, mode: 'insensitive' };
+      } else if (typeof filter.status.contains === 'string' && filter.status.contains.trim() !== '' && filter.status.contains !== '%%') {
+        where.status = { contains: filter.status.contains };
+      } else if (typeof filter.status.eq === 'string' && filter.status.eq.trim() !== '' && filter.status.eq !== '%%') {
+        where.status = filter.status.eq;
       }
     }
-    if (filter?.companyId) {
-      where.companyId = filter.companyId;
+    if (filter?.company?.id?.eq) {
+      where.companyId = Number(filter.company.id.eq);
     }
     if (filter?.salesOwnerId) {
       where.salesOwnerId = filter.salesOwnerId;

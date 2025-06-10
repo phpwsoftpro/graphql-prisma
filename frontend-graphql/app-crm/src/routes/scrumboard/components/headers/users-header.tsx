@@ -10,7 +10,7 @@ type Props = {
 };
 
 export const UsersHeader = ({ users = [] }: Props) => {
-  if (users.length > 0) {
+  if (users?.length > 0) {
     return (
       <Space size={[0, 8]} wrap>
         {users.map((user) => (

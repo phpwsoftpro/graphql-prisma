@@ -22,7 +22,7 @@ export const Participants: FC<Props> = ({ userOne, userTwo }) => {
         textTransform: "uppercase",
       }}
     >
-      <Tooltip title={userOne.name}>
+      <Tooltip title={userOne?.name}>
         <CustomAvatar
           size="small"
           src={userOne?.avatarUrl}

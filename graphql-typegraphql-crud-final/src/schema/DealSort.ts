@@ -3,6 +3,7 @@ import { SortDirection } from "./SortDirection";
 export enum DealSortField {
   title = "title",
   createdAt = "createdAt",
+  updatedAt = "updatedAt",
   // Thêm các trường khác nếu muốn sort
 }
 

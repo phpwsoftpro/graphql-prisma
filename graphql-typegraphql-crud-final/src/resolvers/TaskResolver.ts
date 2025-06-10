@@ -1,4 +1,4 @@
-import { Resolver, Query, Arg, Mutation } from "type-graphql";
+import { Resolver, Query, Arg, Mutation, ID } from "type-graphql";
 import { PrismaClient } from "@prisma/client";
 import { TaskConnection } from "../schema/TaskConnection";
 import { TaskFilter } from "../schema/TaskFilter";
@@ -69,6 +69,16 @@ export class TaskResolver {
     return prisma.task.update({
       where: { id: Number(input.id) },
       data,
+      include: {
+        stage: true,
+      },
+    });
+  }
+
+  @Query(() => Task, { nullable: true })
+  async task(@Arg("id", () => ID) id: string) {
+    return prisma.task.findUnique({
+      where: { id: Number(id) },
       include: {
         stage: true,
       },
