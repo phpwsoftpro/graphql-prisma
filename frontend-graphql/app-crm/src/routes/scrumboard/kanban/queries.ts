@@ -79,11 +79,11 @@ export const KANBAN_UPDATE_TASK_MUTATION = gql`
 
 export const KANBAN_TASK_COMMENTS_QUERY = gql`
     query KanbanTaskComments(
-        $filter: TaskCommentFilter!
-        $sorting: [TaskCommentSort!]
+        $filter: CommentFilter!
+        $sorting: [CommentSort!]
         $paging: OffsetPaging!
     ) {
-        taskComments(filter: $filter, sorting: $sorting, paging: $paging) {
+        comments(filter: $filter, sorting: $sorting, paging: $paging) {
             nodes {
                 id
                 comment
@@ -98,7 +98,28 @@ export const KANBAN_TASK_COMMENTS_QUERY = gql`
         }
     }
 `;
-
+//create comment
+export const KANBAN_CREATE_COMMENT_MUTATION = gql`
+    mutation KanbanCreateComment($input: CreateCommentInput!) {
+        createComment(input: $input) {
+            id
+        }
+    }
+`;
+//update comment
+export const KANBAN_UPDATE_COMMENT_MUTATION = gql`
+    mutation KanbanUpdateComment($input: UpdateCommentInput!) {
+        updateComment(input: $input) {
+            id
+        }
+    }
+`;
+//delete comment
+export const KANBAN_DELETE_COMMENT_MUTATION = gql`
+    mutation KanbanDeleteComment($input: DeleteCommentInput!) {
+        deleteComment(input: $input)
+    }
+`;
 export const KANBAN_TASK_STAGES_QUERY = gql`
     query KanbanTaskStages(
         $filter: TaskStageFilter!

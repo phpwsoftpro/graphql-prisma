@@ -2,7 +2,7 @@ import { ObjectType, Field, Int } from "type-graphql";
 import { Comment } from "./Comment";
 
 @ObjectType()
-export class CommentConnection {
+export class CommentListResponse {
   @Field(() => [Comment])
   nodes: Comment[];
 

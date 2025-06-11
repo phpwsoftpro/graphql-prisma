@@ -1,6 +1,6 @@
 import { Resolver, FieldResolver, Root } from "type-graphql";
 import { Task } from "../schema/Task";
-import { CommentConnection } from "../schema/CommentConnection";
+import { CommentConnection } from "../schema/CommentListResponse";
 import { PrismaClient } from "@prisma/client";
 
 const prisma = new PrismaClient();

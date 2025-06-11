@@ -15,7 +15,7 @@ import { CustomAvatar, Text } from "@/components";
 import type { User } from "@/graphql/schema.types";
 import type { KanbanTaskCommentsQuery } from "@/graphql/types";
 
-import { KANBAN_TASK_COMMENTS_QUERY } from "../kanban/queries";
+import { KANBAN_DELETE_COMMENT_MUTATION, KANBAN_TASK_COMMENTS_QUERY, KANBAN_UPDATE_COMMENT_MUTATION } from "../kanban/queries";
 
 type TaskComment = GetFieldsFromList<KanbanTaskCommentsQuery>;
 
@@ -26,16 +26,19 @@ const CommentListItem = ({ item }: { item: TaskComment }) => {
     HttpError,
     TaskComment
   >({
-    resource: "taskComments",
+    resource: "comments",
     action: "edit",
     queryOptions: {
       enabled: false,
+    },
+    meta: {
+      gqlMutation: KANBAN_UPDATE_COMMENT_MUTATION,
     },
     onMutationSuccess: () => {
       setId(undefined);
       invalidate({
         invalidates: ["list"],
-        resource: "taskComments",
+        resource: "comments",
       });
     },
     successNotification: () => ({
@@ -47,16 +50,16 @@ const CommentListItem = ({ item }: { item: TaskComment }) => {
   });
   const { data: me } = useGetIdentity<User>();
 
-  const isMe = me?.id === item.createdBy.id;
-
+  //const isMe = me?.id === item.createdBy.id;
+  const isMe = true;
   return (
     <div style={{ display: "flex", gap: "12px" }}>
       <CustomAvatar
         style={{ flexShrink: 0 }}
-        alt={item.createdBy.name}
-        src={item.createdBy.avatarUrl}
+        alt={item.createdBy?.name}
+        src={item.createdBy?.avatarUrl}
       >
-        {item.createdBy.name.charAt(0)}
+        {item.createdBy?.name?.charAt(0)}
       </CustomAvatar>
       <div
         style={{
@@ -114,20 +117,23 @@ const CommentListItem = ({ item }: { item: TaskComment }) => {
           <Space size={16}>
             <Typography.Link
               style={{ color: "inherit", fontSize: "12px" }}
-              onClick={() => setId(item.id)}
+              onClick={() => setId(Number(item.id))}
             >
               Edit
             </Typography.Link>
             <DeleteButton
-              recordItemId={item.id}
-              resource="taskComments"
+              recordItemId={Number(item.id)}
+              meta={{
+                gqlMutation: KANBAN_DELETE_COMMENT_MUTATION,
+              }}
+              resource="comments"
               size="small"
               type="link"
               icon={null}
               onSuccess={() => {
                 invalidate({
                   invalidates: ["list"],
-                  resource: "taskComments",
+                  resource: "comments",
                 });
               }}
               successNotification={() => ({
@@ -164,8 +170,8 @@ export const CommentList = () => {
   const { id: taskId } = useParsed();
 
   const { data } = useList<TaskComment>({
-    resource: "taskComments",
-    filters: [{ field: "task.id", operator: "eq", value: taskId }],
+    resource: "comments",
+    filters: [{ field: "task.id", operator: "eq", value: Number(taskId) }],
     sorters: [{ field: "createdAt", order: "desc" }],
     pagination: {
       mode: "off",

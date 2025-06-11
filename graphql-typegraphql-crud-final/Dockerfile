@@ -10,6 +10,7 @@ COPY . .
 RUN corepack enable && corepack prepare pnpm@latest --activate
 RUN pnpm install
 RUN npx prisma generate
+RUN pnpm run seed
 
 EXPOSE 8000
 

@@ -68,11 +68,11 @@ async function main() {
   // 5. Deal
   await prisma.deal.createMany({
     data: [
-      { title: "Deal 1", amount: 1000, description: "First deal",     stageId: 1, companyId: 1, contactId: 1, salesOwnerId: 1 },
-      { title: "Deal 2", amount: 2000, description: "Second deal",    stageId: 2, companyId: 2, contactId: 2, salesOwnerId: 2 },
-      { title: "Deal 3", amount: 3000, description: "Third deal",     stageId: 3, companyId: 3, contactId: 3, salesOwnerId: 3 },
-      { title: "Deal 4", amount: 4000, description: "Fourth deal",    stageId: 4, companyId: 4, contactId: 4, salesOwnerId: 4 },
-      { title: "Deal 5", amount: 5000, description: "Fifth deal",     stageId: 5, companyId: 5, contactId: 5, salesOwnerId: 5 },
+      { title: "Deal 1", amount: 1000, description: "First deal",     stageId: 1, companyId: 1, dealContactId: 1, dealOwnerId: 1 },
+      { title: "Deal 2", amount: 2000, description: "Second deal",    stageId: 2, companyId: 2, dealContactId: 2, dealOwnerId: 2 },
+      { title: "Deal 3", amount: 3000, description: "Third deal",     stageId: 3, companyId: 3, dealContactId: 3, dealOwnerId: 3 },
+      { title: "Deal 4", amount: 4000, description: "Fourth deal",    stageId: 4, companyId: 4, dealContactId: 4, dealOwnerId: 4 },
+      { title: "Deal 5", amount: 5000, description: "Fifth deal",     stageId: 5, companyId: 5, dealContactId: 5, dealOwnerId: 5 },
     ],
     skipDuplicates: true,
   });
