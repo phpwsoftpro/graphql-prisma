@@ -4,7 +4,7 @@ import { Comment } from "./Comment";
 import { Checklist } from "./Checklist";
 import { Project } from "./Project";
 import { User } from "./User";
-import { CommentConnection } from "./CommentConnection";
+import { CommentListResponse } from "./CommentListResponse";
 @ObjectType()
 export class Task {
   @Field(() => ID)
@@ -30,8 +30,8 @@ export class Task {
   @Field(() => TaskStage, { nullable: true })
   stage?: TaskStage;
   //comments
-  @Field(() => CommentConnection, { nullable: true })
-  comments?: CommentConnection;
+  @Field(() => CommentListResponse, { nullable: true })
+  comments?: CommentListResponse;
   //checklist
   @Field(() => [Checklist], { nullable: true })
   checklist?: Checklist[];

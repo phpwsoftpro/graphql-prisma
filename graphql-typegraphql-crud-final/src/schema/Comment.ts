@@ -1,5 +1,6 @@
 import { Field, ID, ObjectType } from "type-graphql";
 import { User } from "./User";
+import { Task } from "./Task";
 
 @ObjectType()
 export class Comment {
@@ -9,15 +10,16 @@ export class Comment {
   @Field()
   comment: string;
 
-  @Field()
+  @Field({ nullable: true })
   createdById: number;
 
-  @Field(() => User)
-  createdBy: User;
+  @Field(() => User, { nullable: true })
+  createdBy?: User;
 
   @Field({ nullable: true })
   taskId?: number;
-
+  @Field(() => Task, { nullable: true })
+  task?: Task;
   @Field()
   createdAt: Date;
 

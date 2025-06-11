@@ -12,6 +12,7 @@ import { Form, Input } from "antd";
 
 import { CustomAvatar } from "@/components";
 import type { TaskComment, User } from "@/graphql/schema.types";
+import { KANBAN_CREATE_COMMENT_MUTATION } from "../../kanban/queries";
 
 type FormValues = TaskComment & {
   taskId: BaseKey;
@@ -29,17 +30,20 @@ export const CommentForm = () => {
     FormValues
   >({
     action: "create",
-    resource: "taskComments",
+    resource: "comments",
     queryOptions: {
       enabled: false,
+    },
+    meta: {
+      gqlMutation: KANBAN_CREATE_COMMENT_MUTATION,
     },
     redirect: false,
     mutationMode: "optimistic",
     onMutationSuccess: () => {
       invalidate({
         invalidates: ["list", "detail"],
-        resource: "tasks",
-        id: taskId,
+        resource: "comments",
+        id: Number(taskId),
       });
     },
     successNotification: () => ({
@@ -63,7 +67,8 @@ export const CommentForm = () => {
     try {
       await onFinish({
         ...values,
-        taskId,
+        taskId: Number(taskId),
+      
       });
     } catch (error) {}
 

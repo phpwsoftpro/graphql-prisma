@@ -1,11 +1,6 @@
 import { Field, ID, InputType } from "type-graphql";
 import { StringFilter } from "./StringFilter";
-
-@InputType()
- class IdFilter {
-  @Field({ nullable: true })
-  eq?: number;
-}
+import { IdFilter } from "./IdFilter";
 
 @InputType()
 export class ContactRelationFilter {
