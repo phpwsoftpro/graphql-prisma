@@ -7,5 +7,3 @@ export const PayrollPage: React.FC = () => {
     </div>
   );
 };
-
-export default PayrollPage;
