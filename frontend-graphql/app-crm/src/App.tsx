@@ -62,6 +62,7 @@ import {
 import { UpdatePasswordPage } from "./routes/update-password";
 import { ProductsListPage, ProductsCreatePage } from "./routes/sales/products";
 import { InvoicesListPage, InvoicesShowPage } from "./routes/sales/invoices";
+import { PayrollPage } from "./routes/payroll";
 import "./utilities/init-dayjs";
 import "@refinedev/antd/dist/reset.css";
 import "./styles/antd.css";
@@ -270,6 +271,7 @@ const App: React.FC = () => {
                         {/* <Route path="create" element={<InvoicesCreatePage />} /> */}
                     </Route>
                     <Route path="/invoices/show/:id" element={<InvoicesShowPage />} />
+                    <Route path="/payroll" element={<PayrollPage />} />
                     <Route path="/administration" element={<Outlet />}>
                       <Route path="settings" element={<SettingsPage />} />
                       <Route path="audit-log" element={<AuditLogPage />} />
