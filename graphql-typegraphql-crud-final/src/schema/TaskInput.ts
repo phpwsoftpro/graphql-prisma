@@ -30,7 +30,7 @@ export class TaskInput {
 @InputType()
 export class UpdateTaskInput {
   @Field(() => Int)
-  id: number;
+  id: any;
 
   @Field(() => TaskInput)
   update: TaskInput;

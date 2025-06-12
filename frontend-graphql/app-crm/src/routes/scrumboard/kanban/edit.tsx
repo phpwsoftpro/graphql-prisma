@@ -44,7 +44,7 @@ export const KanbanEditPage = () => {
     meta: { gqlQuery: KANBAN_GET_TASK_QUERY },
   });
 
-  const { description, completed, stage, dueDate, users, checklist, title } =
+  const { description, completed, stage, dueDate, users, checklist, title, id } =
     data?.data ?? {};
 
   return (
@@ -56,7 +56,7 @@ export const KanbanEditPage = () => {
         list("tasks", "replace");
       }}
       title={
-        <TitleForm initialValues={{ title }} isLoading={isLoading ?? true} />
+        <TitleForm initialValues={{ title, id: Number(id) }} isLoading={isLoading ?? true} />
       }
       width={586}
       footer={<ModalFooter />}
@@ -109,7 +109,7 @@ export const KanbanEditPage = () => {
           initialValues={{
             userIds: users?.map((user) => ({
               label: user.name,
-              value: user.id,
+              value: Number(user.id),
             })),
           }}
           cancelForm={() => setActiveKey(undefined)}

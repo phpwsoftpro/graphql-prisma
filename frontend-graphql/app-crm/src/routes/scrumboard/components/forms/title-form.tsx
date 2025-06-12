@@ -36,13 +36,14 @@ const TitleInput = ({
 type Props = {
   initialValues: {
     title?: Task["title"];
+    id?: Task["id"];
   };
   isLoading?: boolean;
 };
 
 export const TitleForm = ({ initialValues, isLoading }: Props) => {
   const invalidate = useInvalidate();
-
+  console.log(initialValues);
   const { formProps } = useForm<Task, HttpError, TaskUpdateInput>({
     queryOptions: {
       enabled: false,
@@ -57,6 +58,12 @@ export const TitleForm = ({ initialValues, isLoading }: Props) => {
     },
     meta: {
       gqlMutation: KANBAN_UPDATE_TASK_MUTATION,
+      updateTask: {
+        id: Number(initialValues.id),
+        update: {
+          title: initialValues.title,
+        },
+      },
     },
   });
 
