@@ -1,6 +1,6 @@
 import React from "react";
 
-export const PayrollPage: React.FC = () => {
+export const PayrollListPage: React.FC = () => {
   return (
     <div className="page-container">
       <h1>Payroll</h1>
@@ -8,4 +8,4 @@ export const PayrollPage: React.FC = () => {
   );
 };
 
-export default PayrollPage;
+export default PayrollListPage;

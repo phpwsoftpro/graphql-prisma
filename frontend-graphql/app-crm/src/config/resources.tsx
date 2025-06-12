@@ -192,6 +192,9 @@ export const resources: IResourceItem[] = [
   {
     name: "payroll",
     list: "/payroll",
+    create: "/payroll/create",
+    edit: "/payroll/edit/:id",
+    show: "/payroll/show/:id",
     meta: {
       label: "Payroll",
       // @ts-expect-error Ant Design Icon's v5.0.1 has an issue with @types/react@^18.2.66
