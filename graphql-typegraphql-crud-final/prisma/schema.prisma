@@ -322,3 +322,14 @@ model Todo {
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 }
+
+model Payroll {
+  id          String   @id @default(cuid())
+  employeeId  String
+  workedHours Float
+  periodStart DateTime
+  periodEnd   DateTime
+  approvedBy  String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}

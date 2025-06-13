@@ -1,0 +1,12 @@
+query Payrolls {
+  payrolls {
+    ...PayrollFields
+  }
+}
+
+query Payroll($id: ID!) {
+  payroll(id: $id) {
+    ...PayrollFields
+  }
+}
+

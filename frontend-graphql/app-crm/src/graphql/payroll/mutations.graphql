@@ -1,0 +1,16 @@
+mutation CreatePayroll($data: CreatePayrollInput!) {
+  createPayroll(data: $data) {
+    ...PayrollFields
+  }
+}
+
+mutation UpdatePayroll($id: ID!, $data: UpdatePayrollInput!) {
+  updatePayroll(id: $id, data: $data) {
+    ...PayrollFields
+  }
+}
+
+mutation DeletePayroll($id: ID!) {
+  deletePayroll(id: $id)
+}
+
