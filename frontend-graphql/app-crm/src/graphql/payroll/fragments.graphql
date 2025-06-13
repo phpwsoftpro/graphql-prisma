@@ -1,0 +1,10 @@
+fragment PayrollFields on Payroll {
+  id
+  employeeId
+  workedHours
+  periodStart
+  periodEnd
+  approvedBy
+  createdAt
+  updatedAt
+}
