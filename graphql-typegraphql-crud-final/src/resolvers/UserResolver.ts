@@ -20,36 +20,49 @@ export class UserResolver {
     @Arg("paging", () => OffsetPaging, { nullable: true }) paging: OffsetPaging
   ) {
     const where: any = {};
-    
-    if (filter) {
-      if (filter.name) {
-        if (filter.name.iLike) {
-          where.name = { contains: filter.name.iLike, mode: 'insensitive' };
-        } else if (filter.name.contains) {
-          where.name = { contains: filter.name.contains };
-        } else if (filter.name.equals) {
-          where.name = filter.name.equals;
+    if (filter?.name) {
+      if (typeof filter.name === 'string') {
+        if ((filter.name as string).trim() !== '' && filter.name !== '%%') {
+          where.name = { contains: filter.name as string };
         }
+      } else if (typeof filter.name.iLike === 'string' && filter.name.iLike !== '%%' && filter.name.iLike.trim() !== '') {
+        where.name = { contains: filter.name.iLike, mode: 'insensitive' };
+      } else if (typeof filter.name.contains === 'string' && filter.name.contains.trim() !== '' && filter.name.contains !== '%%') {
+        where.name = { contains: filter.name.contains };
+      } else if (typeof filter.name.eq === 'string' && filter.name.eq.trim() !== '' && filter.name.eq !== '%%') {
+        where.name = filter.name.eq;
+      } else if (typeof filter.name.equals === 'string' && filter.name.equals.trim() !== '' && filter.name.equals !== '%%') {
+        where.name = filter.name.equals;
       }
-      
-      if (filter.email) {
-        if (filter.email.iLike) {
-          where.email = { contains: filter.email.iLike, mode: 'insensitive' };
-        } else if (filter.email.contains) {
-          where.email = { contains: filter.email.contains };
-        } else if (filter.email.equals) {
-          where.email = filter.email.equals;
+    }
+    if (filter?.email) {
+      if (typeof filter.email === 'string') {
+        if ((filter.email as string).trim() !== '' && filter.email !== '%%') {
+          where.email = { contains: filter.email as string };
         }
+      } else if (typeof filter.email.iLike === 'string' && filter.email.iLike !== '%%' && filter.email.iLike.trim() !== '') {
+        where.email = { contains: filter.email.iLike, mode: 'insensitive' };
+      } else if (typeof filter.email.contains === 'string' && filter.email.contains.trim() !== '' && filter.email.contains !== '%%') {
+        where.email = { contains: filter.email.contains };
+      } else if (typeof filter.email.eq === 'string' && filter.email.eq.trim() !== '' && filter.email.eq !== '%%') {
+        where.email = filter.email.eq;
+      } else if (typeof filter.email.equals === 'string' && filter.email.equals.trim() !== '' && filter.email.equals !== '%%') {
+        where.email = filter.email.equals;
       }
-      
-      if (filter.role) {
-        if (filter.role.iLike) {
-          where.role = { contains: filter.role.iLike, mode: 'insensitive' };
-        } else if (filter.role.contains) {
-          where.role = { contains: filter.role.contains };
-        } else if (filter.role.equals) {
-          where.role = filter.role.equals;
+    }
+    if (filter?.role) {
+      if (typeof filter.role === 'string') {
+        if ((filter.role as string).trim() !== '' && filter.role !== '%%') {
+          where.role = { contains: filter.role as string };
         }
+      } else if (typeof filter.role.iLike === 'string' && filter.role.iLike !== '%%' && filter.role.iLike.trim() !== '') {
+        where.role = { contains: filter.role.iLike, mode: 'insensitive' };
+      } else if (typeof filter.role.contains === 'string' && filter.role.contains.trim() !== '' && filter.role.contains !== '%%') {
+        where.role = { contains: filter.role.contains };
+      } else if (typeof filter.role.eq === 'string' && filter.role.eq.trim() !== '' && filter.role.eq !== '%%') {
+        where.role = filter.role.eq;
+      } else if (typeof filter.role.equals === 'string' && filter.role.equals.trim() !== '' && filter.role.equals !== '%%') {
+        where.role = filter.role.equals;
       }
     }
 

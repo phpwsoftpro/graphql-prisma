@@ -106,7 +106,7 @@ export class CompanyResolver {
 
   @Mutation(() => Company )
   async createCompany(@Arg("input", () => CreateCompanyInput) input: CreateCompanyInput) {
-    const { salesOwnerId, id, ...rest } = input.company;
+    const { salesOwnerId, ...rest } = input.company;
     const company = await prisma.company.create({
       data: {
         ...rest,
@@ -123,9 +123,13 @@ export class CompanyResolver {
 
   @Mutation(() => Company)
   async updateCompany(@Arg("input", () => UpdateCompanyInput) input: UpdateCompanyInput) {
+    const { salesOwnerId, ...rest } = input.update;
     return prisma.company.update({
       where: { id: Number(input.id) },
-      data: input.company
+      data: {
+        ...rest,
+        salesOwner: salesOwnerId ? { connect: { id: Number(salesOwnerId) } } : undefined,
+      },
     });
   }
 

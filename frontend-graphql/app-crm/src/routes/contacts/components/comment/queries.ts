@@ -1,23 +1,14 @@
 import gql from "graphql-tag";
 
 export const CONTACTS_CREATE_CONTACT_NOTE_MUTATION = gql`
-    mutation ContactsCreateContactNote($input: CreateOneContactNoteInput!) {
-        createOneContactNote(input: $input) {
+    mutation ContactsCreateContactNote($input: CreateNoteInput!) {
+        createNote(input: $input) {
             id
             note
+            contactId
         }
     }
 `;
-
-export const CONTACTS_UPDATE_CONTACT_NOTE_MUTATION = gql`
-    mutation ContactsUpdateContactNote($input: UpdateOneContactNoteInput!) {
-        updateOneContactNote(input: $input) {
-            id
-            note
-        }
-    }
-`;
-
 export const CONTACTS_CONTACT_NOTES_LIST_QUERY = gql`
     query ContactsContactNotesList(
         $filter: NoteFilter!
@@ -36,6 +27,23 @@ export const CONTACTS_CONTACT_NOTES_LIST_QUERY = gql`
                     avatarUrl
                 }
             }
+        }
+    }
+`;
+//delete note
+export const CONTACTS_DELETE_CONTACT_NOTE_MUTATION = gql`
+    mutation ContactsDeleteContactNote($input: DeleteNoteInput!) {
+        deleteNote(input: $input) {
+            id
+        }
+    }
+`;
+//update note
+export const CONTACTS_UPDATE_CONTACT_NOTE_MUTATION = gql`
+    mutation ContactsUpdateContactNote($input: UpdateNoteInput!) {
+        updateNote(input: $input) {
+            id
+            note
         }
     }
 `;

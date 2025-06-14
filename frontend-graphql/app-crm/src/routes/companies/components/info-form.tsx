@@ -22,7 +22,7 @@ import type {
 import type { CompanyInfoQuery } from "@/graphql/types";
 import { currencyNumber } from "@/utilities";
 
-import { COMPANY_INFO_QUERY } from "./queries";
+import { COMPANY_INFO_QUERY, COMPANY_UPDATE_MUTATION } from "./queries";
 
 type Company = GetFields<CompanyInfoQuery>;
 
@@ -51,7 +51,7 @@ export const CompanyInfoForm = () => {
     country,
     website,
   } = data || {};
-
+  
   const getActiveForm = (args: { formName: keyof Company }) => {
     const { formName } = args;
 
@@ -92,6 +92,7 @@ export const CompanyInfoForm = () => {
         style={{
           padding: "0.5rem 1rem",
         }}
+       
         // @ts-expect-error Ant Design Icon's v5.0.1 has an issue with @types/react@^18.2.66
         icon={<ColumnWidthOutlined className="tertiary" />}
         state={getActiveForm({ formName: "companySize" })}
@@ -103,6 +104,11 @@ export const CompanyInfoForm = () => {
         onClick={() => setActiveForm("companySize")}
         onUpdate={() => setActiveForm(undefined)}
         onCancel={() => setActiveForm(undefined)}
+        useFormProps={{
+          meta: {
+            gqlMutation: COMPANY_UPDATE_MUTATION,
+          },
+        }}
       >
         <Select
           autoFocus
@@ -112,6 +118,7 @@ export const CompanyInfoForm = () => {
             width: "100%",
           }}
         />
+
       </SingleElementForm>
       <SingleElementForm
         loading={loading}
@@ -129,6 +136,11 @@ export const CompanyInfoForm = () => {
         onClick={() => setActiveForm("totalRevenue")}
         onUpdate={() => setActiveForm(undefined)}
         onCancel={() => setActiveForm(undefined)}
+        useFormProps={{
+          meta: {
+            gqlMutation: COMPANY_UPDATE_MUTATION,
+          },
+        }}
       >
         <InputNumber
           autoFocus
@@ -157,6 +169,11 @@ export const CompanyInfoForm = () => {
         onClick={() => setActiveForm("industry")}
         onUpdate={() => setActiveForm(undefined)}
         onCancel={() => setActiveForm(undefined)}
+        useFormProps={{
+          meta: {
+            gqlMutation: COMPANY_UPDATE_MUTATION,
+          },
+        }}
       >
         <Select
           autoFocus
@@ -183,6 +200,11 @@ export const CompanyInfoForm = () => {
         onClick={() => setActiveForm("businessType")}
         onUpdate={() => setActiveForm(undefined)}
         onCancel={() => setActiveForm(undefined)}
+        useFormProps={{
+          meta: {
+            gqlMutation: COMPANY_UPDATE_MUTATION,
+          },
+        }}
       >
         <Select
           autoFocus
@@ -209,6 +231,11 @@ export const CompanyInfoForm = () => {
         onClick={() => setActiveForm("country")}
         onUpdate={() => setActiveForm(undefined)}
         onCancel={() => setActiveForm(undefined)}
+        useFormProps={{
+          meta: {
+            gqlMutation: COMPANY_UPDATE_MUTATION,
+          },
+        }}
       >
         <Input
           autoFocus
@@ -235,6 +262,11 @@ export const CompanyInfoForm = () => {
         onClick={() => setActiveForm("website")}
         onUpdate={() => setActiveForm(undefined)}
         onCancel={() => setActiveForm(undefined)}
+        useFormProps={{
+          meta: {
+            gqlMutation: COMPANY_UPDATE_MUTATION,
+          },
+        }}
       >
         <Input
           autoFocus

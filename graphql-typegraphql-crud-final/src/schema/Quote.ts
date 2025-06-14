@@ -1,4 +1,4 @@
-import { Field, ID, ObjectType } from "type-graphql";
+import { Field, ID, ObjectType, FieldResolver } from "type-graphql";
 import { Company } from "./Company";
 import { User } from "./User";
 import { Contact } from "./Contact";
@@ -18,16 +18,16 @@ export class Quote {
   @Field({ nullable: true })
   description?: string;
 
-  @Field()
+  @Field({ nullable: true })
   subTotal: number;
 
-  @Field()
+  @Field({ nullable: true })
   total: number;
 
-  @Field()
+  @Field({ nullable: true })
   tax: number;
 
-  @Field()
+  @Field({ nullable: true })
   createdAt: Date;
 
   @Field()

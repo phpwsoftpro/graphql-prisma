@@ -49,7 +49,7 @@ export class Company {
   @Field(() => User, { nullable: true })
   salesOwner?: User | null;
 
-  @Field(() => ContactListResponse)
+  @Field(() => ContactListResponse, { nullable: true })
   contacts?: ContactListResponse;
 
   @Field(() => [DealAggregate], { nullable: true })

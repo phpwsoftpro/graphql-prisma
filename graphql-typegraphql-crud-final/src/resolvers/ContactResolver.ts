@@ -8,6 +8,7 @@ import {
   CreateContactInput,
   UpdateContactInput,
   DeleteContactInput,
+  CreateManyContactsInput,
 } from "../schema/ContactInput";
 import { ContactFilter } from "../schema/ContactFilter";
 import { ContactSort } from "../schema/ContactSort";
@@ -173,5 +174,26 @@ export class ContactResolver {
     return true;
   }
 
-  
+  @Mutation(() => [Contact])
+  async createManyContacts(
+    @Arg("input", () => CreateManyContactsInput) input: CreateManyContactsInput
+  ) {
+    const createdContacts = await Promise.all(
+      input.contacts.map(async (contactInput) => {
+        const { companyId, salesOwnerId, ...rest } = contactInput;
+        return prisma.contact.create({
+          data: {
+            ...rest,
+            company: companyId ? { connect: { id: Number(companyId) } } : undefined,
+            salesOwner: salesOwnerId ? { connect: { id: Number(salesOwnerId) } } : undefined,
+          },
+          include: {
+            company: true,
+            salesOwner: true,
+          },
+        });
+      })
+    );
+    return createdContacts;
+  }
 }

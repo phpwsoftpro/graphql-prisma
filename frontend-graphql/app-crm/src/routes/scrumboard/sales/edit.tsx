@@ -47,12 +47,20 @@ export const SalesEditPage = () => {
     });
 
   const { selectProps: stageSelectProps } = useDealStagesSelect();
-
   const { selectProps: userSelectProps, queryResult: userSelectQueryResult } =
     useUsersSelect();
 
   const deal = queryResult?.data?.data;
-
+  const initialValues = {
+    ...deal,
+    amount: deal?.value,
+    stageId: deal?.stageId ? String(deal.stageId) : undefined,
+    dealOwnerId: deal?.dealOwnerId ? String(deal.dealOwnerId) : undefined,
+    companyId: deal?.company?.id ? String(deal.company.id) : undefined,
+    dealContactId: deal?.dealContact?.id ? String(deal.dealContact.id) : undefined,
+    title: deal?.title,
+  };
+    
   const companyIdField = Form.useWatch("companyId", formProps.form);
 
   useEffect(() => {
@@ -98,7 +106,6 @@ export const SalesEditPage = () => {
         <Form.Item
           label="Deal contact"
           name={["dealContactId"]}
-          trigger=""
           rules={[{ required: true }]}
           initialValue={deal?.dealContact?.id}
           dependencies={["companyId"]}
@@ -122,7 +129,7 @@ export const SalesEditPage = () => {
       title="Edit deal"
       width={512}
     >
-      <Form {...formProps} layout="vertical" preserve={false}>
+      <Form {...formProps} layout="vertical" preserve={false} initialValues={initialValues}>
         <Form.Item label="Deal title" name="title" rules={[{ required: true }]}>
           <Input placeholder="Please enter deal title" />
         </Form.Item>
@@ -153,12 +160,15 @@ export const SalesEditPage = () => {
         {renderContactForm()}
         <Row gutter={12}>
           <Col span={12}>
-            <Form.Item label="Stage" name="stageId">
+            <Form.Item label="Stage" name="stageId" initialValue={deal?.stageId ? String(deal.stageId) : undefined}>
               <Select
                 placeholder="Please select stage"
                 {...stageSelectProps}
                 showSearch={false}
-                options={stageSelectProps.options?.concat({
+                options={stageSelectProps.options?.map(opt => ({
+                  ...opt,
+                  value: opt.value !== null && opt.value !== undefined ? String(opt.value) : null,
+                })).concat({
                   label: "UNASSIGNED",
                   value: null,
                 })}
@@ -166,7 +176,7 @@ export const SalesEditPage = () => {
             </Form.Item>
           </Col>
           <Col span={12}>
-            <Form.Item label="Deal value" name="value">
+            <Form.Item label="Deal value" name="amount" >
               <InputNumber
                 min={0}
                 // @ts-expect-error Ant Design Icon's v5.0.1 has an issue with @types/react@^18.2.66

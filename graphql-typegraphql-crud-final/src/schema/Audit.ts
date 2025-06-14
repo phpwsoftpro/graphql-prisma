@@ -1,5 +1,6 @@
 import { Field, ID, ObjectType } from "type-graphql";
 import { User } from "./User";
+import { Changes } from "./Changes";
 
 @ObjectType()
 export class Audit {
@@ -15,8 +16,8 @@ export class Audit {
   @Field()
   targetId: number;
 
-  @Field()
-  changes: string;
+  @Field(() => [Changes])
+  changes: Changes[];
 
   @Field({ nullable: true })
   userId?: number;

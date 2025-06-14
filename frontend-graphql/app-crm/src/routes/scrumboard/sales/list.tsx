@@ -185,9 +185,9 @@ export const SalesPage: FC<PropsWithChildren> = ({ children }) => {
 
     updateDeal(
       {
-        id: Number(dealId),
+        id: dealId,
         values: {
-          stageId: Number(stageId),
+          stageId: stageId,
         },
         meta:{
           gqlMutation: SALES_UPDATE_DEAL_MUTATION

@@ -1,7 +1,7 @@
 import { Arg, ID, Mutation, Query, Resolver } from "type-graphql";
 import { PrismaClient } from "@prisma/client";
 import { TaskStage, TaskStageConnection } from "../schema/TaskStage";
-import { CreateTaskStageInput, UpdateTaskStageInput } from "../schema/TaskStageInput";
+import { CreateTaskStageInput, DeleteTaskStageInput, UpdateTaskStageInput } from "../schema/TaskStageInput";
 import { TaskStageFilter } from "../schema/TaskStageFilter";
 import { TaskStageSort } from "../schema/TaskStageSort";
 import { OffsetPaging } from "../schema/PagingInput";
@@ -54,24 +54,22 @@ export class TaskStageResolver {
   }
 
   @Mutation(() => TaskStage)
-  async createTaskStage(@Arg("data") data: CreateTaskStageInput) {
-    return prisma.taskStage.create({ data });
+  async createTaskStage(@Arg("input") input: CreateTaskStageInput) {
+    return prisma.taskStage.create({ data: input.taskStage });
   }
 
   @Mutation(() => TaskStage, { nullable: true })
   async updateTaskStage(
-    @Arg("id", () => ID) id: number,
-    @Arg("data") data: UpdateTaskStageInput
-  ) {
-    const updateData = Object.fromEntries(
-      Object.entries(data).filter(([, value]) => value !== undefined)
-    ) as UpdateTaskStageInput;
-    return prisma.taskStage.update({ where: { id }, data: updateData });
+    @Arg("input") input: UpdateTaskStageInput
+    ) {
+      return prisma.taskStage.update({
+        where: { id: Number(input.id) },
+        data: input.update,
+      });
   }
 
-  @Mutation(() => Boolean)
-  async deleteTaskStage(@Arg("id", () => ID) id: number) {
-    await prisma.taskStage.delete({ where: { id } });
-    return true;
+  @Mutation(() => TaskStage)
+  async deleteTaskStage(@Arg("input") input: DeleteTaskStageInput) {
+    return prisma.taskStage.delete({ where: { id: Number(input.id) } });
   }
 }

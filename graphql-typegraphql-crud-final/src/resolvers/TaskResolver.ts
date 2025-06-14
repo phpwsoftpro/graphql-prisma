@@ -4,7 +4,7 @@ import { TaskConnection } from "../schema/TaskConnection";
 import { TaskFilter } from "../schema/TaskFilter";
 import { TaskSort } from "../schema/TaskSort";
 import { OffsetPaging } from "../schema/PagingInput";
-import { CreateTaskInput, TaskInput, UpdateTaskInput } from "../schema/TaskInput";
+import { CreateTaskInput, DeleteTaskInput, TaskInput, UpdateTaskInput } from "../schema/TaskInput";
 import { Task } from "../schema/Task";
 
 const prisma = new PrismaClient();
@@ -37,40 +37,60 @@ export class TaskResolver {
         take,
         include: {
           stage: true,
+          users: true,
         },
       }),
       prisma.task.count({ where }),
     ]);
 
-    return { nodes: nodes as Task[], totalCount };
+    // Chuyển checklist từ JSON sang ChecklistItem[] nếu cần
+    const mappedNodes = nodes.map((node: any) => ({
+      ...node,
+      checklist: Array.isArray(node.checklist) ? node.checklist : [],
+    }));
+
+    return { nodes: mappedNodes, totalCount };
   }
 
   @Mutation(() => Task)
   async createTask(@Arg("input") input: CreateTaskInput) {
-    //nếu userIds rỗng thì bỏ ra khỏi input
-    if (input.task.userIds?.length === 0) {
-      delete input.task.userIds;
+    // Nếu userIds rỗng thì bỏ ra khỏi input
+    const { stageId, userIds, ...rest } = input.task;
+    const data: any = { ...rest };
+    if (stageId !== undefined) {
+      data.stage = { connect: { id: Number(stageId) } };
     }
-    return prisma.task.create({ data: input.task });
+    if (userIds !== undefined) {
+      data.users = { connect: userIds.map((id: any) => ({ id: Number(id) })) };
+    }
+    return prisma.task.create({
+      data,
+      include: {
+        stage: true,
+        users: true,
+      },
+    });
   }
   // like update deal 
   @Mutation(() => Task, { nullable: true })
   async updateTask(@Arg("input") input: UpdateTaskInput) {
     // like update deal 
-    const { stageId, ...rest } = input.update;
-    
+    const { stageId, userIds, ...rest } = input.update;
     const data: any = {
       ...rest,
     };
-  
     if (stageId !== undefined) {
       data.stage = { connect: { id: Number(stageId) } };
+    }
+    if (userIds !== undefined) {
+      data.users = { set: userIds.map((id: any) => ({ id: Number(id) })) };
     }
     return prisma.task.update({
       where: { id: Number(input.id) },
       data,
       include: {
         stage: true,
+        users: true,
       },
     });
   }
@@ -81,7 +101,15 @@ export class TaskResolver {
       where: { id: Number(id) },
       include: {
         stage: true,
+        users: true,
       },
+    });
+  }
+  //delete task
+  @Mutation(() => Task)
+  async deleteTask(@Arg("input") input: DeleteTaskInput) {
+    return prisma.task.delete({
+      where: { id: Number(input.id) },
     });
   }
 }

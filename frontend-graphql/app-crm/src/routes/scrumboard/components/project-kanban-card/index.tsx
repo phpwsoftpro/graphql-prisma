@@ -27,6 +27,7 @@ import dayjs from "dayjs";
 import { CustomAvatar, Text, TextIcon } from "@/components";
 import type { User } from "@/graphql/schema.types";
 import { getDateColor } from "@/utilities";
+import { KANBAN_DELETE_TASK_MUTATION } from "../../kanban/queries";
 
 type ProjectCardProps = {
   id: string;
@@ -57,7 +58,7 @@ export const ProjectCard = ({
   const { token } = theme.useToken();
   const { edit } = useNavigation();
   const { mutate } = useDelete();
-
+  console.log("ProjectCard users:", users);
   const dropdownItems = useMemo(() => {
     const dropdownItems: MenuProps["items"] = [
       {
@@ -81,6 +82,7 @@ export const ProjectCard = ({
             id,
             meta: {
               operation: "task",
+              gqlMutation: KANBAN_DELETE_TASK_MUTATION,
             },
           });
         },

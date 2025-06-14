@@ -277,8 +277,8 @@ const ContactForm = () => {
 
     const contacts = args.contacts.map((contact) => ({
       ...contact,
-      companyId: id,
-      salesOwnerId: data?.data.salesOwner?.id || "",
+      companyId: Number(id),
+      salesOwnerId: Number(data?.data?.salesOwner?.id || ""),
     }));
 
     await mutateAsync({

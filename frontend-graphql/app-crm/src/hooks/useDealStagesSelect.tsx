@@ -20,9 +20,10 @@ const DEAL_STAGES_SELECT_QUERY = gql`
     }
 `;
 
-export const useDealStagesSelect = () => {
+export const useDealStagesSelect = (options?: { optionLabel?: "id" | "title" }) => {
   return useSelect<GetFieldsFromList<DealStagesSelectQuery>>({
     resource: "dealStages",
     meta: { gqlQuery: DEAL_STAGES_SELECT_QUERY },
+    optionLabel: options?.optionLabel,
   });
 };

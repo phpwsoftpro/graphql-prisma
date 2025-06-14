@@ -11,4 +11,11 @@ export class UserFilter {
 
   @Field(() => StringFilter, { nullable: true })
   role?: StringFilter;
+
+  @Field(() => StringFilter, { nullable: true })
+  status?: StringFilter;
+
+  @Field(() => StringFilter, { nullable: true })
+  jobTitle?: StringFilter;
+
 } 

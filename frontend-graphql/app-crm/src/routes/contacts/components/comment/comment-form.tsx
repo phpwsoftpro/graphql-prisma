@@ -29,7 +29,7 @@ export const ContactCommentForm = () => {
     FormValues
   >({
     action: "create",
-    resource: "contactNotes",
+    resource: "notes",
     queryOptions: {
       enabled: false,
     },
