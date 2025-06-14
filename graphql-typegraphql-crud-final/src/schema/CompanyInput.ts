@@ -3,8 +3,6 @@ import { InputType, Field, ID } from "type-graphql";
 @InputType()
 export class CompanyInput {
   @Field({ nullable: true })
-  id?: number;
-  @Field()
   name: string;
   @Field({ nullable: true })
   industry?: string;
@@ -40,8 +38,8 @@ export class CreateCompanyInput {
 export class UpdateCompanyInput {
   @Field(() => ID)
   id: number;
-  @Field()
-  company: CompanyInput;
+  @Field(() => CompanyInput)
+  update: CompanyInput;
 }
 
 @InputType()

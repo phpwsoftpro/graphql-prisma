@@ -88,3 +88,9 @@ export class DeleteContactInput {
   @Field(() => ID)
   id: number;
 }
+//create many contacts
+@InputType()
+export class CreateManyContactsInput {
+  @Field(() => [ContactCreateInput])
+  contacts: ContactCreateInput[];
+}

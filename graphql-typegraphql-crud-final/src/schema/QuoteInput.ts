@@ -2,7 +2,7 @@ import { Field, InputType, ID } from "type-graphql";
 
 @InputType()
 export class QuoteInput {
-  @Field()
+  @Field({ nullable: true })
   title: string;
 
   @Field({ nullable: true })
@@ -11,23 +11,17 @@ export class QuoteInput {
   @Field({ nullable: true })
   status?: string;
 
-  @Field()
-  subTotal: number;
-
-  @Field()
-  total: number;
-
   @Field({ nullable: true })
   tax?: number;
 
   @Field({ nullable: true })
-  companyId?: number;
+  companyId?: string;
 
   @Field({ nullable: true })
-  salesOwnerId?: number;
+  salesOwnerId?: string;
 
   @Field({ nullable: true })
-  contactId?: number;
+  contactId?: string;
 }
 
 @InputType()
@@ -43,4 +37,10 @@ export class UpdateQuoteInput {
 
   @Field(() => QuoteInput)
   update: QuoteInput;
+}
+//delete quote
+@InputType()
+export class DeleteQuoteInput {
+  @Field(() => ID)
+  id: string;
 }

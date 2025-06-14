@@ -10,6 +10,7 @@ import type { GetFieldsFromList } from "@refinedev/nestjs-query";
 
 import { Button, Form, Input, Space, Typography } from "antd";
 import dayjs from "dayjs";
+import { useEffect } from "react";
 
 import { CustomAvatar, Text } from "@/components";
 import type { User } from "@/graphql/schema.types";
@@ -17,8 +18,10 @@ import type { ContactsContactNotesListQuery } from "@/graphql/types";
 
 import {
   CONTACTS_CONTACT_NOTES_LIST_QUERY,
-  CONTACTS_UPDATE_CONTACT_NOTE_MUTATION,
+  CONTACTS_DELETE_CONTACT_NOTE_MUTATION,
+    CONTACTS_UPDATE_CONTACT_NOTE_MUTATION,
 } from "./queries";
+import { useParams } from "react-router-dom";
 
 type ContactNote = GetFieldsFromList<ContactsContactNotesListQuery>;
 
@@ -29,7 +32,7 @@ const ContactCommentListItem = ({ item }: { item: ContactNote }) => {
     HttpError,
     ContactNote
   >({
-    resource: "contactNotes",
+    resource: "notes",
     action: "edit",
     queryOptions: {
       enabled: false,
@@ -39,7 +42,7 @@ const ContactCommentListItem = ({ item }: { item: ContactNote }) => {
       setId(undefined);
       invalidate({
         invalidates: ["list"],
-        resource: "contactNotes",
+        resource: "notes",
       });
     },
     successNotification: () => ({
@@ -54,14 +57,20 @@ const ContactCommentListItem = ({ item }: { item: ContactNote }) => {
   });
   const { data: me } = useGetIdentity<User>();
 
-  const isMe = me?.id === item.createdBy.id;
+  const isMe = me?.id == item?.createdBy?.id;
+
+  useEffect(() => {
+    if (id == item.id) {
+      formProps.form?.setFieldsValue({ note: item.note });
+    }
+  }, [id, item.id, item.note, formProps.form]);
 
   return (
     <div style={{ display: "flex", gap: "12px" }}>
       <CustomAvatar
         style={{ flexShrink: 0 }}
-        name={item.createdBy.name}
-        src={item.createdBy.avatarUrl}
+        name={item?.createdBy?.name}
+        src={item?.createdBy?.avatarUrl}
       />
 
       <div
@@ -79,14 +88,14 @@ const ContactCommentListItem = ({ item }: { item: ContactNote }) => {
             alignItems: "center",
           }}
         >
-          <Text style={{ fontWeight: 500 }}>{item.createdBy.name}</Text>
+          <Text style={{ fontWeight: 500 }}>{item?.createdBy?.name}</Text>
           <Text size="xs" style={{ color: "#000000a6" }}>
-            {dayjs(item.createdAt).format("MMMM D, YYYY - h:ma")}
+            {dayjs(item?.createdAt).format("MMMM D, YYYY - h:ma")}
           </Text>
         </div>
 
-        {id === item.id ? (
-          <Form {...formProps} initialValues={{ note: item.note }}>
+        {id == item.id ? (
+          <Form {...formProps}>
             <Form.Item
               name="note"
               rules={[
@@ -126,13 +135,13 @@ const ContactCommentListItem = ({ item }: { item: ContactNote }) => {
           <Space size={16}>
             <Typography.Link
               style={{ color: "inherit", fontSize: "12px" }}
-              onClick={() => setId(item.id)}
+              onClick={() => setId(Number(item.id))}
             >
               Edit
             </Typography.Link>
             <DeleteButton
-              recordItemId={item.id}
-              resource="contactNotes"
+              recordItemId={Number(item.id)}
+              resource="notes"
               size="small"
               type="link"
               successNotification={() => ({
@@ -141,6 +150,9 @@ const ContactCommentListItem = ({ item }: { item: ContactNote }) => {
                 description: "Successful",
                 type: "success",
               })}
+              meta={{
+                gqlMutation: CONTACTS_DELETE_CONTACT_NOTE_MUTATION,
+              }}
               icon={null}
               style={{
                 padding: 0,
@@ -168,19 +180,22 @@ const ContactCommentListItem = ({ item }: { item: ContactNote }) => {
 
 export const ContactCommentList = () => {
   const { id } = useParsed();
-
-const { data, isLoading, error } = useList<ContactNote>({
-  resource: "contactNotes",
+  const params = useParams();
+const { data } = useList<ContactNote>({
+  resource: "notes",
+    sorters: [
+      {
+        field: "updatedAt",
+        order: "desc",
+      },
+    ],
+    filters: [{ field: "contact.id", operator: "eq", value: Number(params.id )}],
   meta: {
     gqlQuery: CONTACTS_CONTACT_NOTES_LIST_QUERY,
-    variables: {
-      filter: { contact: { id: { eq: Number(id) } } },
-      sorting: [{ field: "createdAt", direction: "DESC" }],
-      paging: { limit: 100, offset: 0 }
-    }
+    
   }
   });
-  console.log(data, isLoading, error);
+  console.log(data?.data);
   return (
     <Space
       size={16}
@@ -191,7 +206,7 @@ const { data, isLoading, error } = useList<ContactNote>({
         width: "100%",
       }}
     >
-      {data?.notes?.nodes?.map((item) => (
+      {data?.data?.map((item: ContactNote) => (
         <ContactCommentListItem key={item.id} item={item} />
       ))}
     </Space>

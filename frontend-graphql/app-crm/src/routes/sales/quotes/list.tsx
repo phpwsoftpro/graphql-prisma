@@ -27,7 +27,7 @@ import type { QuotesTableQuery } from "@/graphql/types";
 import { useCompaniesSelect } from "@/hooks/useCompaniesSelect";
 import { useUsersSelect } from "@/hooks/useUsersSelect";
 import { currencyNumber } from "@/utilities";
-import { QUOTES_TABLE_QUERY } from "./queries";
+import { QUOTES_DELETE_QUOTE_MUTATION, QUOTES_TABLE_QUERY } from "./queries";
 
 type Quote = GetFieldsFromList<QuotesTableQuery>;
 
@@ -254,6 +254,9 @@ export const QuotesListPage: FC<PropsWithChildren> = ({ children }) => {
                   size="small"
                   recordItemId={record.id}
                   style={{ backgroundColor: "transparent" }}
+                  meta={{
+                    gqlMutation: QUOTES_DELETE_QUOTE_MUTATION,
+                  }}
                 />
               </Space>
             )}

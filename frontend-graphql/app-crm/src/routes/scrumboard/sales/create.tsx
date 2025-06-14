@@ -40,10 +40,10 @@ import {
 } from "./queries";
 
 type FormValues = {
-  stageId?: number | null;
-  companyId?: number;
-  dealContactId?: number;
-  dealOwnerId?: number;
+  stageId?: string | null;
+  companyId?: string;
+  dealContactId?: string;
+  dealOwnerId?: string;
   title?: string;
   contactName?: string;
   contactEmail?: string;
@@ -74,13 +74,13 @@ export const SalesCreatePage: FC<PropsWithChildren> = ({ children }) => {
 
     if (stageId) {
       formProps.form?.setFieldsValue({
-        stageId: Number(stageId),
+        stageId: stageId,
       });
     }
 
     if (companyId && companyId !== "null") {
       formProps.form?.setFieldsValue({
-        companyId: Number(companyId),
+        companyId: companyId,
       });
     }
   }, [searchParams]);
@@ -121,7 +121,7 @@ export const SalesCreatePage: FC<PropsWithChildren> = ({ children }) => {
     }
 
     const selectedCompany = queryResult.data?.data?.find(
-      (company) => company.id == Number(companyId),
+      (company) => company.id == companyId,
     );
 
     const hasContact =
@@ -200,8 +200,9 @@ export const SalesCreatePage: FC<PropsWithChildren> = ({ children }) => {
                 values: {
                   name: values.contactName,
                   email: values.contactEmail,
-                  salesOwnerId:Number( user?.id),
-                  companyId:Number(companyId),
+                  salesOwnerId: user?.id,
+                  companyId: companyId,
+                  
                 },
                 
               });
@@ -212,24 +213,25 @@ export const SalesCreatePage: FC<PropsWithChildren> = ({ children }) => {
               if (data) {
                 formProps.onFinish?.({
                   ...values,
-                  dealContactId: Number(data.id),
-                  dealOwnerId: Number(user?.id),
-                  amount: Number(values.amount),
-                  stageId: Number(values.stageId),
-                  companyId: Number(companyId),
+                  dealContactId: data.id,
+                  dealOwnerId: values.dealOwnerId,
+                  amount: values.amount,
+                  stageId: values.stageId,
+                  companyId: companyId,
                 });
               }
             } else {
               formProps.onFinish?.({
                 ...values,
-                dealContactId: Number(values.dealContactId),
-                dealOwnerId: Number(values.dealOwnerId),
-                amount: Number(values.amount),
-                stageId: Number(values.stageId),
-                companyId: Number(values.companyId),
+                dealContactId: values.dealContactId,
+                dealOwnerId: values.dealOwnerId,
+                amount: values.amount,
+                stageId: values.stageId,
+                companyId: companyId,
               });
             }
           }}
+          
         >
           <Form.Item
             label="Deal title"

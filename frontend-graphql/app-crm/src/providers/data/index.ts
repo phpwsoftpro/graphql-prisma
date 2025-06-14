@@ -9,7 +9,7 @@ import { axiosInstance } from "./axios";
 
 export const API_BASE_URL = "http://192.168.1.51:8000";
 export const API_URL = `${API_BASE_URL}/graphql`;
-export const WS_URL = "ws://localhost:8000/graphql";
+export const WS_URL = "ws://192.168.1.51:8000/graphql";
 
 export const client = new GraphQLClient(API_URL, {
   fetch: async (url: string, options: any) => {

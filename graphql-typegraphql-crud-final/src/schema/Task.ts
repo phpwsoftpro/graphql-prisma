@@ -1,10 +1,10 @@
 import { Field, ID, ObjectType } from "type-graphql";
 import { TaskStage } from "./TaskStage";
 import { Comment } from "./Comment";
-import { Checklist } from "./Checklist";
 import { Project } from "./Project";
 import { User } from "./User";
 import { CommentListResponse } from "./CommentListResponse";
+import { ChecklistItem } from "./ChecklistItem";
 @ObjectType()
 export class Task {
   @Field(() => ID)
@@ -32,9 +32,9 @@ export class Task {
   //comments
   @Field(() => CommentListResponse, { nullable: true })
   comments?: CommentListResponse;
-  //checklist
-  @Field(() => [Checklist], { nullable: true })
-  checklist?: Checklist[];
+  //checklist json
+  @Field(() => [ChecklistItem], { nullable: true })
+  checklist?: ChecklistItem[];
   //project
   @Field({ nullable: true })
   projectId?: number;

@@ -15,6 +15,7 @@ import type {
 
 import { AccordionHeaderSkeleton } from "../accordion-header-skeleton";
 import { TASK_STAGES_SELECT_QUERY } from "./queries";
+import { KANBAN_UPDATE_TASK_MUTATION } from "../../kanban/queries";
 
 type KanbanTask = GetFields<KanbanGetTaskQuery>;
 
@@ -32,6 +33,9 @@ export const StageForm = ({ initialValues, isLoading }: Props) => {
     queryOptions: {
       enabled: true,
     },
+    meta: {
+      gqlMutation: KANBAN_UPDATE_TASK_MUTATION,
+    },
     autoSave: {
       enabled: true,
       debounce: 0,
@@ -39,7 +43,7 @@ export const StageForm = ({ initialValues, isLoading }: Props) => {
         return {
           ...values,
           stage: undefined,
-          stageId: values.stage?.id,
+          stageId: Number(values.stage?.id),
         };
       },
     },
