@@ -201,3 +201,17 @@ export const authProvider: AuthProvider = {
     }
   },
 };
+
+import type { AccessControlProvider } from "@refinedev/core";
+
+export const accessControlProvider: AccessControlProvider = {
+  can: async ({ resource, action }) => {
+    if (resource === "payroll" && action === "list") {
+      return { can: true }; // ✅ explicitly allow access to payroll menu
+    }
+
+    // Optional: allow everything else
+    return { can: true };
+  },
+};
+

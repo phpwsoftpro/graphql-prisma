@@ -13,7 +13,12 @@ import routerProvider, {
 import { App as AntdApp, ConfigProvider } from "antd";
 
 import { resources, themeConfig } from "@/config";
-import { authProvider, dataProvider, liveProvider } from "@/providers";
+import {
+  authProvider,
+  dataProvider,
+  liveProvider,
+  accessControlProvider,
+} from "@/providers";
 
 import { AlgoliaSearchWrapper, FullScreenLoading, Layout } from "./components";
 import { useAutoLoginForDemo } from "./hooks";
@@ -90,6 +95,7 @@ const App: React.FC = () => {
                 liveProvider={liveProvider}
                 routerProvider={routerProvider}
                 resources={resources}
+                accessControlProvider={accessControlProvider}
                 notificationProvider={useNotificationProvider}
                 options={{
                   liveMode: "auto",
