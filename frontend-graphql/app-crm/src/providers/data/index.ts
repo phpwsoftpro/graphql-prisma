@@ -7,15 +7,7 @@ import { createClient } from "graphql-ws";
 
 import { axiosInstance } from "./axios";
 
-// Lấy API_BASE_URL từ localStorage, fallback nếu không có
-const getApiBaseUrl = () => {
-  if (typeof window !== "undefined") {
-    return localStorage.getItem("apiUrl") || "http://localhost:8000";
-  }
-  return "http://192.168.1.51:8000";
-};
-
-export const API_BASE_URL = getApiBaseUrl();
+export const API_BASE_URL = "http://localhost:8000";
 export const API_URL = `${API_BASE_URL}/graphql`;
 export const WS_URL = `ws://${API_BASE_URL}/graphql`;
 

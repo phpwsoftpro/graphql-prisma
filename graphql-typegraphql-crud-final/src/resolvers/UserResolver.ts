@@ -93,8 +93,17 @@ export class UserResolver {
   async createUser(
     @Arg("input", () => CreateUserInput) input: CreateUserInput
   ) {
+    // Kiểm tra email đã tồn tại chưa
+    const existingUser = await prisma.user.findUnique({
+      where: { email: input.user.email }
+    });
+
+    if (existingUser) {
+      throw new Error("User with this email already exists");
+    }
+
     return prisma.user.create({
-      data: input.input,
+      data: input.user,
     });
   }
 
