@@ -32,7 +32,7 @@ export class UserInput {
 @InputType()
 export class CreateUserInput {
   @Field(() => UserInput)
-  input: UserInput
+  user: UserInput
 }
 @InputType()
 export class UpdateUserInput {
