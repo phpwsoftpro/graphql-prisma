@@ -12,7 +12,7 @@ const getApiBaseUrl = () => {
   if (typeof window !== "undefined") {
     return localStorage.getItem("apiUrl") || "http://localhost:8000";
   }
-  return "http://localhost:8000";
+  return "http://192.168.1.51:8000";
 };
 
 export const API_BASE_URL = getApiBaseUrl();
