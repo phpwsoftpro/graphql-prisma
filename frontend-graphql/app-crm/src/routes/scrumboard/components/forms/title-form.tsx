@@ -43,8 +43,7 @@ type Props = {
 
 export const TitleForm = ({ initialValues, isLoading }: Props) => {
   const invalidate = useInvalidate();
-  console.log('TitleForm initialValues:', initialValues);
-  console.log('TitleForm initialValues.id type:', typeof initialValues.id);
+ 
   const { formProps } = useForm<Task, HttpError, TaskUpdateInput>({
     queryOptions: {
       enabled: false,
@@ -67,7 +66,7 @@ export const TitleForm = ({ initialValues, isLoading }: Props) => {
       },
     },
   });
-  console.log('TitleForm formProps:', formProps);
+  
   useEffect(() => {
     formProps.form?.setFieldsValue(initialValues);
   }, [initialValues.title]);

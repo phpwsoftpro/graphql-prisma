@@ -191,17 +191,7 @@ async function main() {
     skipDuplicates: true,
   });
 
-  // 15. Checklist
-  await prisma.checklist.createMany({
-    data: [
-      { title: "Checklist 1", checked: false, taskId: 1 },
-      { title: "Checklist 2", checked: true,  taskId: 2 },
-      { title: "Checklist 3", checked: false, taskId: 3 },
-      { title: "Checklist 4", checked: true,  taskId: 4 },
-      { title: "Checklist 5", checked: false, taskId: 5 },
-    ],
-    skipDuplicates: true,
-  });
+ 
 
   // 16. Note
   await prisma.note.createMany({

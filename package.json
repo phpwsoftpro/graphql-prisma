@@ -4,6 +4,7 @@
     "prisma": "^6.9.0"
   },
   "dependencies": {
+    "bcryptjs": "^3.0.2",
     "type-graphql": "^2.0.0-rc.2"
   }
 }

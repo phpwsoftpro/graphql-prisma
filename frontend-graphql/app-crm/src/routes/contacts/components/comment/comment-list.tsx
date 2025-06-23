@@ -195,7 +195,7 @@ const { data } = useList<ContactNote>({
     
   }
   });
-  console.log(data?.data);
+  
   return (
     <Space
       size={16}

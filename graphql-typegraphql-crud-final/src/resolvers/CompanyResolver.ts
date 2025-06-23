@@ -5,7 +5,7 @@ import { CompanyListResponse } from "../schema/CompanyListResponse";
 import { OffsetPaging } from "../schema/PagingInput";
 import { CompanyFilter } from "../schema/CompanyFilter";
 import { CompanySort } from "../schema/CompanySort";
-import { CreateCompanyInput, UpdateCompanyInput, DeleteCompanyInput } from "../schema/CompanyInput";
+import {  UpdateCompanyInput, DeleteCompanyInput, CreateOneCompanyInput } from "../schema/CompanyInput";
 
 const prisma = new PrismaClient();
 
@@ -105,7 +105,7 @@ export class CompanyResolver {
   }
 
   @Mutation(() => Company )
-  async createCompany(@Arg("input", () => CreateCompanyInput) input: CreateCompanyInput) {
+  async createOneCompany(@Arg("input", () => CreateOneCompanyInput) input: CreateOneCompanyInput) {
     const { salesOwnerId, ...rest } = input.company;
     const company = await prisma.company.create({
       data: {
