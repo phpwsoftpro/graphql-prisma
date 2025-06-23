@@ -58,7 +58,7 @@ export const ProjectCard = ({
   const { token } = theme.useToken();
   const { edit } = useNavigation();
   const { mutate } = useDelete();
-  console.log("ProjectCard users:", users);
+  
   const dropdownItems = useMemo(() => {
     const dropdownItems: MenuProps["items"] = [
       {

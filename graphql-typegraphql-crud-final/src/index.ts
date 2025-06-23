@@ -15,6 +15,7 @@ import { TaskStageResolver } from "./resolvers/TaskStageResolver";
 import { TaskResolver } from "./resolvers/TaskResolver";
 import { CategoryResolver } from "./resolvers/CategoryResolver";
 import { EventCategoryResolver } from "./resolvers/EventCategoryResolver";
+import { AuthResolver } from "./resolvers/AuthResolver";
 
 import { AuditResolver } from "./resolvers/AuditResolver";
 import { ProductResolver } from "./resolvers/ProductResolver";
@@ -42,6 +43,7 @@ async function bootstrap() {
       TaskResolver,
       CategoryResolver,
       EventCategoryResolver,
+      AuthResolver,
       AuditResolver,
       ProductResolver,
       QuoteResolver,

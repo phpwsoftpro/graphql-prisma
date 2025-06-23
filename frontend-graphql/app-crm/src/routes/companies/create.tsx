@@ -36,7 +36,7 @@ import type {
 } from "@/graphql/types";
 import { useUsersSelect } from "@/hooks/useUsersSelect";
 
-import { COMPANY_CREATE_MUTATION } from "./queries";
+import { COMPANY_CREATE_MUTATION, CREATE_MANY_CONTACTS_MUTATION } from "./queries";
 
 type Company = GetFields<CreateCompanyMutation>;
 
@@ -56,6 +56,7 @@ export const CompanyCreatePage = ({ isOverModal }: Props) => {
   const [searchParams] = useSearchParams();
   const { pathname } = useLocation();
   const go = useGo();
+  
 //map id to number 
   const { formProps, modalProps, close, onFinish } = useModalForm<
     Company,
@@ -78,6 +79,7 @@ export const CompanyCreatePage = ({ isOverModal }: Props) => {
   const { mutateAsync: createManyMutateAsync } = useCreateMany({
     resource: "contacts",
     successNotification: false,
+   
   });
 
   return (
@@ -116,18 +118,22 @@ export const CompanyCreatePage = ({ isOverModal }: Props) => {
               name: values.name,
               salesOwnerId: values.salesOwnerId,
             });
-
             const createdCompany = (data as CreateResponse<Company>)?.data;
-
+            
             if ((values.contacts ?? [])?.length > 0) {
-              await createManyMutateAsync({
-                values:
-                  values.contacts?.map((contact) => ({
+              
+              try {
+                await createManyMutateAsync({
+                  values: values.contacts?.map((contact) => ({
                     ...contact,
                     companyId: Number(createdCompany.id),
                     salesOwnerId: Number(createdCompany.salesOwner.id),
                   })) ?? [],
-              });
+                });
+               
+              } catch (err) {
+                console.error("Error when calling createManyMutateAsync", err);
+              }
             }
 
             go({

@@ -94,8 +94,7 @@ export const SalesPage: FC<PropsWithChildren> = ({ children }) => {
       gqlQuery: SALES_DEALS_QUERY,
     },
   });
-  console.log(deals?.data);
-  console.log("Stages data:", stages?.data);
+  
   // its convert Deal[] to DealStage[] (group by stage) for kanban
   // its also group `won` and `lost` stages
   // uses `stages` and `tasks` from useList hooks
@@ -131,8 +130,7 @@ export const SalesPage: FC<PropsWithChildren> = ({ children }) => {
       (stage) => stage.title !== "WON" && stage.title !== "LOST",
     );
 
-    console.log("Grouped:", grouped);
-    console.log("stageAll:", stageAll);
+  
 
     return {
       stageUnassigned,

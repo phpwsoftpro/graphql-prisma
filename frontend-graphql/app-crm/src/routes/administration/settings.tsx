@@ -1,6 +1,7 @@
 import { FilterDropdown, useTable } from "@refinedev/antd";
 import { getDefaultFilter } from "@refinedev/core";
 import type { GetFieldsFromList } from "@refinedev/nestjs-query";
+import React, { useState, useEffect } from "react";
 
 import {
   EnvironmentOutlined,
@@ -240,6 +241,18 @@ const companyInfo = [
 ];
 
 export const CompanyInfo = () => {
+  const [apiUrl, setApiUrl] = useState("");
+
+  useEffect(() => {
+    const storedUrl = localStorage.getItem("apiUrl") || "";
+    setApiUrl(storedUrl);
+  }, []);
+
+  const handleApiUrlChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setApiUrl(e.target.value);
+    localStorage.setItem("apiUrl", e.target.value);
+  };
+
   return (
     <Card
       title={
@@ -272,6 +285,23 @@ export const CompanyInfo = () => {
             </div>
           );
         })}
+        {/* API URL Input */}
+        <div className={styles.listItem} style={{ marginTop: 24 }}>
+          <div>
+            <GlobalOutlined className="tertiary" />
+          </div>
+          <div className={styles.listItemContent}>
+            <Text size="xs" className="tertiary">
+              API URL
+            </Text>
+            <Input
+              placeholder="Enter API URL"
+              value={apiUrl}
+              onChange={handleApiUrlChange}
+              className={cn(styles.listItemContent, "primary")}
+            />
+          </div>
+        </div>
       </div>
     </Card>
   );

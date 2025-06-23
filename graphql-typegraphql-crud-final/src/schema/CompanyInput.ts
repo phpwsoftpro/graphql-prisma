@@ -29,7 +29,7 @@ export class CompanyInput {
 }
 
 @InputType()
-export class CreateCompanyInput {
+export class CreateOneCompanyInput {
   @Field(() => CompanyInput)
   company: CompanyInput;
 }
