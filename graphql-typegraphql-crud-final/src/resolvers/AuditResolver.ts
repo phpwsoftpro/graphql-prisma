@@ -155,12 +155,11 @@ export class AuditResolver {
     ]);
 
     // Để FieldResolver xử lý changes, không trả về trực tiếp
-    const mappedNodes = nodes.map(audit => ({
+    const mappedNodes = nodes.map((audit) => ({
       ...audit,
       changes: [],
       userId: audit.userId === null ? undefined : audit.userId,
-      
-    }));
+    })) as unknown as Audit[];
 
     return { nodes: mappedNodes, totalCount };
   }

@@ -15,6 +15,9 @@ export class Product {
   unitPrice: number;
 
   @Field({ nullable: true })
+  status?: string;
+
+  @Field({ nullable: true })
   categoryId?: number;
 
   @Field()
