@@ -2,7 +2,9 @@ import type { FC } from "react";
 import { useState } from "react";
 import { Modal, Form, Input, InputNumber, Select, Spin, Checkbox, Row, Col, Tabs } from "antd";
 import { useNavigate } from "react-router-dom";
+import { type HttpError, useCreate } from "@refinedev/core";
 import styles from "./index.module.css";
+import { PRODUCT_CREATE_MUTATION } from "../../queries";
 
 const PRODUCT_TYPES = [
   { value: "consumable", label: "Consumable" },
@@ -61,6 +63,10 @@ export const ProductsFormModal: FC<Props> = ({ action, onCancel, onMutationSucce
   const [open, setOpen] = useState(true);
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+  const { mutateAsync } = useCreate({
+    resource: "products",
+    meta: { gqlMutation: PRODUCT_CREATE_MUTATION },
+  });
 
   // Theo dõi giá trị checkbox
   const canBeSold = Form.useWatch("canBeSold", form);
@@ -79,15 +85,22 @@ export const ProductsFormModal: FC<Props> = ({ action, onCancel, onMutationSucce
       title={action === "create" ? "Create Product" : "Edit Product"}
       onCancel={handleClose}
       onOk={() => {
-        form.validateFields().then((values) => {
+        form.validateFields().then(async (values) => {
           setLoading(true);
-          // TODO: Gọi mutation tạo/sửa sản phẩm ở đây
-          setTimeout(() => {
-            setLoading(false);
+          try {
+            await mutateAsync({
+              values: {
+                title: values.name,
+                description: values.description,
+                unitPrice: Number(values.salesPrice || 0),
+              },
+            });
             onMutationSuccess?.();
             setOpen(false);
             navigate("/products");
-          }, 800);
+          } finally {
+            setLoading(false);
+          }
         });
       }}
       confirmLoading={loading}
