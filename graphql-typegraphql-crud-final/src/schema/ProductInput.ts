@@ -12,6 +12,9 @@ export class CreateProductInput {
   unitPrice: number;
 
   @Field({ nullable: true })
+  status?: string;
+
+  @Field({ nullable: true })
   categoryId?: number;
 }
 
@@ -25,6 +28,9 @@ export class UpdateProductInput {
 
   @Field({ nullable: true })
   unitPrice?: number;
+
+  @Field({ nullable: true })
+  status?: string;
 
   @Field({ nullable: true })
   categoryId?: number;
