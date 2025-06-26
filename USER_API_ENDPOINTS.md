@@ -33,3 +33,30 @@ The endpoint responds with a JSON array of users with the fields listed above.
 
 - **Endpoint**: `DELETE /quotes/:id`
 - **Returns**: `{ "success": true }` on success.
+
+## List Products
+
+- **Endpoint**: `GET /products`
+- **Returns**: product objects.
+
+## Get Product
+
+- **Endpoint**: `GET /products/:id`
+- **Returns**: a single product object. Returns `404` if not found.
+
+## Create Product
+
+- **Endpoint**: `POST /products`
+- **Body**: `title`, `description`, `unitPrice`, `categoryId`
+- **Returns**: the created product object.
+
+## Update Product
+
+- **Endpoint**: `PUT /products/:id`
+- **Body**: fields to update from the create payload
+- **Returns**: the updated product object.
+
+## Delete Product
+
+- **Endpoint**: `DELETE /products/:id`
+- **Returns**: `{ "success": true }` on success.
