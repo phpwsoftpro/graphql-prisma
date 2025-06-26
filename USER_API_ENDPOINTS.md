@@ -47,7 +47,7 @@ The endpoint responds with a JSON array of users with the fields listed above.
 ## Create Product
 
 - **Endpoint**: `POST /products`
-- **Body**: `title`, `description`, `unitPrice`, `categoryId`
+- **Body**: `title`, `description`, `unitPrice`, `status`, `categoryId`
 - **Returns**: the created product object.
 
 ## Update Product
