@@ -1,14 +1,10 @@
 import type { FC } from "react";
-import { useState } from "react";
 import { Modal, Form, Input, InputNumber, Select, Spin, Checkbox, Row, Col, Tabs } from "antd";
 import { useNavigate } from "react-router-dom";
-import { type HttpError, useCreate } from "@refinedev/core";
+import { useModalForm } from "@refinedev/antd";
+import { type HttpError } from "@refinedev/core";
 import styles from "./index.module.css";
-<<<<<<< 2v6heo-codex/fix--add-product--button-issue
 import { PRODUCT_CREATE_MUTATION } from "../../queries";
-=======
-import { PRODUCT_CREATE_MUTATION } from "../queries";
->>>>>>> lebad_dev
 
 const PRODUCT_TYPES = [
   { value: "consumable", label: "Consumable" },
@@ -63,58 +59,49 @@ type Props = {
 };
 
 export const ProductsFormModal: FC<Props> = ({ action, onCancel, onMutationSuccess }) => {
-  const [form] = Form.useForm();
-  const [open, setOpen] = useState(true);
-  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
-  const { mutateAsync } = useCreate({
+  const { formProps, modalProps, close, onFinish } = useModalForm<any, HttpError, any>({
     resource: "products",
+    action,
+    defaultVisible: true,
+    redirect: false,
     meta: { gqlMutation: PRODUCT_CREATE_MUTATION },
+    onMutationSuccess: () => {
+      onMutationSuccess?.();
+      navigate("/products");
+    },
   });
 
   // Theo dõi giá trị checkbox
-  const canBeSold = Form.useWatch("canBeSold", form);
-  const canBePurchased = Form.useWatch("canBePurchased", form);
-  const productType = Form.useWatch("productType", form);
+  const canBeSold = Form.useWatch("canBeSold", formProps.form);
+  const canBePurchased = Form.useWatch("canBePurchased", formProps.form);
+  const productType = Form.useWatch("productType", formProps.form);
 
   const handleClose = () => {
-    setOpen(false);
+    close();
     if (onCancel) onCancel();
     navigate("/products");
   };
 
   return (
     <Modal
-      open={open}
+      {...modalProps}
       title={action === "create" ? "Create Product" : "Edit Product"}
       onCancel={handleClose}
-      onOk={() => {
-        form.validateFields().then(async (values) => {
-          setLoading(true);
-          try {
-            await mutateAsync({
-              values: {
-                title: values.name,
-                description: values.description,
-                unitPrice: Number(values.salesPrice || 0),
-              },
-            });
-            onMutationSuccess?.();
-            setOpen(false);
-            navigate("/products");
-          } finally {
-            setLoading(false);
-          }
-        });
-      }}
-      confirmLoading={loading}
       width={900}
       destroyOnClose
     >
-      <Spin spinning={loading}>
-        <Form 
-          form={form} 
+      <Spin spinning={modalProps.confirmLoading}>
+        <Form
+          {...formProps}
           layout="vertical"
+          onFinish={(values) => {
+            onFinish({
+              title: values.name,
+              description: values.description,
+              unitPrice: Number(values.salesPrice || 0),
+            });
+          }}
           initialValues={{
             productType: "consumable",
             invoicingPolicy: "ordered",
