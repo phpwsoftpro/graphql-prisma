@@ -4,7 +4,11 @@ import { Modal, Form, Input, InputNumber, Select, Spin, Checkbox, Row, Col, Tabs
 import { useNavigate } from "react-router-dom";
 import { type HttpError, useCreate } from "@refinedev/core";
 import styles from "./index.module.css";
+<<<<<<< 2v6heo-codex/fix--add-product--button-issue
+import { PRODUCT_CREATE_MUTATION } from "../../queries";
+=======
 import { PRODUCT_CREATE_MUTATION } from "../queries";
+>>>>>>> lebad_dev
 
 const PRODUCT_TYPES = [
   { value: "consumable", label: "Consumable" },
