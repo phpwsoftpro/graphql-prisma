@@ -45,8 +45,8 @@ export const RoleTag: FC<Props> = ({ role }) => {
       style={{
         textTransform: "capitalize",
       }}
-      color={variants[role].color}
-      icon={variants[role].icon}
+      color={variants[role]?.color}
+      icon={variants[role]?.icon}
     >
       {text}
     </Tag>

@@ -1,16 +1,11 @@
 import { Field, InputType } from "type-graphql";
 import { StringFilter } from "./StringFilter";
+import { IdFilter } from "./IdFilter";
 
 @InputType()
-class ContactIdFilter {
-  @Field({ nullable: true })
-  eq?: string;
-}
-
-@InputType()
-class ContactCompanyFilter {
-  @Field(() => ContactIdFilter, { nullable: true })
-  id?: ContactIdFilter;
+export class ContactFilterCompanyFilter {
+  @Field(() => IdFilter, { nullable: true })
+  id?: IdFilter;
 }
 
 @InputType()
@@ -18,14 +13,14 @@ export class ContactFilter {
   @Field(() => StringFilter, { nullable: true })
   name?: StringFilter;
 
-  @Field({ nullable: true })
-  email?: string;
+  @Field(() => StringFilter, { nullable: true })
+  email?: StringFilter;
 
-  @Field({ nullable: true })
-  phone?: string;
+  @Field(() => StringFilter, { nullable: true })
+  phone?: StringFilter;
 
-  @Field(() => ContactCompanyFilter, { nullable: true })
-  company?: ContactCompanyFilter;
+  @Field(() => ContactFilterCompanyFilter, { nullable: true })
+  company?: ContactFilterCompanyFilter;
 
   @Field({ nullable: true })
   status?: string;

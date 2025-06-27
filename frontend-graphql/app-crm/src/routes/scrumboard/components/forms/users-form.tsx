@@ -10,9 +10,10 @@ import type { GetFields } from "@refinedev/nestjs-query";
 import type { KanbanUpdateTaskMutation } from "../../../../graphql/types";
 
 type Task = GetFields<KanbanUpdateTaskMutation>;
-
+//ep kieu userIds thành string
 type Props = {
   initialValues: {
+    //ep kieu userIds thành string
     userIds?: { label: string; value: string }[];
   };
   cancelForm: () => void;

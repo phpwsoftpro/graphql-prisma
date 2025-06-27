@@ -11,8 +11,8 @@ function logAndStore(...args: any[]) {
       typeof arg === "object" ? JSON.stringify(arg, null, 2) : String(arg)
     )
     .join(" ");
-  console.log(message);
-  debugLogs.push(message);
+  // console.log(message);
+  // debugLogs.push(message);
 }
 
 // Trigger browser download of the logs

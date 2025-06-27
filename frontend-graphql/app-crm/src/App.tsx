@@ -21,7 +21,7 @@ import {
 } from "@/providers";
 
 import { AlgoliaSearchWrapper, FullScreenLoading, Layout } from "./components";
-import { useAutoLoginForDemo } from "./hooks";
+
 import { AuditLogPage, SettingsPage } from "./routes/administration";
 import {
   CalendarCreatePage,
@@ -73,16 +73,11 @@ import "@refinedev/antd/dist/reset.css";
 import "./styles/antd.css";
 import "./styles/fc.css";
 import "./styles/index.css";
+// add route users
+import { UsersListPage, UserCreatePage, UserEditPage, UserShowPage} from "./routes/users";
+
 
 const App: React.FC = () => {
-  // This hook is used to automatically login the user.
-  // We use this hook to skip the login page and demonstrate the application more quickly.
-  const { loading } = useAutoLoginForDemo();
-
-  if (loading) {
-    return <FullScreenLoading />;
-  }
-
   return (
     <AlgoliaSearchWrapper>
       <BrowserRouter>
@@ -281,6 +276,19 @@ const App: React.FC = () => {
                     <Route path="/administration" element={<Outlet />}>
                       <Route path="settings" element={<SettingsPage />} />
                       <Route path="audit-log" element={<AuditLogPage />} />
+                    </Route>
+                    <Route
+                      path="/users"
+                      element={
+                        <UsersListPage>
+                          <Outlet />
+                        </UsersListPage>
+                      }
+                    >
+                      <Route index element={null} />
+                      <Route path="show/:id" element={<UserShowPage />} />
+                      <Route path="create" element={<UserCreatePage />} />
+                      <Route path="edit/:id" element={<UserEditPage />} />
                     </Route>
                     <Route path="*" element={<ErrorComponent />} />
                   </Route>

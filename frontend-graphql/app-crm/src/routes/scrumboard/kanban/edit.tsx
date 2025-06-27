@@ -44,7 +44,9 @@ export const KanbanEditPage = () => {
     meta: { gqlQuery: KANBAN_GET_TASK_QUERY },
   });
 
-  const { description, completed, stage, dueDate, users, checklist, title, id } =
+  const id = data?.data?.id as number;
+
+  const { description, completed, stage, dueDate, users, checklist, title } =
     data?.data ?? {};
 
   return (
@@ -109,7 +111,7 @@ export const KanbanEditPage = () => {
           initialValues={{
             userIds: users?.map((user) => ({
               label: user.name,
-              value: Number(user.id),
+              value: user.id,
             })),
           }}
           cancelForm={() => setActiveKey(undefined)}

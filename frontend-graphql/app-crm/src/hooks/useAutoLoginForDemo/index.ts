@@ -22,7 +22,8 @@ export const useAutoLoginForDemo = () => {
   }, [isLoading]);
 
   useEffect(() => {
-    const shouldLogin = localStorage.getItem("auto_login") !== "false";
+    // Tắt tự động login - luôn trả về false
+    const shouldLogin = false; // localStorage.getItem("auto_login") !== "false";
     if (!shouldLogin) {
       setIsLoading(false);
       return;

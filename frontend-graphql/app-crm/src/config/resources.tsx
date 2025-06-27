@@ -8,6 +8,7 @@ import {
   ProjectOutlined,
   ShopOutlined,
   TeamOutlined,
+  UserOutlined,
 } from "@ant-design/icons";
 
 export const resources: IResourceItem[] = [
@@ -117,6 +118,18 @@ export const resources: IResourceItem[] = [
       label: "Contacts",
       // @ts-expect-error Ant Design Icon's v5.0.1 has an issue with @types/react@^18.2.66
       icon: <TeamOutlined />,
+    },
+  },
+  {
+    name: "users",
+    list: "/users",
+    create: "/users/create",
+    edit: "/users/edit/:id",
+    show: "/users/show/:id",
+    meta: {
+      label: "Users",
+      // @ts-expect-error Ant Design Icon's v5.0.1 has an issue with @types/react@^18.2.66
+      icon: <UserOutlined />,
     },
   },
   //parent menu sales for quotes, invoices and products

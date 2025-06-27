@@ -1,4 +1,4 @@
-import { Arg, ID, Mutation, Query, Resolver } from "type-graphql";
+import { Arg, ID, Mutation, Query, Resolver, UseMiddleware } from "type-graphql";
 import { PrismaClient } from "@prisma/client";
 import { Deal } from "../schema/Deal";
 import { CreateDealInput, UpdateDealInput } from "../schema/DealInput";
@@ -7,12 +7,14 @@ import { DealSort } from "../schema/DealSort";
 import { OffsetPaging } from "../schema/PagingInput";
 import { DealConnection } from "../schema/DealConnection";
 import { DealGroupByMonth } from "../schema/DealGroupByMonth";
+import { typeGraphqlAuth } from "../common/middleware/auth.middleware";
 
 const prisma = new PrismaClient();
 
 @Resolver(() => Deal)
 export class DealResolver {
   @Query(() => DealConnection)
+  @UseMiddleware(typeGraphqlAuth)
   async deals(
     @Arg("filter", () => DealFilter, { nullable: true }) filter: DealFilter,
     @Arg("sorting", () => [DealSort], { nullable: true }) sorting: DealSort[] = [],
@@ -80,6 +82,7 @@ export class DealResolver {
 
 
   @Query(() => Deal, { nullable: true })
+  @UseMiddleware(typeGraphqlAuth)
   async deal(@Arg("id", () => ID) id: string) {
     const result = await prisma.deal.findUnique({
       where: { id: Number(id) },
@@ -114,6 +117,7 @@ export class DealResolver {
   }
   //map id to number
   @Mutation(() => Deal)
+  @UseMiddleware(typeGraphqlAuth)
   async createDeal(@Arg("input") input: CreateDealInput) {
     const { dealContactId, dealOwnerId,companyId,stageId, ...rest } = input.deal;
     return prisma.deal.create({
@@ -134,6 +138,7 @@ export class DealResolver {
   }
 
   @Mutation(() => Deal, { nullable: true })
+  @UseMiddleware(typeGraphqlAuth)
   async updateDeal(
     @Arg("input") input: UpdateDealInput
   ) {
@@ -169,12 +174,14 @@ export class DealResolver {
   }
 
   @Mutation(() => Boolean)
+  @UseMiddleware(typeGraphqlAuth)
   async deleteDeal(@Arg("id", () => ID) id: number) {
     await prisma.deal.delete({ where: { id } });
     return true;
   }
 
   @Query(() => [DealGroupByMonth])
+  @UseMiddleware(typeGraphqlAuth)
   async groupByDealByMonth(
     @Arg("filter", () => DealFilter, { nullable: true }) filter: DealFilter
   ): Promise<DealGroupByMonth[]> {

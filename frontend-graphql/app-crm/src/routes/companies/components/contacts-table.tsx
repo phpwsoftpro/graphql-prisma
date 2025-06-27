@@ -46,7 +46,7 @@ import {
 
 type Contact = GetFieldsFromList<CompanyContactsTableQuery>;
 
-export const CompanyContactsTable: FC = () => {
+export const CompanyContactsTable: FC<{ isEdit?: boolean }> = ({ isEdit = true }) => {
   const params = useParams();
 
   const { tableProps, filters, setFilters } = useTable<Contact>({
@@ -129,7 +129,7 @@ export const CompanyContactsTable: FC = () => {
           )}
         </Space>
       }
-      actions={[<ContactForm key="1" />]}
+      actions={isEdit ? [<ContactForm key="1" />] : undefined}
       extra={
         <>
           <Text className="tertiary">Total contacts: </Text>
@@ -277,8 +277,8 @@ const ContactForm = () => {
 
     const contacts = args.contacts.map((contact) => ({
       ...contact,
-      companyId: id,
-      salesOwnerId: data?.data.salesOwner?.id || "",
+      companyId: Number(id),
+      salesOwnerId: Number(data?.data?.salesOwner?.id || ""),
     }));
 
     await mutateAsync({

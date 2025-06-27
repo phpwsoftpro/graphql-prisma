@@ -170,3 +170,11 @@ export const COMPANY_QUOTES_TABLE_QUERY = gql`
         }
     }
 `;
+//update company
+export const COMPANY_UPDATE_MUTATION = gql`
+    mutation CompanyUpdate($input: UpdateCompanyInput!) {
+        updateCompany(input: $input) {
+            id
+        }
+    }
+`;

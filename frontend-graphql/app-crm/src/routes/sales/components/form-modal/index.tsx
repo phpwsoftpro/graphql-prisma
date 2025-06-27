@@ -25,8 +25,6 @@ import {
   QUOTES_UPDATE_QUOTE_MUTATION,
 } from "../../quotes/queries";
 
-import { SelectOptionWithAvatar } from "@/components/select-option-with-avatar";
-
 type Props = {
   action: "create" | "edit";
   redirect?: RedirectAction;
@@ -45,7 +43,7 @@ export const QuotesFormModal: FC<Props> = ({
   const { list, replace } = useNavigation();
   const [searchParams] = useSearchParams();
 
-  const { formProps, modalProps, close, onFinish } = useModalForm<
+  const { formProps, modalProps, close } = useModalForm<
     GetFields<QuotesCreateQuoteMutation>,
     HttpError,
     GetVariables<QuotesCreateQuoteMutationVariables>
@@ -68,33 +66,23 @@ export const QuotesFormModal: FC<Props> = ({
 
   const {
     selectProps: selectPropsCompanies,
+    queryResult: { isLoading: isLoadingCompanies },
   } = useCompaniesSelect();
 
   const {
-    options: contactOptions,
-    isLoading: isContactLoading,
+    selectProps: selectPropsContacts,
+    queryResult: { isLoading: isLoadingContact },
   } = useContactsSelect();
 
   const {
-    options: userOptions,
-    isLoading: isUserLoading,
+    selectProps: selectPropsSalesOwners,
+    queryResult: { isLoading: isLoadingSalesOwners },
   } = useUsersSelect();
 
-  const loading = isUserLoading;
+  const loading =
+    isLoadingCompanies || isLoadingContact || isLoadingSalesOwners;
 
   const isHaveOverModal = pathname.includes("company-create");
-
-  const handleOnFinish = async (values: any) => {
-    await onFinish({
-      quote: {
-        ...values,
-        salesOwnerId: Array.isArray(values.salesOwnerId)
-          ? values.salesOwnerId[0]
-          : values.salesOwnerId,
-        status: values.status ?? "DRAFT",
-      },
-    });
-  };
 
   return (
     <Modal
@@ -113,7 +101,7 @@ export const QuotesFormModal: FC<Props> = ({
       }}
     >
       <Spin spinning={loading}>
-        <Form {...formProps} layout="vertical" onFinish={handleOnFinish}>
+        <Form {...formProps} layout="vertical">
           <Form.Item
             rules={[{ required: true }]}
             name="title"
@@ -124,15 +112,12 @@ export const QuotesFormModal: FC<Props> = ({
           <Form.Item
             rules={[{ required: true }]}
             name={["salesOwnerId"]}
-            initialValue={formProps?.initialValues?.salesOwner?._id}
+            initialValue={formProps?.initialValues?.salesOwner?.id}
             label="Sales owner"
           >
             <Select
-              style={{ width: "100%" }}
-              options={userOptions}
-              loading={isUserLoading}
+              {...selectPropsSalesOwners}
               placeholder="Please select user"
-              mode="multiple"
             />
           </Form.Item>
           <Form.Item
@@ -167,19 +152,7 @@ export const QuotesFormModal: FC<Props> = ({
             label="Quote Contact"
           >
             <Select
-              style={{ width: "100%" }}
-              options={
-                (contactOptions ?? []).map((contact: any) => ({
-                  value: contact.value,
-                  label: (
-                    <SelectOptionWithAvatar
-                      name={contact.label}
-                      avatarUrl={contact.avatarUrl ?? undefined}
-                    />
-                  ),
-                }))
-              }
-              loading={isContactLoading}
+              {...selectPropsContacts}
               placeholder="Please select contact"
             />
           </Form.Item>

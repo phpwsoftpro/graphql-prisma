@@ -1,8 +1,8 @@
 import gql from "graphql-tag";
 
 export const COMPANY_CREATE_MUTATION = gql`
-    mutation CreateCompany($input: CreateCompanyInput!) {
-        createCompany(input: $input) {
+    mutation CreateCompany($input: CreateOneCompanyInput!) {
+        createOneCompany(input: $input) {
             id
             name
             salesOwner {
@@ -12,6 +12,16 @@ export const COMPANY_CREATE_MUTATION = gql`
             }
         }
     }
+`;
+
+export const CREATE_MANY_CONTACTS_MUTATION = gql`
+  mutation createManyContacts($values: [ContactCreateInput!]!) {
+    createManyContacts(data: $values) {
+      id
+      name
+      email
+    }
+  }
 `;
 
 export const COMPANIES_TABLE_QUERY = gql`

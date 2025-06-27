@@ -5,7 +5,7 @@ import { QuoteListResponse } from "../schema/QuoteListResponse";
 import { QuoteFilter } from "../schema/QuoteFilter";
 import { QuoteSort } from "../schema/QuoteSort";
 import { OffsetPaging } from "../schema/PagingInput";
-import { CreateQuoteInput, UpdateQuoteInput } from "../schema/QuoteInput";
+import { CreateQuoteInput, DeleteQuoteInput, UpdateQuoteInput } from "../schema/QuoteInput";
 
 const prisma = new PrismaClient();
 
@@ -110,7 +110,7 @@ export class QuoteResolver {
   @Query(() => Quote, { nullable: true })
   async quote(@Arg("id", () => ID) id: number) {
     const quote = await prisma.quote.findUnique({
-      where: { id },
+      where: { id: Number(id) },
       include: {
         company: true,
         salesOwner: true,
@@ -141,8 +141,24 @@ export class QuoteResolver {
   @Mutation(() => Quote)
   async createQuote(@Arg("input", () => CreateQuoteInput) input: CreateQuoteInput) {
     const quoteData = input.quote;
+    const { companyId, salesOwnerId, contactId, ...rest } = quoteData;
+    const data: any = { 
+      ...rest,
+      subTotal: 0,  // Default value
+      total: 0,     // Default value
+      status: quoteData.status || 'DRAFT'  // Default status if not provided
+    };
+    if (companyId !== undefined) {
+      data.company = { connect: { id: Number(companyId) } };
+    }
+    if (salesOwnerId !== undefined) {
+      data.salesOwner = { connect: { id: Number(salesOwnerId) } };
+    }
+    if (contactId !== undefined) {
+      data.contact = { connect: { id: Number(contactId) } };
+    }
     const quote = await prisma.quote.create({
-      data: quoteData,
+      data,
       include: {
         company: true,
         salesOwner: true,
@@ -173,13 +189,20 @@ export class QuoteResolver {
     @Arg("input", () => UpdateQuoteInput) input: UpdateQuoteInput
   ) {
     const { id, update } = input;
-    const updateData = Object.fromEntries(
-      Object.entries(update).filter(([, value]) => value !== undefined)
-    );
-
+    const { companyId, salesOwnerId, contactId, ...rest } = update;
+    const data: any = { ...rest };
+    if (companyId !== undefined) {
+      data.company = companyId ? { connect: { id: Number(companyId) } } : { disconnect: true };
+    }
+    if (salesOwnerId !== undefined) {
+      data.salesOwner = salesOwnerId ? { connect: { id: Number(salesOwnerId) } } : { disconnect: true };
+    }
+    if (contactId !== undefined) {
+      data.contact = contactId ? { connect: { id: Number(contactId) } } : { disconnect: true };
+    }
     const quote = await prisma.quote.update({
-      where: { id },
-      data: updateData,
+      where: { id: Number(id) },
+      data,
       include: {
         company: true,
         salesOwner: true,
@@ -205,9 +228,9 @@ export class QuoteResolver {
     };
   }
 
-  @Mutation(() => Boolean)
-  async deleteQuote(@Arg("id", () => ID) id: number) {
-    await prisma.quote.delete({ where: { id } });
-    return true;
+  @Mutation(() => Quote)
+  async deleteQuote(@Arg("input", () => DeleteQuoteInput) input: DeleteQuoteInput) {
+    return prisma.quote.delete({ where: { id: Number(input.id) } });
+   
   }
 }

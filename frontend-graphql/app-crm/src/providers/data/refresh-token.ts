@@ -27,7 +27,7 @@ export const refreshTokens = async () => {
 
   try {
     const response = await request<RefreshTokenMutation>(
-      "http://localhost:8000",
+      "http://localhost:8000/graphql",
       REFRESH_TOKEN_MUTATION,
       {
         refreshToken: currentRefreshToken,
