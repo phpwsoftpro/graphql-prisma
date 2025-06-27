@@ -167,3 +167,20 @@ export const KANBAN_TASKS_QUERY = gql`
         }
     }
 `;
+//delete task
+export const KANBAN_DELETE_TASK_MUTATION = gql`
+    mutation KanbanDeleteTask($input: DeleteTaskInput!) {
+        deleteTask(input: $input) {
+            id
+        }
+    }
+`;
+//delete task stage
+export const KANBAN_DELETE_TASK_STAGE_MUTATION = gql`
+    mutation KanbanDeleteTaskStage($input: DeleteTaskStageInput!) {
+        deleteTaskStage(input: $input) {
+            id
+        }
+    }
+`;
+//update task stage

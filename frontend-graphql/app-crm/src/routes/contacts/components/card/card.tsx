@@ -27,6 +27,10 @@ export const ContactCard: React.FC<ContactCardProps> = ({ contact }) => {
 
   if (!contact) return <ContactCardSkeleton />;
 
+  // Lấy role của user hiện tại từ localStorage
+  const currentUser = JSON.parse(localStorage.getItem("user") || "{}");
+  const isAdmin = currentUser.role === "ADMIN";
+
   const { name, email, status, jobTitle, company, avatarUrl, id } = contact;
   const items: MenuProps["items"] = [
     {
@@ -38,7 +42,7 @@ export const ContactCard: React.FC<ContactCardProps> = ({ contact }) => {
         show("contacts", id, "replace");
       },
     },
-    {
+    ...(isAdmin ? [{
       label: "Delete",
       key: "delete",
       danger: true,
@@ -51,7 +55,7 @@ export const ContactCard: React.FC<ContactCardProps> = ({ contact }) => {
           meta: { gqlMutation: CONTACT_DELETE_MUTATION },
         });
       },
-    },
+    }] : []),
   ];
 
   return (

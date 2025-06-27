@@ -21,8 +21,9 @@ import type {
 } from "@/graphql/schema.types";
 import type { CompanyInfoQuery } from "@/graphql/types";
 import { currencyNumber } from "@/utilities";
+import { capitalizeWords } from "@/utilities/format-string";
 
-import { COMPANY_INFO_QUERY } from "./queries";
+import { COMPANY_INFO_QUERY, COMPANY_UPDATE_MUTATION } from "./queries";
 
 type Company = GetFields<CompanyInfoQuery>;
 
@@ -51,7 +52,7 @@ export const CompanyInfoForm = () => {
     country,
     website,
   } = data || {};
-
+  
   const getActiveForm = (args: { formName: keyof Company }) => {
     const { formName } = args;
 
@@ -67,6 +68,10 @@ export const CompanyInfoForm = () => {
   };
 
   const loading = queryResult?.isLoading;
+
+  // Lấy role của user hiện tại từ localStorage
+  const currentUser = JSON.parse(localStorage.getItem("user") || "{}");
+  const isAdmin = currentUser.role === "ADMIN";
 
   return (
     <Card
@@ -99,10 +104,16 @@ export const CompanyInfoForm = () => {
           name: "companySize",
           label: "Company size",
         }}
-        view={<Text>{companySize}</Text>}
+        view={<Text>{capitalizeWords(companySize || "")}</Text>}
         onClick={() => setActiveForm("companySize")}
         onUpdate={() => setActiveForm(undefined)}
         onCancel={() => setActiveForm(undefined)}
+        useFormProps={{
+          meta: {
+            gqlMutation: COMPANY_UPDATE_MUTATION,
+          },
+        }}
+        isEdit={isAdmin}
       >
         <Select
           autoFocus
@@ -129,6 +140,12 @@ export const CompanyInfoForm = () => {
         onClick={() => setActiveForm("totalRevenue")}
         onUpdate={() => setActiveForm(undefined)}
         onCancel={() => setActiveForm(undefined)}
+        useFormProps={{
+          meta: {
+            gqlMutation: COMPANY_UPDATE_MUTATION,
+          },
+        }}
+        isEdit={isAdmin}
       >
         <InputNumber
           autoFocus
@@ -153,10 +170,16 @@ export const CompanyInfoForm = () => {
           name: "industry",
           label: "Industry",
         }}
-        view={<Text>{industry}</Text>}
+        view={<Text>{capitalizeWords(industry || "")}</Text>}
         onClick={() => setActiveForm("industry")}
         onUpdate={() => setActiveForm(undefined)}
         onCancel={() => setActiveForm(undefined)}
+        useFormProps={{
+          meta: {
+            gqlMutation: COMPANY_UPDATE_MUTATION,
+          },
+        }}
+        isEdit={isAdmin}
       >
         <Select
           autoFocus
@@ -179,10 +202,16 @@ export const CompanyInfoForm = () => {
           name: "businessType",
           label: "Business type",
         }}
-        view={<Text>{businessType}</Text>}
+        view={<Text>{businessType || ""}</Text>}
         onClick={() => setActiveForm("businessType")}
         onUpdate={() => setActiveForm(undefined)}
         onCancel={() => setActiveForm(undefined)}
+        useFormProps={{
+          meta: {
+            gqlMutation: COMPANY_UPDATE_MUTATION,
+          },
+        }}
+        isEdit={isAdmin}
       >
         <Select
           autoFocus
@@ -205,10 +234,16 @@ export const CompanyInfoForm = () => {
           name: "country",
           label: "Country",
         }}
-        view={<Text>{country}</Text>}
+        view={<Text>{capitalizeWords(country || "")}</Text>}
         onClick={() => setActiveForm("country")}
         onUpdate={() => setActiveForm(undefined)}
         onCancel={() => setActiveForm(undefined)}
+        useFormProps={{
+          meta: {
+            gqlMutation: COMPANY_UPDATE_MUTATION,
+          },
+        }}
+        isEdit={isAdmin}
       >
         <Input
           autoFocus
@@ -231,10 +266,16 @@ export const CompanyInfoForm = () => {
           name: "website",
           label: "Website",
         }}
-        view={<Text>{website}</Text>}
+        view={<Text>{capitalizeWords(website || "")}</Text>}
         onClick={() => setActiveForm("website")}
         onUpdate={() => setActiveForm(undefined)}
         onCancel={() => setActiveForm(undefined)}
+        useFormProps={{
+          meta: {
+            gqlMutation: COMPANY_UPDATE_MUTATION,
+          },
+        }}
+        isEdit={isAdmin}
       >
         <Input
           autoFocus

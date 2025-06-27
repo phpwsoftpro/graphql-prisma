@@ -36,14 +36,14 @@ const TitleInput = ({
 type Props = {
   initialValues: {
     title?: Task["title"];
-    id?: Task["id"];
+    id?: any;
   };
   isLoading?: boolean;
 };
 
 export const TitleForm = ({ initialValues, isLoading }: Props) => {
   const invalidate = useInvalidate();
-  console.log(initialValues);
+ 
   const { formProps } = useForm<Task, HttpError, TaskUpdateInput>({
     queryOptions: {
       enabled: false,
@@ -66,7 +66,7 @@ export const TitleForm = ({ initialValues, isLoading }: Props) => {
       },
     },
   });
-
+  
   useEffect(() => {
     formProps.form?.setFieldsValue(initialValues);
   }, [initialValues.title]);

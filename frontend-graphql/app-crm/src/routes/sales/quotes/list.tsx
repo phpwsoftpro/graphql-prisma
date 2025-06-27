@@ -27,7 +27,7 @@ import type { QuotesTableQuery } from "@/graphql/types";
 import { useCompaniesSelect } from "@/hooks/useCompaniesSelect";
 import { useUsersSelect } from "@/hooks/useUsersSelect";
 import { currencyNumber } from "@/utilities";
-import { QUOTES_TABLE_QUERY } from "./queries";
+import { QUOTES_DELETE_QUOTE_MUTATION, QUOTES_TABLE_QUERY } from "./queries";
 
 type Quote = GetFieldsFromList<QuotesTableQuery>;
 
@@ -39,7 +39,8 @@ const statusOptions: { label: string; value: QuoteStatus }[] = [
 
 export const QuotesListPage: FC<PropsWithChildren> = ({ children }) => {
   const screens = Grid.useBreakpoint();
-
+  const currentUser = JSON.parse(localStorage.getItem("user") || "{}");
+  const isAdmin = currentUser.role === "ADMIN";
   const {
     tableProps,
     searchFormProps,
@@ -243,18 +244,21 @@ export const QuotesListPage: FC<PropsWithChildren> = ({ children }) => {
                   recordItemId={record.id}
                   style={{ backgroundColor: "transparent" }}
                 />
-                <EditButton
+                {isAdmin && <EditButton
                   hideText
                   size="small"
                   recordItemId={record.id}
                   style={{ backgroundColor: "transparent" }}
-                />
-                <DeleteButton
+                />}
+                {isAdmin && <DeleteButton
                   hideText
                   size="small"
                   recordItemId={record.id}
                   style={{ backgroundColor: "transparent" }}
-                />
+                  meta={{
+                    gqlMutation: QUOTES_DELETE_QUOTE_MUTATION,
+                  }}
+                />}
               </Space>
             )}
           />

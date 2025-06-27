@@ -21,18 +21,24 @@ services:
       DATABASE_URL: ${DATABASE_URL}
     ports:
       - '8000:8000'
+    volumes:
+      # Mount source code for hot reload
+      - ./src:/app/src
+      - ./prisma:/app/prisma
+      - ./package.json:/app/package.json
+      - ./tsconfig.json:/app/tsconfig.json
     command: >
       sh -c "
         echo '📦 Installing dependencies...' &&
-        pnpm install &&
+        npm install &&
         echo '🧬 Generating Prisma client...' &&
         npx prisma generate &&
         echo '⏳ Waiting for PostgreSQL...' &&
         until nc -z postgres 5432; do sleep 1; done &&
         echo '🚀 Creating and applying migrations...' &&
         npx prisma migrate dev --name init --skip-seed &&
-        echo '🟢 Starting development server on port 8000...' &&
-        pnpm dev
+        echo '🟢 Starting development server with hot reload on port 8000...' &&
+        npm run dev
       "
 
 volumes:

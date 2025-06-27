@@ -1,7 +1,7 @@
 import type { AuthProvider } from "@refinedev/core";
 
 import type { User } from "@/graphql/schema.types";
-import { disableAutoLogin, enableAutoLogin } from "@/hooks";
+import { disableAutoLogin } from "@/hooks";
 
 import { API_BASE_URL, API_URL, client, dataProvider } from "./data";
 
@@ -31,7 +31,7 @@ export const demoCredentials = {
 };
 
 export const authProvider: AuthProvider = {
-  login: async ({ email, providerName, accessToken, refreshToken }) => {
+  login: async ({ email, password, providerName, accessToken, refreshToken }) => {
     if (accessToken && refreshToken) {
       client.setHeaders({
         Authorization: `Bearer ${accessToken}`,
@@ -60,14 +60,25 @@ export const authProvider: AuthProvider = {
         method: "post",
         headers: {},
         meta: {
-          variables: { email },
+          variables: { email, password },
           rawQuery: `
-                mutation Login($email: String!) {
+                mutation Login($email: String!, $password: String!) {
                     login(loginInput: {
                       email: $email
+                      password: $password
                     }) {
                       accessToken,
-                      refreshToken
+                      refreshToken,
+                      user {
+                        id
+                        name
+                        email
+                        role
+                        avatarUrl
+                        jobTitle
+                        phone
+                        timezone
+                      }
                     }
                   }
                 `,
@@ -77,10 +88,9 @@ export const authProvider: AuthProvider = {
       client.setHeaders({
         Authorization: `Bearer ${data.login.accessToken}`,
       });
-
-      enableAutoLogin(email);
       localStorage.setItem("access_token", data.login.accessToken);
       localStorage.setItem("refresh_token", data.login.refreshToken);
+      localStorage.setItem("user", JSON.stringify(data.login.user));
 
       return {
         success: true,
@@ -118,7 +128,7 @@ export const authProvider: AuthProvider = {
         },
       });
 
-      enableAutoLogin(email);
+      // enableAutoLogin(email); // Tắt auto login
 
       return {
         success: true,
@@ -158,7 +168,11 @@ export const authProvider: AuthProvider = {
     return { error };
   },
   check: async () => {
-    return { authenticated: true };
+    const token = localStorage.getItem("access_token");
+    if (token) {
+      return { authenticated: true };
+    }
+    return { authenticated: false };
   },
   forgotPassword: async () => {
     return {

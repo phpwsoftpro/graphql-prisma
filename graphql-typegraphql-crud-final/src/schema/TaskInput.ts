@@ -1,4 +1,14 @@
 import { Field, InputType, Int } from "type-graphql";
+import { GraphQLJSON } from "graphql-type-json";
+
+@InputType()
+export class ChecklistItemInput {
+  @Field()
+  title: string;
+
+  @Field()
+  checked: boolean;
+}
 
 @InputType()
 export class TaskInput {
@@ -22,15 +32,18 @@ export class TaskInput {
 
   @Field({ nullable: true })
   projectId?: number;
-
-  @Field(() => [Int], { nullable: true })
-  userIds?: number[];
+  //string 
+  @Field(() => [String], { nullable: true })
+  userIds?:   string[];
+  //checklist
+  @Field(() => [ChecklistItemInput], { nullable: true })
+  checklist?: ChecklistItemInput[];
 }
-
+//type là any được không  
 @InputType()
 export class UpdateTaskInput {
-  @Field(() => Int)
-  id: any;
+  @Field(() => String)
+  id: string;
 
   @Field(() => TaskInput)
   update: TaskInput;
@@ -40,4 +53,10 @@ export class UpdateTaskInput {
 export class CreateTaskInput {
   @Field(() => TaskInput)
   task: TaskInput;
+}
+//delete task input
+@InputType()
+export class DeleteTaskInput {
+  @Field(() => String)
+  id: string;
 }

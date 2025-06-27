@@ -20,6 +20,7 @@ type Props = {
 
 export const CheckListForm = ({ initialValues, isLoading }: Props) => {
   const invalidate = useInvalidate();
+  
   const { formProps } = useForm<Task, HttpError, TaskUpdateInput>({
     queryOptions: {
       enabled: false,

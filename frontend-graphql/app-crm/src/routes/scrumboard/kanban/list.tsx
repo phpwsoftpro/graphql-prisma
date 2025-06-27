@@ -28,7 +28,7 @@ import {
   ProjectCardMemo,
   ProjectCardSkeleton,
 } from "../components";
-import { KANBAN_TASK_STAGES_QUERY, KANBAN_TASKS_QUERY, KANBAN_UPDATE_TASK_MUTATION } from "./queries";
+import { KANBAN_DELETE_TASK_STAGE_MUTATION, KANBAN_TASK_STAGES_QUERY, KANBAN_TASKS_QUERY, KANBAN_UPDATE_TASK_MUTATION } from "./queries";
 
 type Task = GetFieldsFromList<KanbanTasksQuery>;
 
@@ -109,6 +109,14 @@ export const KanbanPage: FC<PropsWithChildren> = ({ children }) => {
     successNotification: false,
   });
   const { mutate: deleteStage } = useDelete();
+  const { refetch: refetchStages } = useList<TaskStage>({
+    resource: "taskStages",
+    meta: { gqlQuery: KANBAN_TASK_STAGES_QUERY },
+  });
+  const { refetch: refetchTasks } = useList<Task>({
+    resource: "tasks",
+    meta: { gqlQuery: KANBAN_TASKS_QUERY },
+  });
 
   const handleOnDragEnd = (event: DragEndEvent) => {
     let stageId = event.over?.id as undefined | string | null;
@@ -124,7 +132,7 @@ export const KanbanPage: FC<PropsWithChildren> = ({ children }) => {
     }
 
     updateTask({
-      id: Number(taskId),
+      id: taskId,
       values: {
         stageId: Number(stageId),
       },
@@ -143,16 +151,25 @@ export const KanbanPage: FC<PropsWithChildren> = ({ children }) => {
   };
 
   const handleDeleteStage = (args: { stageId: string }) => {
-    deleteStage({
-      resource: "taskStage",
-      id: args.stageId,
-      successNotification: () => ({
-        key: "delete-stage",
-        type: "success",
-        message: "Successfully deleted stage",
-        description: "Successful",
-      }),
-    });
+    deleteStage(
+      {
+        resource: "taskStage",
+        id: args.stageId,
+        meta: { gqlMutation: KANBAN_DELETE_TASK_STAGE_MUTATION },
+        successNotification: () => ({
+          key: "delete-stage",
+          type: "success",
+          message: "Successfully deleted stage",
+          description: "Successful",
+        }),
+      },
+      {
+        onSuccess: () => {
+          refetchStages();
+          refetchTasks();
+        },
+      }
+    );
   };
 
   const handleAddCard = (args: { stageId: string }) => {
@@ -182,7 +199,7 @@ export const KanbanPage: FC<PropsWithChildren> = ({ children }) => {
         key: "1",
         // @ts-expect-error Ant Design Icon's v5.0.1 has an issue with @types/react@^18.2.66
         icon: <EditOutlined />,
-        onClick: () => handleEditStage({ stageId: Number(column.id)}),
+        onClick: () => handleEditStage({ stageId: column.id }),
       },
       {
         label: "Clear all cards",

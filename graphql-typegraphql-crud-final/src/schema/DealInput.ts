@@ -13,16 +13,16 @@ export class DealInput {
   description?: string;
 
   @Field({ nullable: true })
-  stageId?: number;
+  stageId?: string;
 
   @Field({ nullable: true })
-  companyId?: number;
+  companyId?: string;
 
   @Field({ nullable: true })
-  dealContactId?: number;
+  dealContactId?: string;
 
   @Field({ nullable: true })
-  dealOwnerId?: number;
+  dealOwnerId?: string;
 }
 @InputType()
 export class CreateDealInput {
@@ -33,7 +33,7 @@ export class CreateDealInput {
 @InputType()
 export class UpdateDealInput {
   @Field()
-  id: number;
+  id: string  ;
   @Field(() => DealInput)
   update: DealInput;
 }

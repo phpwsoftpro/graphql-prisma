@@ -21,6 +21,7 @@ import styles from "./index.module.css";
 import { CONTACT_UPDATE_MUTATION } from "../../queries";
 type ContactStatusProps = {
   contact: GetFields<ContactShowQuery>;
+  isEdit?: boolean;
 };
 
 const statusToStage = (status: ContactStatusEnum): ContactStageEnum => {
@@ -98,7 +99,7 @@ const LifecycleStage: React.FC<{ status: ContactStatusType }> = ({
   );
 };
 
-export const ContactStatus: React.FC<ContactStatusProps> = ({ contact }) => {
+export const ContactStatus: React.FC<ContactStatusProps> = ({ contact, isEdit = true }) => {
   const { mutate } = useUpdate({
     resource: "contacts",
     mutationMode: "optimistic",
@@ -132,9 +133,10 @@ export const ContactStatus: React.FC<ContactStatusProps> = ({ contact }) => {
           }`}
         >
           <a
-            onClick={() => {
+            onClick={isEdit ? () => {
               updateStatus(ContactStatusEnum.NEW);
-            }}
+            } : undefined}
+            style={!isEdit ? { pointerEvents: "none", color: "#bbb" } : {}}
           >
             New
           </a>
@@ -146,9 +148,10 @@ export const ContactStatus: React.FC<ContactStatusProps> = ({ contact }) => {
             }`}
         >
           <a
-            onClick={() => {
+            onClick={isEdit ? () => {
               updateStatus(ContactStatusEnum.CONTACTED);
-            }}
+            } : undefined}
+            style={!isEdit ? { pointerEvents: "none", color: "#bbb" } : {}}
           >
             Contacted
           </a>
@@ -161,35 +164,44 @@ export const ContactStatus: React.FC<ContactStatusProps> = ({ contact }) => {
               : ""
           }`}
         >
-          <Dropdown
-            arrow
-            trigger={["click"]}
-            placement="bottomRight"
-            menu={{
-              onClick: ({ key }) => {
-                updateStatus(key as ContactStatusEnum);
-              },
-              items: [
-                {
-                  label: "Interested",
-                  key: ContactStatusEnum.INTERESTED,
+          {isEdit ? (
+            <Dropdown
+              arrow
+              trigger={["click"]}
+              placement="bottomRight"
+              menu={{
+                onClick: ({ key }) => {
+                  updateStatus(key as ContactStatusEnum);
                 },
-                {
-                  label: "Unqualified",
-                  key: ContactStatusEnum.UNQUALIFIED,
-                  danger: true,
-                },
-              ],
-            }}
-          >
-            <a>
+                items: [
+                  {
+                    label: "Interested",
+                    key: ContactStatusEnum.INTERESTED,
+                  },
+                  {
+                    label: "Unqualified",
+                    key: ContactStatusEnum.UNQUALIFIED,
+                    danger: true,
+                  },
+                ],
+              }}
+            >
+              <a>
+                {status === ContactStatusEnum.UNQUALIFIED
+                  ? "Unqualified"
+                  : "Interested"}
+                {/* @ts-expect-error Ant Design Icon's v5.0.1 has an issue with @types/react@^18.2.66 */}
+                <DownOutlined className={styles.arrow} />
+              </a>
+            </Dropdown>
+          ) : (
+            <a style={{ pointerEvents: "none", color: "#bbb" }}>
               {status === ContactStatusEnum.UNQUALIFIED
                 ? "Unqualified"
                 : "Interested"}
-              {/* @ts-expect-error Ant Design Icon's v5.0.1 has an issue with @types/react@^18.2.66 */}
               <DownOutlined className={styles.arrow} />
             </a>
-          </Dropdown>
+          )}
         </li>
         <li
           className={`${styles.item} ${
@@ -197,9 +209,10 @@ export const ContactStatus: React.FC<ContactStatusProps> = ({ contact }) => {
           }`}
         >
           <a
-            onClick={() => {
+            onClick={isEdit ? () => {
               updateStatus(ContactStatusEnum.QUALIFIED);
-            }}
+            } : undefined}
+            style={!isEdit ? { pointerEvents: "none", color: "#bbb" } : {}}
           >
             Qualified
           </a>
@@ -212,33 +225,40 @@ export const ContactStatus: React.FC<ContactStatusProps> = ({ contact }) => {
               : ""
           }`}
         >
-          <Dropdown
-            arrow
-            trigger={["click"]}
-            placement="bottomRight"
-            menu={{
-              onClick: ({ key }) => {
-                updateStatus(key as ContactStatusEnum);
-              },
-              items: [
-                {
-                  label: "Negotiation",
-                  key: ContactStatusEnum.NEGOTIATION,
+          {isEdit ? (
+            <Dropdown
+              arrow
+              trigger={["click"]}
+              placement="bottomRight"
+              menu={{
+                onClick: ({ key }) => {
+                  updateStatus(key as ContactStatusEnum);
                 },
-                {
-                  label: "Lost",
-                  key: ContactStatusEnum.LOST,
-                  danger: true,
-                },
-              ],
-            }}
-          >
-            <a>
+                items: [
+                  {
+                    label: "Negotiation",
+                    key: ContactStatusEnum.NEGOTIATION,
+                  },
+                  {
+                    label: "Lost",
+                    key: ContactStatusEnum.LOST,
+                    danger: true,
+                  },
+                ],
+              }}
+            >
+              <a>
+                {status === ContactStatusEnum.LOST ? "Lost" : "Negotiation"}
+                {/* @ts-expect-error Ant Design Icon's v5.0.1 has an issue with @types/react@^18.2.66 */}
+                <DownOutlined className={styles.arrow} />
+              </a>
+            </Dropdown>
+          ) : (
+            <a style={{ pointerEvents: "none", color: "#bbb" }}>
               {status === ContactStatusEnum.LOST ? "Lost" : "Negotiation"}
-              {/* @ts-expect-error Ant Design Icon's v5.0.1 has an issue with @types/react@^18.2.66 */}
               <DownOutlined className={styles.arrow} />
             </a>
-          </Dropdown>
+          )}
         </li>
         <li
           className={`${styles.item} ${
@@ -248,33 +268,40 @@ export const ContactStatus: React.FC<ContactStatusProps> = ({ contact }) => {
               : ""
           }`}
         >
-          <Dropdown
-            arrow
-            trigger={["click"]}
-            placement="bottomRight"
-            menu={{
-              onClick: ({ key }) => {
-                updateStatus(key as ContactStatusEnum);
-              },
-              items: [
-                {
-                  label: "Won",
-                  key: ContactStatusEnum.WON,
+          {isEdit ? (
+            <Dropdown
+              arrow
+              trigger={["click"]}
+              placement="bottomRight"
+              menu={{
+                onClick: ({ key }) => {
+                  updateStatus(key as ContactStatusEnum);
                 },
-                {
-                  label: "Churned",
-                  key: ContactStatusEnum.CHURNED,
-                  danger: true,
-                },
-              ],
-            }}
-          >
-            <a>
+                items: [
+                  {
+                    label: "Won",
+                    key: ContactStatusEnum.WON,
+                  },
+                  {
+                    label: "Churned",
+                    key: ContactStatusEnum.CHURNED,
+                    danger: true,
+                  },
+                ],
+              }}
+            >
+              <a>
+                {status === ContactStatusEnum.CHURNED ? "Churned" : "Won"}
+                {/* @ts-expect-error Ant Design Icon's v5.0.1 has an issue with @types/react@^18.2.66 */}
+                <DownOutlined className={styles.arrow} />
+              </a>
+            </Dropdown>
+          ) : (
+            <a style={{ pointerEvents: "none", color: "#bbb" }}>
               {status === ContactStatusEnum.CHURNED ? "Churned" : "Won"}
-              {/* @ts-expect-error Ant Design Icon's v5.0.1 has an issue with @types/react@^18.2.66 */}
               <DownOutlined className={styles.arrow} />
             </a>
-          </Dropdown>
+          )}
         </li>
       </ul>
     </div>

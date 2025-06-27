@@ -81,3 +81,11 @@ export const QUOTES_UPDATE_QUOTE_MUTATION = gql`
     }
     ${QUOTE_FRAGMENT}
 `;
+//delete quote
+export const QUOTES_DELETE_QUOTE_MUTATION = gql`
+    mutation QuotesDeleteQuote($input: DeleteQuoteInput!) {
+        deleteQuote(input: $input) {
+            id
+        }
+    }
+`;

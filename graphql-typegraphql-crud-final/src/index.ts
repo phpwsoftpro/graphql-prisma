@@ -4,6 +4,9 @@ import { ApolloServer } from "apollo-server-express";
 import { buildSchema } from "type-graphql";
 import { PrismaClient } from "@prisma/client";
 
+// Import enum types to register them
+import "./schema/enums";
+
 import { TodoResolver } from "./resolvers/TodoResolver";
 import { UserResolver } from "./resolvers/UserResolver";
 import { CompanyResolver } from "./resolvers/CompanyResolver";
@@ -15,7 +18,8 @@ import { TaskStageResolver } from "./resolvers/TaskStageResolver";
 import { TaskResolver } from "./resolvers/TaskResolver";
 import { CategoryResolver } from "./resolvers/CategoryResolver";
 import { EventCategoryResolver } from "./resolvers/EventCategoryResolver";
-import { ChecklistResolver } from "./resolvers/ChecklistResolver";
+import { AuthResolver } from "./resolvers/AuthResolver";
+
 import { AuditResolver } from "./resolvers/AuditResolver";
 import { ProductResolver } from "./resolvers/ProductResolver";
 import { QuoteResolver } from "./resolvers/QuoteResolver";
@@ -43,7 +47,7 @@ async function bootstrap() {
       TaskResolver,
       CategoryResolver,
       EventCategoryResolver,
-      ChecklistResolver,
+      AuthResolver,
       AuditResolver,
       ProductResolver,
       QuoteResolver,
@@ -60,7 +64,7 @@ async function bootstrap() {
 
   const server = new ApolloServer({
     schema,
-    context: () => ({ prisma }),
+    context: ({ req }) => ({ req, prisma }),
   });
 
   await server.start();
@@ -122,13 +126,7 @@ async function bootstrap() {
               email: true,
             },
           },
-          checklists: {
-            select: {
-              id: true,
-              title: true,
-              checked: true,
-            },
-          },
+          checklist: true,
         },
       });
 
@@ -153,9 +151,7 @@ async function bootstrap() {
         dueDate: true,
         completed: true,
         stageId: true,
-        checklists: {
-          select: { title: true, checked: true },
-        },
+        checklist: true,
         users: {
           select: { id: true, name: true, avatarUrl: true },
         },
@@ -170,7 +166,7 @@ async function bootstrap() {
       dueDate: task.dueDate,
       completed: task.completed,
       stageId: task.stageId,
-      checklist: task.checklists,
+      checklist: task.checklist,
       users: task.users,
       comments: { totalCount: task.comments.length },
     }));

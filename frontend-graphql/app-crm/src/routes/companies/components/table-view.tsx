@@ -32,7 +32,8 @@ export const CompaniesTableView: FC<Props> = ({ tableProps, filters }) => {
   const { selectProps: selectPropsUsers } = useUsersSelect();
 
   const { selectProps: selectPropsContacts } = useContactsSelect();
-
+  const currentUser = JSON.parse(localStorage.getItem("user") || "{}");
+  const isAdmin = currentUser.role === "ADMIN";
   return (
     <Table
       {...tableProps}
@@ -155,11 +156,11 @@ export const CompaniesTableView: FC<Props> = ({ tableProps, filters }) => {
               recordItemId={value}
             />
 
-            <DeleteButton hideText size="small" recordItemId={value}
+            {isAdmin && <DeleteButton hideText size="small" recordItemId={value}
             mutationMode="pessimistic"
             meta={{
               gqlMutation: DELETE_COMPANY_MUTATION,
-            }} />
+            }} />}
           </Space>
         )}
       />
