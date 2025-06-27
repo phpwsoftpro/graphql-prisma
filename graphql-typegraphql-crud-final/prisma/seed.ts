@@ -20,8 +20,12 @@ async function main() {
   // 1. User
   await prisma.user.createMany({
     data: [
-      { name: "Admin",   email: "admin@example.com",   password: "1", avatarUrl: "https://example.com/admin.png",   role: "ADMIN", jobTitle: "Administrator" },
-      { name: "User",  email: "user@example.com",          password: "1", avatarUrl: "https://example.com/user.png",          role: "USER", jobTitle: "Regular User" },
+      { name: "Admin1",   email: "admin1@example.com",   password: "1", avatarUrl: "https://example.com/admin.png",   role: "ADMIN", jobTitle: "Administrator" },
+      { name: "User1",  email: "user1@example.com",          password: "1", avatarUrl: "https://example.com/user.png",          role: "USER", jobTitle: "Regular User" },
+      { name: "Admin2",   email: "admin2@example.com",   password: "1", avatarUrl: "https://example.com/admin.png",   role: "ADMIN", jobTitle: "Administrator" },
+      { name: "User2",  email: "user2@example.com",          password: "1", avatarUrl: "https://example.com/user.png",          role: "USER", jobTitle: "Regular User" },
+      { name: "Admin3",   email: "admin@example.com",   password: "1", avatarUrl: "https://example.com/admin.png",   role: "ADMIN", jobTitle: "Administrator" },
+      { name: "User3",  email: "user@example.com",          password: "1", avatarUrl: "https://example.com/user.png",          role: "USER", jobTitle: "Regular User" },
     ],
     skipDuplicates: true,
   });
@@ -193,7 +197,7 @@ async function main() {
     where: { id: 1 },
     data: {
       users: {
-        connect: [{ id: 8 }] // Developer
+        connect: [{ id: 1 }] // Admin1
       }
     }
   });
@@ -202,7 +206,7 @@ async function main() {
     where: { id: 2 },
     data: {
       users: {
-        connect: [{ id: 8 }] // Developer
+        connect: [{ id: 2 }] // User1
       }
     }
   });
@@ -211,7 +215,7 @@ async function main() {
     where: { id: 3 },
     data: {
       users: {
-        connect: [{ id: 8 }] // Developer
+        connect: [{ id: 3 }] // Admin2
       }
     }
   });
