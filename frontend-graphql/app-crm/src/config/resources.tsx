@@ -57,7 +57,7 @@ export const resources: IResourceItem[] = [
     edit: "/scrumboard/kanban/stages/edit/:id",
     list: "/scrumboard/kanban",
     meta: {
-      hide: true,
+      hide: false,
     },
   },
   {
