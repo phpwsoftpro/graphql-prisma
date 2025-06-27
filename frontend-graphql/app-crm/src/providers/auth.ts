@@ -68,7 +68,17 @@ export const authProvider: AuthProvider = {
                       password: $password
                     }) {
                       accessToken,
-                      refreshToken
+                      refreshToken,
+                      user {
+                        id
+                        name
+                        email
+                        role
+                        avatarUrl
+                        jobTitle
+                        phone
+                        timezone
+                      }
                     }
                   }
                 `,
@@ -78,9 +88,9 @@ export const authProvider: AuthProvider = {
       client.setHeaders({
         Authorization: `Bearer ${data.login.accessToken}`,
       });
-
       localStorage.setItem("access_token", data.login.accessToken);
       localStorage.setItem("refresh_token", data.login.refreshToken);
+      localStorage.setItem("user", JSON.stringify(data.login.user));
 
       return {
         success: true,

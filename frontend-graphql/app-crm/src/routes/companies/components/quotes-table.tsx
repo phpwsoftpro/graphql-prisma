@@ -27,7 +27,7 @@ type Props = {
 
 type Quote = GetFieldsFromList<CompanyQuotesTableQuery>;
 
-export const CompanyQuotesTable: FC<Props> = ({ style }) => {
+export const CompanyQuotesTable: FC<Props & { isEdit?: boolean }> = ({ style, isEdit = true }) => {
   const { listUrl } = useNavigation();
   const params = useParams();
 
@@ -117,15 +117,12 @@ export const CompanyQuotesTable: FC<Props> = ({ style }) => {
           }}
         >
           <Text>No quotes yet</Text>
-          <Link to={listUrl("quotes")}>
-            {/* @ts-expect-error Ant Design Icon's v5.0.1 has an issue with @types/react@^18.2.66 */}
-            <PlusCircleOutlined
-              style={{
-                marginRight: 4,
-              }}
-            />{" "}
-            Add quotes
-          </Link>
+          {isEdit && (
+            <Link to={listUrl("quotes")}>
+              {/* @ts-expect-error Ant Design Icon's v5.0.1 has an issue with @types/react@^18.2.66 */}
+              <PlusCircleOutlined style={{ marginRight: 4 }} /> Add quotes
+            </Link>
+          )}
         </Space>
       )}
       {hasData && (
@@ -215,7 +212,7 @@ export const CompanyQuotesTable: FC<Props> = ({ style }) => {
             }}
           />
         </Table>
-      )}{" "}
+      )}
     </Card>
   );
 };

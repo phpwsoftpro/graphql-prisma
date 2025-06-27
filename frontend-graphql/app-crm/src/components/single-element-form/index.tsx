@@ -23,6 +23,7 @@ type SingleElementFormProps = {
   style?: React.CSSProperties;
   useFormProps?: UseFormProps;
   formProps?: FormProps;
+  isEdit?: boolean;
 } & React.PropsWithChildren;
 
 export const SingleElementForm: React.FC<SingleElementFormProps> = ({
@@ -39,6 +40,7 @@ export const SingleElementForm: React.FC<SingleElementFormProps> = ({
   extra,
   useFormProps,
   formProps: formPropsFromProp,
+  isEdit = true,
 }) => {
   const { formProps, saveButtonProps } = useForm({
     action: "edit",
@@ -76,7 +78,7 @@ export const SingleElementForm: React.FC<SingleElementFormProps> = ({
                 {extra}
               </div>
             )}
-            {state === "empty" && !loading && (
+            {state === "empty" && !loading && isEdit && (
               <Button
                 onClick={onClick}
                 type="link"
@@ -99,7 +101,7 @@ export const SingleElementForm: React.FC<SingleElementFormProps> = ({
           )}
         </div>
 
-        {state === "view" && (
+        {state === "view" && isEdit && (
           <div className={styles.actions}>
             {/* @ts-expect-error Ant Design Icon's v5.0.1 has an issue with @types/react@^18.2.66 */}
             <Button onClick={onClick} icon={<EditOutlined />} />

@@ -37,6 +37,8 @@ const statusOptions = Object.keys(ContactStatusEnum).map((key) => ({
   label: `${key[0]}${key.slice(1).toLowerCase()}`,
   value: ContactStatusEnum[key as keyof typeof ContactStatusEnum],
 }));
+const currentUser = JSON.parse(localStorage.getItem("user") || "{}");
+const isAdmin = currentUser.role === "ADMIN";
 
 export const TableView: React.FC<Props> = ({
   tableProps,
@@ -103,7 +105,7 @@ export const TableView: React.FC<Props> = ({
           </FilterDropdown>
         )}
         render={(_, record: Contact) => {
-          return <span>{record?.company.name}</span>;
+          return <span>{record?.company?.name}</span>;
         }}
       />
       <Table.Column
@@ -148,14 +150,14 @@ export const TableView: React.FC<Props> = ({
               // @ts-expect-error Ant Design Icon's v5.0.1 has an issue with @types/react@^18.2.66
               icon={<PhoneOutlined />}
             />
-            <DeleteButton 
+            {isAdmin && <DeleteButton 
               hideText 
               size="small" 
               recordItemId={record.id}
               meta={{
                 gqlMutation: CONTACT_DELETE_MUTATION
               }}
-            />
+            />}
           </Space>
         )}
       />

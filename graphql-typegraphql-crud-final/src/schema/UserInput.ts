@@ -1,5 +1,5 @@
 import { Field, ID, InputType } from "type-graphql"
-
+import { UserRole } from "../enums/UserRole";
 
 @InputType()
 export class UserInput {
@@ -15,8 +15,8 @@ export class UserInput {
   @Field({ nullable: true })
   avatarUrl?: string
 
-  @Field({ nullable: true })
-  role?: string
+  @Field(() => UserRole, { nullable: true })
+  role?: UserRole
 
   @Field({ nullable: true })
   jobTitle?: string

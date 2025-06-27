@@ -33,7 +33,7 @@ type Props = {
 
 type Deal = GetFieldsFromList<CompanyDealsTableQuery>;
 
-export const CompanyDealsTable: FC<Props> = ({ style }) => {
+export const CompanyDealsTable: FC<Props & { isEdit?: boolean }> = ({ style, isEdit = true }) => {
   const { listUrl } = useNavigation();
   const params = useParams();
 
@@ -150,15 +150,12 @@ export const CompanyDealsTable: FC<Props> = ({ style }) => {
           }}
         >
           <Text>No deals yet</Text>
-          <Link to={listUrl("deals")}>
-            {/* @ts-expect-error Ant Design Icon's v5.0.1 has an issue with @types/react@^18.2.66 */}
-            <PlusCircleOutlined
-              style={{
-                marginRight: 4,
-              }}
-            />{" "}
-            Add deals through sales pipeline
-          </Link>
+          {isEdit && (
+            <Link to={listUrl("deals")}> 
+              {/* @ts-expect-error Ant Design Icon's v5.0.1 has an issue with @types/react@^18.2.66 */}
+              <PlusCircleOutlined style={{ marginRight: 4 }} /> Add deals through sales pipeline
+            </Link>
+          )}
         </Space>
       )}
 

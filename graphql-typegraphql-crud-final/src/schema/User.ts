@@ -1,4 +1,5 @@
 import { Field, ID, ObjectType, InputType } from "type-graphql";
+import { UserRole } from "../enums/UserRole";
 
 @ObjectType()
 export class User {
@@ -14,14 +15,17 @@ export class User {
   @Field({ nullable: true })
   avatarUrl?: string;
 
-  @Field()
-  role: string;
+  @Field(() => UserRole)
+  role: UserRole;
 
   @Field({ nullable: true })
   jobTitle?: string;
 
   @Field({ nullable: true })
   phone?: string;
+
+  @Field({ nullable: true })
+  timezone?: string;
 
   @Field({ nullable: true })
   status?: string;

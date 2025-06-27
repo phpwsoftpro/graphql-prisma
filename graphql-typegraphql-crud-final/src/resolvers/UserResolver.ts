@@ -1,4 +1,4 @@
-import { Arg, ID, Mutation, Query, Resolver } from "type-graphql";
+import { Arg, ID, Mutation, Query, Resolver, UseMiddleware, Ctx } from "type-graphql";
 import { PrismaClient } from "@prisma/client";
 import { randomBytes } from "crypto";
 import { User } from "../schema/User";
@@ -8,17 +8,27 @@ import { UserListResponse } from "../schema/UserListResponse";
 import { UserFilter } from "../schema/UserFilter";
 import { UserSort } from "../schema/UserSort";
 import { OffsetPaging } from "../schema/PagingInput";
+import { verifyToken, typeGraphqlAuth } from "../common/middleware/auth.middleware";
+import { PermissionService } from "../common/services/permission.service";
+import { UserRole } from "../enums/UserRole";
 
 const prisma = new PrismaClient();
 
 @Resolver(() => User)
 export class UserResolver {
   @Query(() => UserListResponse)
+  @UseMiddleware(typeGraphqlAuth)
   async users(
     @Arg("filter", () => UserFilter, { nullable: true }) filter: UserFilter,
     @Arg("sorting", () => [UserSort], { nullable: true }) sorting: UserSort[],
-    @Arg("paging", () => OffsetPaging, { nullable: true }) paging: OffsetPaging
+    @Arg("paging", () => OffsetPaging, { nullable: true }) paging: OffsetPaging,
+    @Ctx() context?: any
   ) {
+    const user = context.user;
+    const userRole = user?.role as UserRole;
+    if (!PermissionService.canRead(userRole)) {
+      throw new Error("Access denied: Insufficient permissions to read data");
+    }
     const where: any = {};
     if (filter?.name) {
       if (typeof filter.name === 'string') {
@@ -65,6 +75,16 @@ export class UserResolver {
         where.role = filter.role.equals;
       }
     }
+    if (filter?.companies?.id?.eq) {
+      where.companies = {
+        some: { id: Number(filter.companies.id.eq) }
+      };
+    }
+    if (filter?.companies?.id?.in && Array.isArray(filter.companies.id.in)) {
+      where.companies = {
+        some: { id: { in: filter.companies.id.in.map((id: string) => Number(id)) } }
+      };
+    }
 
     const orderBy = sorting?.map((s) => ({ [s.field]: s.direction.toLowerCase() })) ?? [{ id: "desc" }];
 
@@ -85,14 +105,27 @@ export class UserResolver {
   }
 
   @Query(() => User, { nullable: true })
-  async user(@Arg("id", () => ID) id: string) {
+  @UseMiddleware(typeGraphqlAuth)
+  async user(@Arg("id", () => ID) id: string, @Ctx() context?: any) {
+    const user = context.user;
+    const userRole = user?.role as UserRole;
+    if (!PermissionService.canRead(userRole)) {
+      throw new Error("Access denied: Insufficient permissions to read data");
+    }
     return prisma.user.findUnique({ where: { id: Number(id) } });
   }
 
   @Mutation(() => User)
+  @UseMiddleware(typeGraphqlAuth)
   async createUser(
-    @Arg("input", () => CreateUserInput) input: CreateUserInput
+    @Arg("input", () => CreateUserInput) input: CreateUserInput,
+    @Ctx() context?: any
   ) {
+    const user = context.user;
+    const userRole = user?.role as UserRole;
+    if (!PermissionService.canCreate(userRole)) {
+      throw new Error("Access denied: Insufficient permissions to create data");
+    }
     // Kiểm tra email đã tồn tại chưa
     const existingUser = await prisma.user.findUnique({
       where: { email: input.user.email }
@@ -108,9 +141,16 @@ export class UserResolver {
   }
 
   @Mutation(() => User)
+  @UseMiddleware(typeGraphqlAuth)
   async updateUser(
-    @Arg("input", () => UpdateUserInput) input: UpdateUserInput
+    @Arg("input", () => UpdateUserInput) input: UpdateUserInput,
+    @Ctx() context?: any
   ) {
+    const user = context.user;
+    const userRole = user?.role as UserRole;
+    if (!PermissionService.canUpdate(userRole)) {
+      throw new Error("Access denied: Insufficient permissions to update data");
+    }
     return prisma.user.update({
       where: { id: Number(input.id) },
       data: input.update,
@@ -118,9 +158,16 @@ export class UserResolver {
   }
 
   @Mutation(() => User)
+  @UseMiddleware(typeGraphqlAuth)
   async deleteUser(
-    @Arg("input", () => DeleteUserInput) input: DeleteUserInput
+    @Arg("input", () => DeleteUserInput) input: DeleteUserInput,
+    @Ctx() context?: any
   ) {
+    const user = context.user;
+    const userRole = user?.role as UserRole;
+    if (!PermissionService.canDelete(userRole)) {
+      throw new Error("Access denied: Insufficient permissions to delete data");
+    }
     return await prisma.user.delete({ where: { id: Number(input.id) } });
   }
 }

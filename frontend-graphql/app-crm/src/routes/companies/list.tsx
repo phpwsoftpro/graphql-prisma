@@ -91,7 +91,8 @@ export const CompanyListPage: FC<PropsWithChildren> = ({ children }) => {
     });
   };
   const debouncedOnChange = debounce(onSearch, 500);
-
+  const currentUser = JSON.parse(localStorage.getItem("user") || "{}");
+  const isAdmin = currentUser.role === "ADMIN";
   return (
     <div className="page-container">
       <List
@@ -145,7 +146,7 @@ export const CompanyListPage: FC<PropsWithChildren> = ({ children }) => {
           },
         }}
         title={
-          <ListTitleButton toPath="companies" buttonText="Add new company" />
+          isAdmin && <ListTitleButton toPath="companies" buttonText="Add new company" />
         }
       >
         {view === "table" ? (

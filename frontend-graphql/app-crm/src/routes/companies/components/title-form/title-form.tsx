@@ -15,11 +15,12 @@ import type {
 } from "@/graphql/types";
 import { useUsersSelect } from "@/hooks/useUsersSelect";
 import { getNameInitials } from "@/utilities";
+import { capitalizeWords } from "@/utilities/format-string";
 
 import { COMPANY_TITLE_FORM_MUTATION, COMPANY_TITLE_QUERY } from "./queries";
 import styles from "./title-form.module.css";
 import { useResource } from "@refinedev/core";
-export const CompanyTitleForm = () => {
+export const CompanyTitleForm = ({ isEdit = true }: { isEdit?: boolean } = {}) => {
   const { id } = useResource();
   const {
     formProps,
@@ -63,21 +64,24 @@ export const CompanyTitleForm = () => {
           <Form.Item name="name" required noStyle>
             <TitleInput
               loading={loading}
-              onChange={(value) => {
+              onChange={isEdit ? (value) => {
                 return onFinish?.({
                   name: value,
                 });
-              }}
+              } : undefined}
+              value={capitalizeWords(company?.name || "")}
+              isEdit={isEdit}
             />
           </Form.Item>
           <SalesOwnerInput
             salesOwner={company?.salesOwner}
             loading={loading}
-            onChange={(value) => {
+            onChange={isEdit ? (value) => {
               onFinish?.({
                 salesOwnerId: Number(value),
               });
-            }}
+            } : undefined}
+            isEdit={isEdit}
           />
         </Space>
       </Space>
@@ -89,23 +93,24 @@ const TitleInput = ({
   value,
   onChange,
   loading,
+  isEdit = true,
 }: {
-  // value is set by <Form.Item />
   value?: string;
   onChange?: (value: string) => void;
   loading?: boolean;
+  isEdit?: boolean;
 }) => {
   return (
     <Text
       className={styles.title}
       size="xl"
       strong
-      editable={{
+      editable={isEdit ? {
         onChange,
         triggerType: ["text", "icon"],
         // @ts-expect-error Ant Design Icon's v5.0.1 has an issue with @types/react@^18.2.66
         icon: <EditOutlined className={styles.titleEditIcon} />,
-      }}
+      } : false}
     >
       {loading ? (
         <Skeleton.Input size="small" style={{ width: 200 }} active />
@@ -120,12 +125,14 @@ const SalesOwnerInput = ({
   salesOwner,
   onChange,
   loading,
+  isEdit = true,
 }: {
   onChange?: (value: string) => void;
   salesOwner?: Partial<User>;
   loading?: boolean;
+  isEdit?: boolean;
 }) => {
-  const [isEdit, setIsEdit] = useState(false);
+  const [isEditState, setIsEditState] = useState(false);
 
   const { selectProps, queryResult } = useUsersSelect();
 
@@ -134,8 +141,9 @@ const SalesOwnerInput = ({
       className={styles.salesOwnerInput}
       role="button"
       onClick={() => {
-        setIsEdit(true);
+        if (isEdit) setIsEditState(true);
       }}
+      style={{ cursor: isEdit ? "pointer" : "default" }}
     >
       <Text
         type="secondary"
@@ -146,7 +154,7 @@ const SalesOwnerInput = ({
         Sales Owner:
       </Text>
       {loading && <Skeleton.Input size="small" style={{ width: 120 }} active />}
-      {!isEdit && !loading && (
+      {!isEditState && !loading && (
         <>
           <CustomAvatar
             size="small"
@@ -156,14 +164,16 @@ const SalesOwnerInput = ({
             }}
           />
           <Text>{salesOwner?.name}</Text>
-          <Button
-            type="link"
-            // @ts-expect-error Ant Design Icon's v5.0.1 has an issue with @types/react@^18.2.66
-            icon={<EditOutlined className={styles.salesOwnerInputEditIcon} />}
-          />
+          {isEdit && (
+            <Button
+              type="link"
+              // @ts-expect-error Ant Design Icon's v5.0.1 has an issue with @types/react@^18.2.66
+              icon={<EditOutlined className={styles.salesOwnerInputEditIcon} />}
+            />
+          )}
         </>
       )}
-      {isEdit && !loading && (
+      {isEditState && isEdit && !loading && (
         <Form.Item name={["salesOwner", "id"]} noStyle>
           <Select
             {...selectProps}
@@ -171,7 +181,7 @@ const SalesOwnerInput = ({
             autoFocus
             onDropdownVisibleChange={(open) => {
               if (!open) {
-                setIsEdit(false);
+                setIsEditState(false);
               }
             }}
             onClick={(e) => {
