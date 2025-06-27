@@ -79,6 +79,10 @@ export const ContactShowPage: React.FC = () => {
   const { selectProps: usersSelectProps, queryResult: usersSelectQueryResult } =
     useUsersSelect();
 
+  // Lấy role của user hiện tại từ localStorage
+  const currentUser = JSON.parse(localStorage.getItem("user") || "{}");
+  const isAdmin = currentUser.role === "ADMIN";
+
   const closeModal = () => {
     setActiveForm(undefined);
 
@@ -152,18 +156,22 @@ export const ContactShowPage: React.FC = () => {
             level={3}
             style={{ padding: 0, margin: 0, width: "100%" }}
             className={styles.title}
-            editable={{
-              onChange(value) {
-                mutate({
-                  values: {
-                    name: value,
-                  },
-                });
-              },
-              triggerType: ["text", "icon"],
-              // @ts-expect-error Ant Design Icon's v5.0.1 has an issue with @types/react@^18.2.66
-              icon: <EditOutlined className={styles.titleEditIcon} />,
-            }}
+            editable={
+              isAdmin
+                ? {
+                    onChange(value) {
+                      mutate({
+                        values: {
+                          name: value,
+                        },
+                      });
+                    },
+                    triggerType: ["text", "icon"],
+                    // @ts-expect-error Ant Design Icon's v5.0.1 has an issue with @types/react@^18.2.66
+                    icon: <EditOutlined className={styles.titleEditIcon} />,
+                  }
+                : false
+            }
           >
             {name}
           </Typography.Title>
@@ -193,6 +201,7 @@ export const ContactShowPage: React.FC = () => {
             onClick={() => setActiveForm("email")}
             onUpdate={() => setActiveForm(undefined)}
             onCancel={() => setActiveForm(undefined)}
+            isEdit={isAdmin}
           >
             <Input defaultValue={email} />
           </SingleElementForm>
@@ -262,6 +271,7 @@ export const ContactShowPage: React.FC = () => {
                 />
               </Form.Item>
             }
+            isEdit={isAdmin}
           >
             <Select
               style={{ width: "100%" }}
@@ -308,6 +318,7 @@ export const ContactShowPage: React.FC = () => {
             onClick={() => setActiveForm("jobTitle")}
             onUpdate={() => setActiveForm(undefined)}
             onCancel={() => setActiveForm(undefined)}
+            isEdit={isAdmin}
           >
             <Input defaultValue={jobTitle || ""} />
           </SingleElementForm>
@@ -334,6 +345,7 @@ export const ContactShowPage: React.FC = () => {
             onClick={() => setActiveForm("phone")}
             onUpdate={() => setActiveForm(undefined)}
             onCancel={() => setActiveForm(undefined)}
+            isEdit={isAdmin}
           >
             <Input defaultValue={phone || ""} />
           </SingleElementForm>
@@ -361,6 +373,7 @@ export const ContactShowPage: React.FC = () => {
             onClick={() => setActiveForm("timezone")}
             onUpdate={() => setActiveForm(undefined)}
             onCancel={() => setActiveForm(undefined)}
+            isEdit={isAdmin}
           >
             <Select
               style={{ width: "100%" }}
@@ -371,7 +384,7 @@ export const ContactShowPage: React.FC = () => {
         </div>
 
         <div className={styles.stage}>
-          <ContactStatus contact={data.data} />
+          <ContactStatus contact={data.data} isEdit={isAdmin} />
         </div>
 
         <Card

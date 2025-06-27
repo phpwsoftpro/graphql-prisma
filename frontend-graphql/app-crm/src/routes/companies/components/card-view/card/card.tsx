@@ -21,7 +21,8 @@ type Props = {
 export const CompanyCard: FC<Props> = ({ company }) => {
   const { edit } = useNavigation();
   const { mutate } = useDelete();
-
+  const currentUser = JSON.parse(localStorage.getItem("user") || "{}");
+  const isAdmin = currentUser.role === "ADMIN";
   if (!company) return <CompanyCardSkeleton />;
 
   const relatedContactAvatars = company?.contacts?.nodes?.map((contact) => {
@@ -104,7 +105,7 @@ export const CompanyCard: FC<Props> = ({ company }) => {
                   edit("companies", company.id);
                 },
               },
-              {
+              ...(isAdmin ? [{
                 danger: true,
                 label: "Delete company",
                 key: "2",
@@ -120,7 +121,7 @@ export const CompanyCard: FC<Props> = ({ company }) => {
                     },
                   });
                 },
-              },
+              }] : []),
             ],
           }}
           placement="bottom"

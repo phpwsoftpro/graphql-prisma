@@ -4,6 +4,9 @@ import { ApolloServer } from "apollo-server-express";
 import { buildSchema } from "type-graphql";
 import { PrismaClient } from "@prisma/client";
 
+// Import enum types to register them
+import "./schema/enums";
+
 import { TodoResolver } from "./resolvers/TodoResolver";
 import { UserResolver } from "./resolvers/UserResolver";
 import { CompanyResolver } from "./resolvers/CompanyResolver";
@@ -59,7 +62,7 @@ async function bootstrap() {
 
   const server = new ApolloServer({
     schema,
-    context: () => ({ prisma }),
+    context: ({ req }) => ({ req, prisma }),
   });
 
   await server.start();

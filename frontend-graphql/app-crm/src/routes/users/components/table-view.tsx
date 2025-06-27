@@ -54,6 +54,10 @@ const statusOptions = [
   { label: "Suspended", value: "SUSPENDED" },
 ];
 
+// Lấy role của user hiện tại từ localStorage
+const currentUser = JSON.parse(localStorage.getItem("user") || "{}");
+const isAdmin = currentUser.role === "ADMIN";
+
 export const TableView: React.FC<Props> = ({
   tableProps,
   filters,
@@ -160,7 +164,9 @@ export const TableView: React.FC<Props> = ({
         render={(_, record) => (
           <Space>
             <ShowButton hideText size="small" recordItemId={record.id} />
-            <DeleteButton hideText size="small" recordItemId={record.id} meta={{ gqlMutation: DELETE_USER_MUTATION }} />
+            {isAdmin && (
+              <DeleteButton hideText size="small" recordItemId={record.id} meta={{ gqlMutation: DELETE_USER_MUTATION }} />
+            )}
             <Button size="small" href="tel:1234567890"
               // @ts-expect-error Ant Design Icon's v5.0.1 has an issue with @types/react@^18.2.66
               icon={<PhoneOutlined />}

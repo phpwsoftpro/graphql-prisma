@@ -170,6 +170,10 @@ export const UserShowPage: React.FC = () => {
     deals,
   } = data?.data ?? {};
 
+  // Lấy role của user hiện tại từ localStorage
+  const currentUser = JSON.parse(localStorage.getItem("user") || "{}");
+  const isAdmin = currentUser.role === "ADMIN";
+
   return (
     <Drawer
       open
@@ -202,18 +206,22 @@ export const UserShowPage: React.FC = () => {
             level={3}
             style={{ padding: 0, margin: 0, width: "100%" }}
             className={styles.title}
-            editable={{
-              onChange(value) {
-                mutate({
-                  values: {
-                    name: value,
-                  },
-                });
-              },
-              triggerType: ["text", "icon"],
-              // @ts-expect-error Ant Design Icon's v5.0.1 has an issue with @types/react@^18.2.66
-              icon: <EditOutlined className={styles.titleEditIcon} />,
-            }}
+            editable={
+              isAdmin
+                ? {
+                    onChange(value) {
+                      mutate({
+                        values: {
+                          name: value,
+                        },
+                      });
+                    },
+                    triggerType: ["text", "icon"],
+                    // @ts-expect-error Ant Design Icon's v5.0.1 has an issue with @types/react@^18.2.66
+                    icon: <EditOutlined className={styles.titleEditIcon} />,
+                  }
+                : false
+            }
           >
             {name}
           </Typography.Title>
@@ -240,9 +248,10 @@ export const UserShowPage: React.FC = () => {
               label: "Email",
             }}
             view={<Text>{email}</Text>}
-            onClick={() => setActiveForm("email")}
+            onClick={isAdmin ? () => setActiveForm("email") : undefined}
             onUpdate={() => setActiveForm(undefined)}
             onCancel={() => setActiveForm(undefined)}
+            isEdit={isAdmin}
           >
             <Input defaultValue={email} />
           </SingleElementForm>
@@ -267,9 +276,10 @@ export const UserShowPage: React.FC = () => {
               label: "Job Title",
             }}
             view={<Text>{jobTitle}</Text>}
-            onClick={() => setActiveForm("jobTitle")}
+            onClick={isAdmin ? () => setActiveForm("jobTitle") : undefined}
             onUpdate={() => setActiveForm(undefined)}
             onCancel={() => setActiveForm(undefined)}
+            isEdit={isAdmin}
           >
             <Input defaultValue={jobTitle || ""} />
           </SingleElementForm>
@@ -297,6 +307,7 @@ export const UserShowPage: React.FC = () => {
             onClick={() => setActiveForm("phone")}
             onUpdate={() => setActiveForm(undefined)}
             onCancel={() => setActiveForm(undefined)}
+            isEdit={isAdmin}
           >
             <Input defaultValue={phone || ""} />
           </SingleElementForm>
@@ -321,9 +332,10 @@ export const UserShowPage: React.FC = () => {
               label: "Role",
             }}
             view={<RoleTag role={role} />}
-            onClick={() => setActiveForm("role")}
+            onClick={isAdmin ? () => setActiveForm("role") : undefined}
             onUpdate={() => setActiveForm(undefined)}
             onCancel={() => setActiveForm(undefined)}
+            isEdit={isAdmin}
           >
             <Select
               style={{ width: "100%" }}
@@ -352,9 +364,10 @@ export const UserShowPage: React.FC = () => {
               label: "Status",
             }}
             view={<UserStatusTag status={status as any} />}
-            onClick={() => setActiveForm("status")}
+            onClick={isAdmin ? () => setActiveForm("status") : undefined}
             onUpdate={() => setActiveForm(undefined)}
             onCancel={() => setActiveForm(undefined)}
+            isEdit={isAdmin}
           >
             <Select
               style={{ width: "100%" }}
@@ -384,9 +397,10 @@ export const UserShowPage: React.FC = () => {
               label: "Address",
             }}
             view={<Text>{address}</Text>}
-            onClick={() => setActiveForm("address")}
+            onClick={isAdmin ? () => setActiveForm("address") : undefined}
             onUpdate={() => setActiveForm(undefined)}
             onCancel={() => setActiveForm(undefined)}
+            isEdit={isAdmin}
           >
             <Input.TextArea defaultValue={address || ""} rows={3} />
           </SingleElementForm>
@@ -442,10 +456,12 @@ export const UserShowPage: React.FC = () => {
             okText="Yes"
             cancelText="No"
           >
-            {/* @ts-expect-error Ant Design Icon's v5.0.1 has an issue with @types/react@^18.2.66 */}
-            <Button type="link" danger icon={<DeleteOutlined />} meta={{ gqlMutation: DELETE_USER_MUTATION }}>
-              Delete User
-            </Button>
+            
+            {isAdmin && (
+              <Button type="link" danger icon={<DeleteOutlined />} meta={{ gqlMutation: DELETE_USER_MUTATION }}>
+                Delete User
+              </Button>
+            )}
           </Popconfirm>
         </div>
       </div>

@@ -119,7 +119,8 @@ export const UsersListPage: React.FC<Props> = ({ children }) => {
   };
 
   const debouncedOnChange = debounce(onSearch, 500);
-
+  const currentUser = JSON.parse(localStorage.getItem("user") || "{}");
+  const isAdmin = currentUser.role === "ADMIN";
   return (
     <div className="page-container">
       <List
@@ -167,7 +168,7 @@ export const UsersListPage: React.FC<Props> = ({ children }) => {
           },
         }}
         title={
-          <ListTitleButton toPath="users" buttonText="Add new user" />
+          isAdmin && <ListTitleButton toPath="users" buttonText="Add new user" />
         }
       >
         {screens.xs || view === "table" ? (

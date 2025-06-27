@@ -8,6 +8,8 @@ services:
     container_name: refine_frontend_crm_graphql
     ports:
       - "5174:5173"  # Changed external port from 5173 to 5174
+    volumes:
+      - ./app-crm:/app-crm
     environment:
       - NODE_ENV=development
     stdin_open: true

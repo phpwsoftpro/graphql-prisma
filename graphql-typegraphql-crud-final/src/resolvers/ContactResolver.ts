@@ -1,4 +1,4 @@
-import { Arg, ID, Mutation, Query, Resolver } from "type-graphql";
+import { Arg, ID, Mutation, Query, Resolver, UseMiddleware, Ctx } from "type-graphql";
 import { PrismaClient } from "@prisma/client";
 import { Contact } from "../schema/Contact";
 import { ContactListResponse } from "../schema/ContactListResponse";
@@ -13,17 +13,27 @@ import {
 import { ContactFilter } from "../schema/ContactFilter";
 import { ContactSort } from "../schema/ContactSort";
 import { OffsetPaging } from "../schema/PagingInput";
+import { typeGraphqlAuth } from "../common/middleware/auth.middleware";
+import { PermissionService } from "../common/services/permission.service";
+import { UserRole } from "../enums/UserRole";
 
 const prisma = new PrismaClient();
 
 @Resolver(() => Contact)
 export class ContactResolver {
   @Query(() => ContactListResponse)
+  @UseMiddleware(typeGraphqlAuth)
   async contacts(
     @Arg("filter", () => ContactFilter, { nullable: true }) filter: ContactFilter,
     @Arg("sorting", () => [ContactSort], { nullable: true }) sorting: ContactSort[],
-    @Arg("paging", () => OffsetPaging, { nullable: true }) paging: OffsetPaging
+    @Arg("paging", () => OffsetPaging, { nullable: true }) paging: OffsetPaging,
+    @Ctx() context?: any
   ) {
+    const user = context.user;
+    const userRole = user?.role as UserRole;
+    if (!PermissionService.canRead(userRole)) {
+      throw new Error("Access denied: Insufficient permissions to read data");
+    }
     const where: any = {};
     if (filter?.name) {
       if (typeof filter.name === 'string') {
@@ -46,6 +56,9 @@ export class ContactResolver {
     }
     if (filter?.company?.id?.eq) {
       where.companyId = Number(filter.company.id.eq);
+    }
+    if (filter?.company?.id?.in && Array.isArray(filter.company.id.in)) {
+      where.companyId = { in: filter.company.id.in.map((id: string) => Number(id)) };
     }
     if (filter?.status) {
       where.status = filter.status;
@@ -93,7 +106,13 @@ export class ContactResolver {
   }
 
   @Query(() => Contact, { nullable: true })
-  async contact(@Arg("id", () => ID) id: number | string) {
+  @UseMiddleware(typeGraphqlAuth)
+  async contact(@Arg("id", () => ID) id: number | string, @Ctx() context?: any) {
+    const user = context.user;
+    const userRole = user?.role as UserRole;
+    if (!PermissionService.canRead(userRole)) {
+      throw new Error("Access denied: Insufficient permissions to read data");
+    }
     return prisma.contact.findUnique({
       where: {
         id: typeof id === "string" ? Number(id) : id,
@@ -106,9 +125,16 @@ export class ContactResolver {
   }
 
   @Mutation(() => Contact)
+  @UseMiddleware(typeGraphqlAuth)
   async createContact(
-    @Arg("input", () => CreateContactInput) input: CreateContactInput
+    @Arg("input", () => CreateContactInput) input: CreateContactInput,
+    @Ctx() context?: any
   ) {
+    const user = context.user;
+    const userRole = user?.role as UserRole;
+    if (!PermissionService.canCreate(userRole)) {
+      throw new Error("Access denied: Insufficient permissions to create data");
+    }
     const {
       companyId,
       salesOwnerId,
@@ -129,9 +155,16 @@ export class ContactResolver {
   }
 
   @Mutation(() => Contact)
+  @UseMiddleware(typeGraphqlAuth)
   async updateContact(
-    @Arg("input", () => UpdateContactInput) input: UpdateContactInput
+    @Arg("input", () => UpdateContactInput) input: UpdateContactInput,
+    @Ctx() context?: any
   ) {
+    const user = context.user;
+    const userRole = user?.role as UserRole;
+    if (!PermissionService.canUpdate(userRole)) {
+      throw new Error("Access denied: Insufficient permissions to update data");
+    }
     const {
       companyId,
       salesOwnerId,
@@ -167,7 +200,13 @@ export class ContactResolver {
   }
 
   @Mutation(() => Boolean)
-  async deleteContact(@Arg("input", () => DeleteContactInput) input: DeleteContactInput) {
+  @UseMiddleware(typeGraphqlAuth)
+  async deleteContact(@Arg("input", () => DeleteContactInput) input: DeleteContactInput, @Ctx() context?: any) {
+    const user = context.user;
+    const userRole = user?.role as UserRole;
+    if (!PermissionService.canDelete(userRole)) {
+      throw new Error("Access denied: Insufficient permissions to delete data");
+    }
     await prisma.contact.delete({
       where: { id: Number(input.id) },
     });
@@ -175,9 +214,16 @@ export class ContactResolver {
   }
 
   @Mutation(() => [Contact])
+  @UseMiddleware(typeGraphqlAuth)
   async createManyContacts(
-    @Arg("input", () => CreateManyContactsInput) input: CreateManyContactsInput
+    @Arg("input", () => CreateManyContactsInput) input: CreateManyContactsInput,
+    @Ctx() context?: any
   ) {
+    const user = context.user;
+    const userRole = user?.role as UserRole;
+    if (!PermissionService.canCreate(userRole)) {
+      throw new Error("Access denied: Insufficient permissions to create data");
+    }
     const createdContacts = await Promise.all(
       input.contacts.map(async (contactInput) => {
         const { companyId, salesOwnerId, ...rest } = contactInput;

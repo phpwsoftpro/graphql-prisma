@@ -24,7 +24,8 @@ type View = "card" | "table";
 export const ContactsListPage: React.FC<Props> = ({ children }) => {
   const [view, setView] = useState<View>("table");
   const screens = Grid.useBreakpoint();
-
+  const currentUser = JSON.parse(localStorage.getItem("user") || "{}");
+  const isAdmin = currentUser.role === "ADMIN";
   const {
     tableProps,
     searchFormProps,
@@ -166,7 +167,7 @@ export const ContactsListPage: React.FC<Props> = ({ children }) => {
           },
         }}
         title={
-          <ListTitleButton toPath="contacts" buttonText="Add new contact" />
+          isAdmin && <ListTitleButton toPath="contacts" buttonText="Add new contact" />
         }
       >
         {screens.xs || view === "card" ? (

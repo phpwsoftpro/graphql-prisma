@@ -56,7 +56,8 @@ export const CompanyCreatePage = ({ isOverModal }: Props) => {
   const [searchParams] = useSearchParams();
   const { pathname } = useLocation();
   const go = useGo();
-  
+  const currentUser = JSON.parse(localStorage.getItem("user") || "{}");
+  const isAdmin = currentUser.role === "ADMIN";
 //map id to number 
   const { formProps, modalProps, close, onFinish } = useModalForm<
     Company,
@@ -83,63 +84,21 @@ export const CompanyCreatePage = ({ isOverModal }: Props) => {
   });
 
   return (
-    <Modal
-      {...modalProps}
-      mask={!isOverModal}
-      onCancel={() => {
-        close();
-        go({
-          to:
-            searchParams.get("to") ??
-            getToPath({
-              action: "list",
-            }) ??
-            "",
-          query: {
-            to: undefined,
-          },
-          options: {
-            keepQuery: true,
-          },
-          type: "replace",
-        });
-      }}
-      title="Add new company"
-      width={512}
-      // @ts-expect-error Ant Design Icon's v5.0.1 has an issue with @types/react@^18.2.66
-      closeIcon={<LeftOutlined />}
-    >
-      <Form
-        {...formProps}
-        layout="vertical"
-        onFinish={async (values) => {
-          try {
-            const data = await onFinish({
-              name: values.name,
-              salesOwnerId: values.salesOwnerId,
-            });
-            const createdCompany = (data as CreateResponse<Company>)?.data;
-            
-            if ((values.contacts ?? [])?.length > 0) {
-              
-              try {
-                await createManyMutateAsync({
-                  values: values.contacts?.map((contact) => ({
-                    ...contact,
-                    companyId: Number(createdCompany.id),
-                    salesOwnerId: Number(createdCompany.salesOwner.id),
-                  })) ?? [],
-                });
-               
-              } catch (err) {
-                console.error("Error when calling createManyMutateAsync", err);
-              }
-            }
-
+    <>
+      {isAdmin && (
+        <Modal
+          {...modalProps}
+          mask={!isOverModal}
+          onCancel={() => {
+            close();
             go({
-              to: searchParams.get("to") ?? pathname,
+              to:
+                searchParams.get("to") ??
+                getToPath({
+                  action: "list",
+                }) ??
+                "",
               query: {
-                companyId: createdCompany.id,
                 to: undefined,
               },
               options: {
@@ -147,79 +106,125 @@ export const CompanyCreatePage = ({ isOverModal }: Props) => {
               },
               type: "replace",
             });
-          } catch (error) {
-            Promise.reject(error);
-          }
-        }}
-      >
-        <Form.Item
-          label="Company name"
-          name="name"
-          rules={[{ required: true }]}
+          }}
+          title="Add new company"
+          width={512}
+          // @ts-expect-error Ant Design Icon's v5.0.1 has an issue with @types/react@^18.2.66
+          closeIcon={<LeftOutlined />}
         >
-          <Input placeholder="Please enter company name" />
-        </Form.Item>
-        <Form.Item
-          label="Sales owner"
-          name="salesOwnerId"
-          rules={[{ required: true }]}
-        >
-          <Select
-            placeholder="Please sales owner user"
-            {...selectProps}
-            options={
-              queryResult.data?.data?.map((user) => ({
-                value: user.id,
-                label: (
-                  <SelectOptionWithAvatar
-                    name={user.name}
-                    avatarUrl={user.avatarUrl ?? undefined}
-                  />
-                ),
-              })) ?? []
-            }
-          />
-        </Form.Item>
-        <Form.List name="contacts">
-          {(fields, { add, remove }) => (
-            <Space direction="vertical">
-              {fields.map(({ key, name, ...restField }) => (
-                <Row key={key} gutter={12} align="middle">
-                  <Col span={11}>
-                    <Form.Item noStyle {...restField} name={[name, "name"]}>
-                      <Input
-                        // @ts-expect-error Ant Design Icon's v5.0.1 has an issue with @types/react@^18.2.66
-                        addonBefore={<UserOutlined />}
-                        placeholder="Contact name"
+          <Form
+            {...formProps}
+            layout="vertical"
+            onFinish={async (values) => {
+              try {
+                const data = await onFinish({
+                  name: values.name,
+                  salesOwnerId: values.salesOwnerId,
+                });
+                const createdCompany = (data as CreateResponse<Company>)?.data;
+                
+                if ((values.contacts ?? [])?.length > 0) {
+                  
+                  try {
+                    await createManyMutateAsync({
+                      values: values.contacts?.map((contact) => ({
+                        ...contact,
+                        companyId: Number(createdCompany.id),
+                        salesOwnerId: Number(createdCompany.salesOwner.id),
+                      })) ?? [],
+                    });
+                   
+                  } catch (err) {
+                    console.error("Error when calling createManyMutateAsync", err);
+                  }
+                }
+
+                go({
+                  to: searchParams.get("to") ?? pathname,
+                  query: {
+                    companyId: createdCompany.id,
+                    to: undefined,
+                  },
+                  options: {
+                    keepQuery: true,
+                  },
+                  type: "replace",
+                });
+              } catch (error) {
+                Promise.reject(error);
+              }
+            }}
+          >
+            <Form.Item
+              label="Company name"
+              name="name"
+              rules={[{ required: true }]}
+            >
+              <Input placeholder="Please enter company name" />
+            </Form.Item>
+            <Form.Item
+              label="Sales owner"
+              name="salesOwnerId"
+              rules={[{ required: true }]}
+            >
+              <Select
+                placeholder="Please sales owner user"
+                {...selectProps}
+                options={
+                  queryResult.data?.data?.map((user) => ({
+                    value: user.id,
+                    label: (
+                      <SelectOptionWithAvatar
+                        name={user.name}
+                        avatarUrl={user.avatarUrl ?? undefined}
                       />
-                    </Form.Item>
-                  </Col>
-                  <Col span={11}>
-                    <Form.Item noStyle name={[name, "email"]}>
-                      <Input
-                        // @ts-expect-error Ant Design Icon's v5.0.1 has an issue with @types/react@^18.2.66
-                        addonBefore={<MailOutlined />}
-                        placeholder="Contact email"
-                      />
-                    </Form.Item>
-                  </Col>
-                  <Col span={2}>
-                    <Button
-                      // @ts-expect-error Ant Design Icon's v5.0.1 has an issue with @types/react@^18.2.66
-                      icon={<DeleteOutlined />}
-                      onClick={() => remove(name)}
-                    />
-                  </Col>
-                </Row>
-              ))}
-              <Typography.Link onClick={() => add()}>
-                {/* @ts-expect-error Ant Design Icon's v5.0.1 has an issue with @types/react@^18.2.66 */}
-                <PlusCircleOutlined /> Add new contacts
-              </Typography.Link>
-            </Space>
-          )}
-        </Form.List>
-      </Form>
-    </Modal>
+                    ),
+                  })) ?? []
+                }
+              />
+            </Form.Item>
+            <Form.List name="contacts">
+              {(fields, { add, remove }) => (
+                <Space direction="vertical">
+                  {fields.map(({ key, name, ...restField }) => (
+                    <Row key={key} gutter={12} align="middle">
+                      <Col span={11}>
+                        <Form.Item noStyle {...restField} name={[name, "name"]}>
+                          <Input
+                            // @ts-expect-error Ant Design Icon's v5.0.1 has an issue with @types/react@^18.2.66
+                            addonBefore={<UserOutlined />}
+                            placeholder="Contact name"
+                          />
+                        </Form.Item>
+                      </Col>
+                      <Col span={11}>
+                        <Form.Item noStyle name={[name, "email"]}>
+                          <Input
+                            // @ts-expect-error Ant Design Icon's v5.0.1 has an issue with @types/react@^18.2.66
+                            addonBefore={<MailOutlined />}
+                            placeholder="Contact email"
+                          />
+                        </Form.Item>
+                      </Col>
+                      <Col span={2}>
+                        <Button
+                          // @ts-expect-error Ant Design Icon's v5.0.1 has an issue with @types/react@^18.2.66
+                          icon={<DeleteOutlined />}
+                          onClick={() => remove(name)}
+                        />
+                      </Col>
+                    </Row>
+                  ))}
+                  <Typography.Link onClick={() => add()}>
+                    {/* @ts-expect-error Ant Design Icon's v5.0.1 has an issue with @types/react@^18.2.66 */}
+                    <PlusCircleOutlined /> Add new contacts
+                  </Typography.Link>
+                </Space>
+              )}
+            </Form.List>
+          </Form>
+        </Modal>
+      )}
+    </>
   );
 };

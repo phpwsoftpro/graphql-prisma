@@ -10,9 +10,11 @@ import {
 } from "./components";
 
 export const CompanyEditPage = () => {
+  const currentUser = JSON.parse(localStorage.getItem("user") || "{}");
+  const isAdmin = currentUser.role === "ADMIN";
   return (
     <div className="page-container">
-      <CompanyTitleForm />
+        <CompanyTitleForm isEdit={isAdmin} />
       <Row
         gutter={[32, 32]}
         style={{
@@ -20,16 +22,18 @@ export const CompanyEditPage = () => {
         }}
       >
         <Col span={16}>
-          <CompanyContactsTable />
+          <CompanyContactsTable isEdit={isAdmin} />
           <CompanyDealsTable
             style={{
               marginTop: 32,
             }}
+            isEdit={isAdmin}
           />
           <CompanyQuotesTable
             style={{
               marginTop: 32,
             }}
+            isEdit={isAdmin}
           />
           <CompanyNotes
             style={{
@@ -38,7 +42,7 @@ export const CompanyEditPage = () => {
           />
         </Col>
         <Col span={8}>
-          <CompanyInfoForm />
+          <CompanyInfoForm isEdit={isAdmin} />
         </Col>
       </Row>
     </div>

@@ -42,7 +42,8 @@ export const ContactCreatePage: React.FC<PropsWithChildren> = ({
   }, [searchParams]);
 
   const isHaveOverModal = pathname === "/contacts/create/company-create";
-
+  const currentUser = JSON.parse(localStorage.getItem("user") || "{}");
+  const isAdmin = currentUser.role === "ADMIN";
   return (
     <>
       <Modal
@@ -102,17 +103,18 @@ export const ContactCreatePage: React.FC<PropsWithChildren> = ({
               },
             ]}
             help={
-              <Button
-                style={{ paddingLeft: 0 }}
-                type="link"
-                // @ts-expect-error Ant Design Icon's v5.0.1 has an issue with @types/react@^18.2.66
-                icon={<PlusCircleOutlined />}
-                onClick={() => {
-                  replace("company-create?to=/contacts/create");
-                }}
-              >
-                Add new company
-              </Button>
+                isAdmin && (<Button
+                  style={{ paddingLeft: 0 }}
+                  type="link"
+                  // @ts-expect-error Ant Design Icon's v5.0.1 has an issue with @types/react@^18.2.66
+                  icon={<PlusCircleOutlined />}
+                  onClick={() => {
+                    replace("company-create?to=/contacts/create");
+                  }}
+                >
+                  Add new company
+                </Button>
+              )
             }
           >
             <Select
