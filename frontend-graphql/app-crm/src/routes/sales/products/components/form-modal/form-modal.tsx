@@ -13,6 +13,9 @@ import {
   Tabs,
   message,
 } from "antd";
+
+import { Modal, Form, Input, InputNumber, Select, Spin, Checkbox, Row, Col, Tabs, message } from "antd";
+
 import { useNavigate } from "react-router-dom";
 import { type HttpError, useCreate } from "@refinedev/core";
 import styles from "./index.module.css";
@@ -105,6 +108,20 @@ export const ProductsFormModal: FC<Props> = ({
           title: values.name,
           description: values.description,
           unitPrice: Number(values.salesPrice || 0),
+
+          title: values.name,
+          description: values.description,
+          unitPrice: Number(values.salesPrice || 0),
+
+          name: values.name,
+          internalReference: values.internalReference,
+          responsible: values.responsible,
+          productTags: values.tags || [],
+          description: values.description,
+          salesPrice: Number(values.salesPrice || 0),
+          cost: Number(values.cost || 0),
+          unitOfMeasure: values.unitOfMeasure,
+
         },
       });
 
@@ -114,6 +131,10 @@ export const ProductsFormModal: FC<Props> = ({
     } catch (error: any) {
       console.error("create product error", error);
       message.error(error?.message || "Có lỗi xảy ra!");
+
+
+      message.error(error?.message || "Có lỗi xảy ra!");
+
     } finally {
       setLoading(false);
     }
