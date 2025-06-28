@@ -19,7 +19,10 @@ export class ProductResolver {
 
   @Mutation(() => Product)
   async createProduct(@Arg("data") data: CreateProductInput) {
-    return prisma.product.create({ data });
+    const createData = Object.fromEntries(
+      Object.entries(data).filter(([, value]) => value !== undefined)
+    );
+    return prisma.product.create({ data: createData as any });
   }
 
   @Mutation(() => Product, { nullable: true })
@@ -29,8 +32,8 @@ export class ProductResolver {
   ) {
     const updateData = Object.fromEntries(
       Object.entries(data).filter(([, value]) => value !== undefined)
-    ) as UpdateProductInput;
-    return prisma.product.update({ where: { id }, data: updateData });
+    );
+    return prisma.product.update({ where: { id }, data: updateData as any });
   }
 
   @Mutation(() => Boolean)

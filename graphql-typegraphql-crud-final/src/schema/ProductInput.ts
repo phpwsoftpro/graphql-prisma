@@ -1,15 +1,36 @@
-import { Field, InputType } from "type-graphql";
+import { Field, InputType, Int, Float } from "type-graphql";
 
 @InputType()
 export class CreateProductInput {
   @Field()
-  title: string;
+  name: string;
+
+  @Field()
+  internalReference: string;
+
+  @Field()
+  responsible: string;
+
+  @Field(() => [String], { nullable: true })
+  productTags?: string[];
 
   @Field({ nullable: true })
   description?: string;
 
+  @Field(() => Float)
+  salesPrice: number;
+
+  @Field(() => Float, { nullable: true })
+  cost?: number;
+
+  @Field(() => Int, { nullable: true })
+  quantityOnHand?: number;
+
+  @Field(() => Int, { nullable: true })
+  forecastedQuantity?: number;
+
   @Field()
-  unitPrice: number;
+  unitOfMeasure: string;
 
   @Field({ nullable: true })
   status?: string;
@@ -21,13 +42,34 @@ export class CreateProductInput {
 @InputType()
 export class UpdateProductInput {
   @Field({ nullable: true })
-  title?: string;
+  name?: string;
+
+  @Field({ nullable: true })
+  internalReference?: string;
+
+  @Field({ nullable: true })
+  responsible?: string;
+
+  @Field(() => [String], { nullable: true })
+  productTags?: string[];
 
   @Field({ nullable: true })
   description?: string;
 
+  @Field(() => Float, { nullable: true })
+  salesPrice?: number;
+
+  @Field(() => Float, { nullable: true })
+  cost?: number;
+
+  @Field(() => Int, { nullable: true })
+  quantityOnHand?: number;
+
+  @Field(() => Int, { nullable: true })
+  forecastedQuantity?: number;
+
   @Field({ nullable: true })
-  unitPrice?: number;
+  unitOfMeasure?: string;
 
   @Field({ nullable: true })
   status?: string;
