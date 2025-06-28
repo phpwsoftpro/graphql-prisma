@@ -42,10 +42,10 @@ export const ProductsFormModal: FC<Props> = ({
       }}
     >
       <Form {...formProps} layout="vertical">
-        <Form.Item name="title" label="Product name" rules={[{ required: true }]}> 
+        <Form.Item name="name" label="Product name" rules={[{ required: true }]}> 
           <Input />
         </Form.Item>
-        <Form.Item name="unitPrice" label="Sales Price">
+        <Form.Item name="salesPrice" label="Sales Price">
           <Input type="number" />
         </Form.Item>
       </Form>

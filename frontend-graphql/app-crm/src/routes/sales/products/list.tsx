@@ -17,8 +17,8 @@ import { PRODUCTS_TABLE_QUERY } from "./queries";
 // type Product = GetFieldsFromList<ProductsTableQuery>;
 type Product = {
   id: string;
-  title: string;
-  unitPrice: number;
+  name: string;
+  salesPrice: number;
   createdAt: string;
   image?: string;
 };
@@ -27,11 +27,11 @@ type Product = {
 const mockProducts = [
   {
     id: "1",
-    title: "yyyyy",
+    name: "yyyyy",
     internalReference: "REF001",
     responsible: "Administrator",
     productTags: ["tag1", "tag2", "tag3"],
-    unitPrice: 0.0,
+    salesPrice: 0.0,
     cost: 0.0,
     quantityOnHand: 10,
     forecastedQuantity: 12,
@@ -39,11 +39,11 @@ const mockProducts = [
   },
   {
     id: "2",
-    title: "Service on Timesheet",
+    name: "Service on Timesheet",
     internalReference: "REF002",
     responsible: "Administrator",
     productTags: [],
-    unitPrice: 40.0,
+    salesPrice: 40.0,
     cost: 0.0,
     quantityOnHand: 0,
     forecastedQuantity: 0,
@@ -51,11 +51,11 @@ const mockProducts = [
   },
   {
     id: "3",
-    title: "Senior Developer (Timesheet)",
+    name: "Senior Developer (Timesheet)",
     internalReference: "REF003",
     responsible: "Administrator",
     productTags: [],
-    unitPrice: 20.0,
+    salesPrice: 20.0,
     cost: 0.0,
     quantityOnHand: 0,
     forecastedQuantity: 0,
@@ -105,24 +105,24 @@ export const ProductsListPage: FC<PropsWithChildren> = ({ children }) => {
             rowKey="id"
           >
             <Table.Column
-              dataIndex="title"
+              dataIndex="name"
               title="Product Name"
               width={200}
               render={(_, record) => (
                 <span style={{ display: "flex", alignItems: "center", gap: 8 }}>
                   <CustomAvatar
-                    name={record.title}
+                    name={record.name}
                     src={record.image}
                     shape="square"
                     size={28}
                     style={{ marginRight: 6 }}
                   />
-                  {record.title}
+                  {record.name}
                 </span>
               )}
             />
             <Table.Column
-              dataIndex="unitPrice"
+              dataIndex="salesPrice"
               title="Sales Price"
               width={100}
               render={(value) => `${value.toFixed(2)} €`}
