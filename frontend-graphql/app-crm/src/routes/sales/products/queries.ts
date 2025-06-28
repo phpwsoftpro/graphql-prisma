@@ -4,19 +4,19 @@ export const PRODUCTS_TABLE_QUERY = gql`
   query ProductsTable {
     products {
       id
-      title
-      unitPrice
+      name
+      salesPrice
       createdAt
     }
   }
 `;
 
 export const PRODUCT_CREATE_MUTATION = gql`
-  mutation CreateProduct($data: CreateProductInput!) {
-    createProduct(data: $data) {
+  mutation CreateProduct($input: CreateProductInput!) {
+    createProduct(data: $input) {
       id
-      title
-      unitPrice
+      name
+      salesPrice
     }
   }
 `;
