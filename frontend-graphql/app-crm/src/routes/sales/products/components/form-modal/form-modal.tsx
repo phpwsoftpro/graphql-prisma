@@ -1,403 +1,281 @@
-import type { FC } from "react";
-import { useState } from "react";
+import type { FC, PropsWithChildren } from "react";
+
 import {
-  Modal,
-  Form,
-  Input,
-  InputNumber,
-  Select,
-  Spin,
-  Checkbox,
-  Row,
-  Col,
-  Tabs,
-  message,
-} from "antd";
+  DeleteButton,
+  EditButton,
+  FilterDropdown,
+  getDefaultSortOrder,
+  List,
+  ShowButton,
+  useTable,
+} from "@refinedev/antd";
+import { getDefaultFilter, type HttpError } from "@refinedev/core";
+import { SearchOutlined } from "@ant-design/icons";
+import { Form, Grid, Input, Space, Spin, Table, Avatar } from "antd";
+import dayjs from "dayjs";
+import debounce from "lodash/debounce";
 
-import { useNavigate } from "react-router-dom";
-import { type HttpError, useCreate } from "@refinedev/core";
-import styles from "./index.module.css";
-import { PRODUCT_CREATE_MUTATION } from "../../queries";
+import { ListTitleButton, PaginationTotal, Text, CustomAvatar } from "@/components";
+import { PRODUCTS_TABLE_QUERY } from "./queries";
 
-const PRODUCT_TYPES = [
-  { value: "consumable", label: "Consumable" },
-  { value: "stockable", label: "Stockable" },
-  { value: "service", label: "Service" },
-];
-const INVOICING_POLICIES = [
-  { value: "ordered", label: "Ordered quantities" },
-  { value: "delivered", label: "Delivered quantities" },
-];
-const REINVOICE_EXPENSES = [
-  { value: "no", label: "No" },
-  { value: "at_cost", label: "At cost" },
-  { value: "sales_price", label: "Sales price" },
-];
-const UOM_OPTIONS = [
-  { value: "Units", label: "Units" },
-  { value: "Box", label: "Box" },
-  { value: "Hours", label: "Hours" },
-];
-const CATEGORY_OPTIONS = [
-  { value: "all", label: "All" },
-  { value: "food", label: "Food" },
-  { value: "drink", label: "Drink" },
-];
-const TAX_OPTIONS = [
-  { value: "vat10", label: "VAT 10%" },
-  { value: "vat0", label: "VAT 0%" },
-];
-
-// Inventory/accounting field options (placeholder)
-const ACCOUNT_OPTIONS = [
-  { value: "income", label: "Income Account" },
-  { value: "expense", label: "Expense Account" },
-];
-const ASSET_TYPE_OPTIONS = [
-  { value: "none", label: "None" },
-  { value: "asset", label: "Asset" },
-];
-
-const CREATE_ON_ORDER_OPTIONS = [
-  { value: "nothing", label: "Nothing" },
-  { value: "task", label: "Task" },
-  { value: "project_task", label: "Project & Task" },
-  { value: "project", label: "Project" },
-];
-
-type Props = {
-  action: "create" | "edit";
-  onCancel?: () => void;
-  onMutationSuccess?: () => void;
+// TODO: Thay thế bằng type thực tế của Product
+// type Product = GetFieldsFromList<ProductsTableQuery>;
+type Product = {
+  id: string;
+  name: string;
+  price: number;
+  createdAt: string;
+  image?: string;
 };
 
-export const ProductsFormModal: FC<Props> = ({
-  action,
-  onCancel,
-  onMutationSuccess,
-}) => {
-  const [form] = Form.useForm();
-  const [open, setOpen] = useState(true);
-  const [loading, setLoading] = useState(false);
-  const navigate = useNavigate();
-  const { mutateAsync } = useCreate({
+// TẠM MOCKDATA CHO DEMO UI
+const mockProducts = [
+  {
+    id: "1",
+    name: "yyyyy",
+    internalReference: "REF001",
+    responsible: "Administrator",
+    productTags: ["tag1", "tag2", "tag3"],
+    salesPrice: 0.0,
+    cost: 0.0,
+    quantityOnHand: 10,
+    forecastedQuantity: 12,
+    unitOfMeasure: "Units",
+  },
+  {
+    id: "2",
+    name: "Service on Timesheet",
+    internalReference: "REF002",
+    responsible: "Administrator",
+    productTags: [],
+    salesPrice: 40.0,
+    cost: 0.0,
+    quantityOnHand: 0,
+    forecastedQuantity: 0,
+    unitOfMeasure: "Hours",
+  },
+  {
+    id: "3",
+    name: "Senior Developer (Timesheet)",
+    internalReference: "REF003",
+    responsible: "Administrator",
+    productTags: [],
+    salesPrice: 20.0,
+    cost: 0.0,
+    quantityOnHand: 0,
+    forecastedQuantity: 0,
+    unitOfMeasure: "Units",
+  },
+];
+
+export const ProductsListPage: FC<PropsWithChildren> = ({ children }) => {
+  const screens = Grid.useBreakpoint();
+
+  const {
+    tableProps,
+    searchFormProps,
+    filters,
+    sorters,
+    tableQuery: tableQueryResult,
+  } = useTable<Product, HttpError, { name: string }>({
     resource: "products",
-    meta: { gqlMutation: PRODUCT_CREATE_MUTATION },
+    onSearch: (values) => [
+      {
+        field: "name",
+        operator: "contains",
+        value: values.name,
+      },
+    ],
+    filters: {
+      initial: [
+        { field: "name", value: "", operator: "contains" },
+      ],
+    },
+    sorters: {
+      initial: [{ field: "createdAt", order: "desc" }],
+    },
+    meta: {
+      gqlQuery: PRODUCTS_TABLE_QUERY,
+    },
   });
 
-  // Theo dõi giá trị checkbox
-  const canBeSold = Form.useWatch("canBeSold", form);
-  const canBePurchased = Form.useWatch("canBePurchased", form);
-  const productType = Form.useWatch("productType", form);
-
-  const handleClose = () => {
-    setOpen(false);
-    if (onCancel) onCancel();
-    navigate("/products");
+  const onSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
+    searchFormProps?.onFinish?.({
+      name: e.target.value ?? "",
+    });
   };
 
-  const handleOk = async () => {
-    try {
-      const values = await form.validateFields();
-      setLoading(true);
+  const debouncedOnChange = debounce(onSearch, 500);
 
-      await mutateAsync({
-        values: {
-          name: values.name,
-          internalReference: values.internalReference,
-          responsible: values.responsible,
-          productTags: values.tags || [],
-          description: values.description,
-          salesPrice: Number(values.salesPrice || 0),
-          cost: Number(values.cost || 0),
-          unitOfMeasure: values.unitOfMeasure,
-        },
-      });
-
-      onMutationSuccess?.();
-      setOpen(false);
-      navigate("/products");
-    } catch (error: any) {
-      console.error("create product error", error);
-      message.error(error?.message || "Có lỗi xảy ra!");
-
-    } finally {
-      setLoading(false);
-    }
-  };
+  const dataSource = Array.isArray(tableProps.dataSource)
+    ? tableProps.dataSource.map((product: any) => ({
+        ...product,
+        id: product._id ?? product.id,
+      }))
+    : [];
 
   return (
-    <Modal
-      open={open}
-      title={action === "create" ? "Create Product" : "Edit Product"}
-      onCancel={handleClose}
-      onOk={handleOk}
-      confirmLoading={loading}
-      width={900}
-      destroyOnClose
-    >
-      <Spin spinning={loading}>
-        <Form
-          form={form}
-          layout="vertical"
-          initialValues={{
-            productType: "consumable",
-            invoicingPolicy: "ordered",
-            reInvoiceExpenses: "no",
-            unitOfMeasure: "Units",
-            purchaseUoM: "Units",
-            canBeSold: false,
-            canBePurchased: false,
+    <div className="page-container">
+      <div style={{ padding: 24, background: '#fff', borderRadius: 8 }}>
+        <List
+          breadcrumb={false}
+          headerButtons={() => {
+            return (
+              <Space
+                style={{
+                  marginTop: screens.xs ? "1.6rem" : undefined,
+                }}
+              >
+                <Form
+                  {...searchFormProps}
+                  initialValues={{
+                    name: getDefaultFilter("name", filters, "contains"),
+                  }}
+                  layout="inline"
+                >
+                  <Form.Item name="name" noStyle>
+                    <Input
+                      size="large"
+                      prefix={<SearchOutlined />}
+                      suffix={
+                        <Spin
+                          size="small"
+                          spinning={tableQueryResult.isFetching}
+                        />
+                      }
+                      placeholder="Search by name"
+                      onChange={debouncedOnChange}
+                    />
+                  </Form.Item>
+                </Form>
+              </Space>
+            );
           }}
+          contentProps={{
+            style: {
+              marginTop: "28px",
+            },
+          }}
+          title={<ListTitleButton buttonText="Add product" toPath="/products/create" />}
         >
-          <Tabs defaultActiveKey="general">
-            <Tabs.TabPane tab="General Information" key="general">
-              <Row gutter={16}>
-                <Col span={12}>
-                  <Form.Item
-                    name="name"
-                    label="Product Name"
-                    rules={[{ required: true }]}
-                  >
-                    <Input placeholder="e.g. Cheese Burger" />
-                  </Form.Item>
-                  <Form.Item label="Can be Sold / Purchased">
-                    <Form.Item
-                      name="canBeSold"
-                      valuePropName="checked"
-                      initialValue={true}
-                      noStyle
-                    >
-                      <Checkbox style={{ marginRight: 24 }}>
-                        Can be Sold
-                      </Checkbox>
-                    </Form.Item>
-                    <Form.Item
-                      name="canBePurchased"
-                      valuePropName="checked"
-                      initialValue={true}
-                      noStyle
-                    >
-                      <Checkbox>Can be Purchased</Checkbox>
-                    </Form.Item>
-                  </Form.Item>
-                  <Form.Item
-                    name="productType"
-                    label="Product Type"
-                    rules={[{ required: true }]}
-                  >
-                    <Select options={PRODUCT_TYPES} placeholder="Select type" />
-                  </Form.Item>
-                  <Form.Item name="invoicingPolicy" label="Invoicing Policy">
-                    <Select
-                      options={INVOICING_POLICIES}
-                      placeholder="Select policy"
+          <Table
+            {...tableProps}
+            dataSource={dataSource}
+            pagination={{
+              ...tableProps.pagination,
+              showTotal: (total) => (
+                <PaginationTotal total={total} entityName="products" />
+              ),
+            }}
+            rowKey="id"
+          >
+            <Table.Column
+              dataIndex="name"
+              title="Product Name"
+              width={200}
+              sorter
+              render={(_, record) => (
+                <span style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                  <CustomAvatar name={record.name} src={record.image} shape="square" size={28} style={{ marginRight: 6 }} />
+                  {record.name}
+                </span>
+              )}
+            />
+            <Table.Column dataIndex="internalReference" title="Internal Reference" width={140} sorter />
+            <Table.Column
+              dataIndex="responsible"
+              title="Responsible"
+              width={140}
+              sorter
+              render={value => (
+                <span>
+                  <Avatar style={{ backgroundColor: '#c44', marginRight: 6 }} size={24}>A</Avatar>
+                  {value}
+                </span>
+              )}
+            />
+            <Table.Column
+              dataIndex="productTags"
+              title="Product Tags"
+              width={180}
+              sorter
+              render={tags => (
+                <span style={{
+                  display: "inline-block",
+                  maxWidth: 120,
+                  whiteSpace: "nowrap",
+                  overflow: "hidden",
+                  textOverflow: "ellipsis"
+                }}>
+                  {tags?.join(", ")}
+                </span>
+              )}
+            />
+            <Table.Column
+              dataIndex="salesPrice"
+              title="Sales Price"
+              width={100}
+              sorter
+              render={value => `${value.toFixed(2)} €`}
+            />
+            <Table.Column
+              dataIndex="cost"
+              title="Cost"
+              width={100}
+              sorter
+              render={value => `${value.toFixed(2)} €`}
+            />
+            <Table.Column
+              dataIndex="quantityOnHand"
+              title="Quantity On Hand"
+              width={120}
+              sorter
+            />
+            <Table.Column
+              dataIndex="forecastedQuantity"
+              title="Forecasted Quantity"
+              width={140}
+              sorter
+            />
+            <Table.Column
+              dataIndex="unitOfMeasure"
+              title="Unit of Measure"
+              width={120}
+              sorter
+            />
+            <Table.Column
+              fixed="right"
+              title="Actions"
+              dataIndex="actions"
+              render={(_, record) => {
+                return (
+                  <Space>
+                    <ShowButton
+                      hideText
+                      size="small"
+                      recordItemId={record.id}
+                      style={{ backgroundColor: "transparent" }}
                     />
-                  </Form.Item>
-                  {productType === "service" && (
-                    <Form.Item name="createOnOrder" label="Create on Order">
-                      <Select
-                        options={CREATE_ON_ORDER_OPTIONS}
-                        placeholder="Select option"
-                      />
-                    </Form.Item>
-                  )}
-                  <Form.Item
-                    name="reInvoiceExpenses"
-                    label="Re-Invoice Expenses"
-                  >
-                    <Select options={REINVOICE_EXPENSES} />
-                  </Form.Item>
-                  <Form.Item name="unitOfMeasure" label="Unit of Measure">
-                    <Select options={UOM_OPTIONS} placeholder="Select UoM" />
-                  </Form.Item>
-                  <Form.Item name="purchaseUoM" label="Purchase UoM">
-                    <Select
-                      options={UOM_OPTIONS}
-                      placeholder="Select Purchase UoM"
+                    <EditButton
+                      hideText
+                      size="small"
+                      recordItemId={record.id}
+                      style={{ backgroundColor: "transparent" }}
                     />
-                  </Form.Item>
-                  <Form.Item name="description" label={<b>Internal Notes</b>}>
-                    <Input.TextArea
-                      rows={3}
-                      placeholder="This note is only for internal purposes."
+                    <DeleteButton
+                      hideText
+                      size="small"
+                      recordItemId={record.id}
+                      style={{ backgroundColor: "transparent" }}
                     />
-                  </Form.Item>
-                </Col>
-                <Col span={12}>
-                  <Form.Item
-                    name="salesPrice"
-                    label="Sales Price"
-                    rules={[{ required: true }]}
-                  >
-                    <InputNumber
-                      min={0}
-                      style={{ width: "100%" }}
-                      placeholder="e.g. 1.00"
-                      addonAfter="$"
-                    />
-                  </Form.Item>
-                  <Form.Item name="customerTaxes" label="Customer Taxes">
-                    <Select options={TAX_OPTIONS} placeholder="Select tax" />
-                  </Form.Item>
-                  <Form.Item name="cost" label="Cost">
-                    <InputNumber
-                      min={0}
-                      style={{ width: "100%" }}
-                      placeholder="e.g. 0.00"
-                      addonAfter="$"
-                    />
-                  </Form.Item>
-                  <Form.Item name="category" label="Product Category">
-                    <Select
-                      options={CATEGORY_OPTIONS}
-                      placeholder="Select category"
-                    />
-                  </Form.Item>
-                  <Form.Item
-                    name="internalReference"
-                    label="Internal Reference"
-                  >
-                    <Input placeholder="SKU/Code" />
-                  </Form.Item>
-                  <Form.Item name="barcode" label="Barcode">
-                    <Input placeholder="Barcode" />
-                  </Form.Item>
-                  <Form.Item name="tags" label="Product Tags">
-                    <Select
-                      mode="tags"
-                      style={{ width: "100%" }}
-                      placeholder="Add tags"
-                    />
-                  </Form.Item>
-                </Col>
-              </Row>
-            </Tabs.TabPane>
-            {productType !== "service" && (
-              <Tabs.TabPane tab="Inventory" key="inventory">
-                <Row gutter={16}>
-                  <Col span={12}>
-                    <Form.Item name="routes" label="Routes">
-                      <Input placeholder="e.g. View Diagram" />
-                    </Form.Item>
-                  </Col>
-                  <Col span={12}>
-                    <Form.Item name="responsible" label="Responsible">
-                      <Input placeholder="e.g. Administrator" />
-                    </Form.Item>
-                  </Col>
-                </Row>
-                <Row gutter={16}>
-                  <Col span={12}>
-                    <Form.Item name="weight" label="Weight">
-                      <InputNumber
-                        min={0}
-                        style={{ width: "100%" }}
-                        placeholder="0.00"
-                        addonAfter="kg"
-                      />
-                    </Form.Item>
-                  </Col>
-                  <Col span={12}>
-                    <Form.Item name="volume" label="Volume">
-                      <InputNumber
-                        min={0}
-                        style={{ width: "100%" }}
-                        placeholder="0.00"
-                        addonAfter="m³"
-                      />
-                    </Form.Item>
-                  </Col>
-                </Row>
-                <Row gutter={16}>
-                  <Col span={24}>
-                    <Form.Item
-                      name="receiptNote"
-                      label="Description for Receipts"
-                    >
-                      <Input.TextArea
-                        rows={2}
-                        placeholder="This note is added to receipt orders..."
-                      />
-                    </Form.Item>
-                  </Col>
-                </Row>
-                <Row gutter={16}>
-                  <Col span={24}>
-                    <Form.Item
-                      name="deliveryNote"
-                      label="Description for Delivery Orders"
-                    >
-                      <Input.TextArea
-                        rows={2}
-                        placeholder="This note is added to delivery orders..."
-                      />
-                    </Form.Item>
-                  </Col>
-                </Row>
-              </Tabs.TabPane>
-            )}
-            {canBeSold && (
-              <Tabs.TabPane tab="Sales" key="sales">
-                <Row gutter={16}>
-                  <Col span={12}>
-                    <Form.Item name="salesNote" label="Sales Note">
-                      <Input.TextArea
-                        rows={2}
-                        placeholder="This note is added to sales orders..."
-                      />
-                    </Form.Item>
-                  </Col>
-                </Row>
-              </Tabs.TabPane>
-            )}
-            {canBePurchased && (
-              <Tabs.TabPane tab="Purchase" key="purchase">
-                <Row gutter={16}>
-                  <Col span={12}>
-                    <Form.Item name="vendorTaxes" label="Vendor Taxes">
-                      <Select
-                        options={TAX_OPTIONS}
-                        placeholder="Select vendor tax"
-                      />
-                    </Form.Item>
-                  </Col>
-                </Row>
-              </Tabs.TabPane>
-            )}
-            <Tabs.TabPane tab="Accounting" key="accounting">
-              <Row gutter={16}>
-                <Col span={12}>
-                  <Form.Item name="incomeAccount" label="Income Account">
-                    <Select
-                      options={ACCOUNT_OPTIONS}
-                      placeholder="Select income account"
-                    />
-                  </Form.Item>
-                </Col>
-                <Col span={12}>
-                  <Form.Item name="expenseAccount" label="Expense Account">
-                    <Select
-                      options={ACCOUNT_OPTIONS}
-                      placeholder="Select expense account"
-                    />
-                  </Form.Item>
-                </Col>
-              </Row>
-              <Row gutter={16}>
-                <Col span={12}>
-                  <Form.Item name="assetType" label="Asset Type">
-                    <Select
-                      options={ASSET_TYPE_OPTIONS}
-                      placeholder="Select asset type"
-                    />
-                  </Form.Item>
-                </Col>
-              </Row>
-            </Tabs.TabPane>
-          </Tabs>
-        </Form>
-      </Spin>
-    </Modal>
+                  </Space>
+                );
+              }}
+            />
+          </Table>
+        </List>
+        {children}
+      </div>
+    </div>
   );
 };
