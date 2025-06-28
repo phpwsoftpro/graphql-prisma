@@ -108,8 +108,8 @@ export const ProductsFormModal: FC<Props> = ({ action, onCancel, onMutationSucce
       destroyOnClose
     >
       <Spin spinning={loading}>
-        <Form 
-          form={form} 
+        <Form
+          form={form}
           layout="vertical"
           initialValues={{
             productType: "consumable",
