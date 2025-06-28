@@ -22,11 +22,22 @@ export const client = new GraphQLClient(API_URL, {
 
       return response;
     } catch (error: any) {
-      const messages = error?.map((error: any) => error?.message)?.join("");
-      const code = error?.[0]?.extensions?.code;
+      let graphQLErrors: any[] = [];
+
+      if (Array.isArray(error)) {
+        graphQLErrors = error;
+      } else if (Array.isArray(error?.response?.data?.errors)) {
+        graphQLErrors = error.response.data.errors;
+      }
+
+      const messages = graphQLErrors
+        .map((err: any) => err?.message)
+        .join("; ");
+      const code =
+        graphQLErrors[0]?.extensions?.code || error?.response?.status;
 
       return Promise.reject({
-        message: messages || JSON.stringify(error),
+        message: messages || error?.message || JSON.stringify(error),
         statusCode: code || 500,
       });
     }
