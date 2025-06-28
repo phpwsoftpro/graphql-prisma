@@ -1,6 +1,18 @@
 import type { FC } from "react";
 import { useState } from "react";
-import { Modal, Form, Input, InputNumber, Select, Spin, Checkbox, Row, Col, Tabs } from "antd";
+import {
+  Modal,
+  Form,
+  Input,
+  InputNumber,
+  Select,
+  Spin,
+  Checkbox,
+  Row,
+  Col,
+  Tabs,
+  message,
+} from "antd";
 import { useNavigate } from "react-router-dom";
 import { type HttpError, useCreate } from "@refinedev/core";
 import styles from "./index.module.css";
@@ -58,7 +70,11 @@ type Props = {
   onMutationSuccess?: () => void;
 };
 
-export const ProductsFormModal: FC<Props> = ({ action, onCancel, onMutationSuccess }) => {
+export const ProductsFormModal: FC<Props> = ({
+  action,
+  onCancel,
+  onMutationSuccess,
+}) => {
   const [form] = Form.useForm();
   const [open, setOpen] = useState(true);
   const [loading, setLoading] = useState(false);
@@ -79,35 +95,36 @@ export const ProductsFormModal: FC<Props> = ({ action, onCancel, onMutationSucce
     navigate("/products");
   };
 
+  const handleOk = async () => {
+    try {
+      const values = await form.validateFields();
+      setLoading(true);
+
+      await mutateAsync({
+        values: {
+          title: values.name,
+          description: values.description,
+          unitPrice: Number(values.salesPrice || 0),
+        },
+      });
+
+      onMutationSuccess?.();
+      setOpen(false);
+      navigate("/products");
+    } catch (error: any) {
+      console.error("create product error", error);
+      message.error(error?.message || "Có lỗi xảy ra!");
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <Modal
       open={open}
       title={action === "create" ? "Create Product" : "Edit Product"}
       onCancel={handleClose}
-      onOk={() => {
-        form.validateFields().then(async (values) => {
-          setLoading(true);
-          try {
-            await mutateAsync({
-              values: {
-                name: values.name,
-                internalReference: values.internalReference,
-                responsible: values.responsible,
-                productTags: values.tags || [],
-                description: values.description,
-                salesPrice: Number(values.salesPrice || 0),
-                cost: Number(values.cost || 0),
-                unitOfMeasure: values.unitOfMeasure,
-              },
-            });
-            onMutationSuccess?.();
-            setOpen(false);
-            navigate("/products");
-          } finally {
-            setLoading(false);
-          }
-        });
-      }}
+      onOk={handleOk}
       confirmLoading={loading}
       width={900}
       destroyOnClose
@@ -130,62 +147,121 @@ export const ProductsFormModal: FC<Props> = ({ action, onCancel, onMutationSucce
             <Tabs.TabPane tab="General Information" key="general">
               <Row gutter={16}>
                 <Col span={12}>
-                  <Form.Item name="name" label="Product Name" rules={[{ required: true }]}> 
+                  <Form.Item
+                    name="name"
+                    label="Product Name"
+                    rules={[{ required: true }]}
+                  >
                     <Input placeholder="e.g. Cheese Burger" />
                   </Form.Item>
                   <Form.Item label="Can be Sold / Purchased">
-                    <Form.Item name="canBeSold" valuePropName="checked" initialValue={true} noStyle>
-                      <Checkbox style={{ marginRight: 24 }}>Can be Sold</Checkbox>
+                    <Form.Item
+                      name="canBeSold"
+                      valuePropName="checked"
+                      initialValue={true}
+                      noStyle
+                    >
+                      <Checkbox style={{ marginRight: 24 }}>
+                        Can be Sold
+                      </Checkbox>
                     </Form.Item>
-                    <Form.Item name="canBePurchased" valuePropName="checked" initialValue={true} noStyle>
+                    <Form.Item
+                      name="canBePurchased"
+                      valuePropName="checked"
+                      initialValue={true}
+                      noStyle
+                    >
                       <Checkbox>Can be Purchased</Checkbox>
                     </Form.Item>
                   </Form.Item>
-                  <Form.Item name="productType" label="Product Type" rules={[{ required: true }]}> 
+                  <Form.Item
+                    name="productType"
+                    label="Product Type"
+                    rules={[{ required: true }]}
+                  >
                     <Select options={PRODUCT_TYPES} placeholder="Select type" />
                   </Form.Item>
-                  <Form.Item name="invoicingPolicy" label="Invoicing Policy"> 
-                    <Select options={INVOICING_POLICIES} placeholder="Select policy" />
+                  <Form.Item name="invoicingPolicy" label="Invoicing Policy">
+                    <Select
+                      options={INVOICING_POLICIES}
+                      placeholder="Select policy"
+                    />
                   </Form.Item>
                   {productType === "service" && (
                     <Form.Item name="createOnOrder" label="Create on Order">
-                      <Select options={CREATE_ON_ORDER_OPTIONS} placeholder="Select option" />
+                      <Select
+                        options={CREATE_ON_ORDER_OPTIONS}
+                        placeholder="Select option"
+                      />
                     </Form.Item>
                   )}
-                  <Form.Item name="reInvoiceExpenses" label="Re-Invoice Expenses">
+                  <Form.Item
+                    name="reInvoiceExpenses"
+                    label="Re-Invoice Expenses"
+                  >
                     <Select options={REINVOICE_EXPENSES} />
                   </Form.Item>
-                  <Form.Item name="unitOfMeasure" label="Unit of Measure"> 
+                  <Form.Item name="unitOfMeasure" label="Unit of Measure">
                     <Select options={UOM_OPTIONS} placeholder="Select UoM" />
                   </Form.Item>
-                  <Form.Item name="purchaseUoM" label="Purchase UoM"> 
-                    <Select options={UOM_OPTIONS} placeholder="Select Purchase UoM" />
+                  <Form.Item name="purchaseUoM" label="Purchase UoM">
+                    <Select
+                      options={UOM_OPTIONS}
+                      placeholder="Select Purchase UoM"
+                    />
                   </Form.Item>
                   <Form.Item name="description" label={<b>Internal Notes</b>}>
-                    <Input.TextArea rows={3} placeholder="This note is only for internal purposes." />
+                    <Input.TextArea
+                      rows={3}
+                      placeholder="This note is only for internal purposes."
+                    />
                   </Form.Item>
                 </Col>
                 <Col span={12}>
-                  <Form.Item name="salesPrice" label="Sales Price" rules={[{ required: true }]}> 
-                    <InputNumber min={0} style={{ width: "100%" }} placeholder="e.g. 1.00" addonAfter="$" />
+                  <Form.Item
+                    name="salesPrice"
+                    label="Sales Price"
+                    rules={[{ required: true }]}
+                  >
+                    <InputNumber
+                      min={0}
+                      style={{ width: "100%" }}
+                      placeholder="e.g. 1.00"
+                      addonAfter="$"
+                    />
                   </Form.Item>
                   <Form.Item name="customerTaxes" label="Customer Taxes">
                     <Select options={TAX_OPTIONS} placeholder="Select tax" />
                   </Form.Item>
-                  <Form.Item name="cost" label="Cost"> 
-                    <InputNumber min={0} style={{ width: "100%" }} placeholder="e.g. 0.00" addonAfter="$" />
+                  <Form.Item name="cost" label="Cost">
+                    <InputNumber
+                      min={0}
+                      style={{ width: "100%" }}
+                      placeholder="e.g. 0.00"
+                      addonAfter="$"
+                    />
                   </Form.Item>
-                  <Form.Item name="category" label="Product Category"> 
-                    <Select options={CATEGORY_OPTIONS} placeholder="Select category" />
+                  <Form.Item name="category" label="Product Category">
+                    <Select
+                      options={CATEGORY_OPTIONS}
+                      placeholder="Select category"
+                    />
                   </Form.Item>
-                  <Form.Item name="internalReference" label="Internal Reference"> 
+                  <Form.Item
+                    name="internalReference"
+                    label="Internal Reference"
+                  >
                     <Input placeholder="SKU/Code" />
                   </Form.Item>
-                  <Form.Item name="barcode" label="Barcode"> 
+                  <Form.Item name="barcode" label="Barcode">
                     <Input placeholder="Barcode" />
                   </Form.Item>
-                  <Form.Item name="tags" label="Product Tags"> 
-                    <Select mode="tags" style={{ width: "100%" }} placeholder="Add tags" />
+                  <Form.Item name="tags" label="Product Tags">
+                    <Select
+                      mode="tags"
+                      style={{ width: "100%" }}
+                      placeholder="Add tags"
+                    />
                   </Form.Item>
                 </Col>
               </Row>
@@ -207,26 +283,48 @@ export const ProductsFormModal: FC<Props> = ({ action, onCancel, onMutationSucce
                 <Row gutter={16}>
                   <Col span={12}>
                     <Form.Item name="weight" label="Weight">
-                      <InputNumber min={0} style={{ width: "100%" }} placeholder="0.00" addonAfter="kg" />
+                      <InputNumber
+                        min={0}
+                        style={{ width: "100%" }}
+                        placeholder="0.00"
+                        addonAfter="kg"
+                      />
                     </Form.Item>
                   </Col>
                   <Col span={12}>
                     <Form.Item name="volume" label="Volume">
-                      <InputNumber min={0} style={{ width: "100%" }} placeholder="0.00" addonAfter="m³" />
+                      <InputNumber
+                        min={0}
+                        style={{ width: "100%" }}
+                        placeholder="0.00"
+                        addonAfter="m³"
+                      />
                     </Form.Item>
                   </Col>
                 </Row>
                 <Row gutter={16}>
                   <Col span={24}>
-                    <Form.Item name="receiptNote" label="Description for Receipts">
-                      <Input.TextArea rows={2} placeholder="This note is added to receipt orders..." />
+                    <Form.Item
+                      name="receiptNote"
+                      label="Description for Receipts"
+                    >
+                      <Input.TextArea
+                        rows={2}
+                        placeholder="This note is added to receipt orders..."
+                      />
                     </Form.Item>
                   </Col>
                 </Row>
                 <Row gutter={16}>
                   <Col span={24}>
-                    <Form.Item name="deliveryNote" label="Description for Delivery Orders">
-                      <Input.TextArea rows={2} placeholder="This note is added to delivery orders..." />
+                    <Form.Item
+                      name="deliveryNote"
+                      label="Description for Delivery Orders"
+                    >
+                      <Input.TextArea
+                        rows={2}
+                        placeholder="This note is added to delivery orders..."
+                      />
                     </Form.Item>
                   </Col>
                 </Row>
@@ -237,7 +335,10 @@ export const ProductsFormModal: FC<Props> = ({ action, onCancel, onMutationSucce
                 <Row gutter={16}>
                   <Col span={12}>
                     <Form.Item name="salesNote" label="Sales Note">
-                      <Input.TextArea rows={2} placeholder="This note is added to sales orders..." />
+                      <Input.TextArea
+                        rows={2}
+                        placeholder="This note is added to sales orders..."
+                      />
                     </Form.Item>
                   </Col>
                 </Row>
@@ -248,7 +349,10 @@ export const ProductsFormModal: FC<Props> = ({ action, onCancel, onMutationSucce
                 <Row gutter={16}>
                   <Col span={12}>
                     <Form.Item name="vendorTaxes" label="Vendor Taxes">
-                      <Select options={TAX_OPTIONS} placeholder="Select vendor tax" />
+                      <Select
+                        options={TAX_OPTIONS}
+                        placeholder="Select vendor tax"
+                      />
                     </Form.Item>
                   </Col>
                 </Row>
@@ -258,19 +362,28 @@ export const ProductsFormModal: FC<Props> = ({ action, onCancel, onMutationSucce
               <Row gutter={16}>
                 <Col span={12}>
                   <Form.Item name="incomeAccount" label="Income Account">
-                    <Select options={ACCOUNT_OPTIONS} placeholder="Select income account" />
+                    <Select
+                      options={ACCOUNT_OPTIONS}
+                      placeholder="Select income account"
+                    />
                   </Form.Item>
                 </Col>
                 <Col span={12}>
                   <Form.Item name="expenseAccount" label="Expense Account">
-                    <Select options={ACCOUNT_OPTIONS} placeholder="Select expense account" />
+                    <Select
+                      options={ACCOUNT_OPTIONS}
+                      placeholder="Select expense account"
+                    />
                   </Form.Item>
                 </Col>
               </Row>
               <Row gutter={16}>
                 <Col span={12}>
                   <Form.Item name="assetType" label="Asset Type">
-                    <Select options={ASSET_TYPE_OPTIONS} placeholder="Select asset type" />
+                    <Select
+                      options={ASSET_TYPE_OPTIONS}
+                      placeholder="Select asset type"
+                    />
                   </Form.Item>
                 </Col>
               </Row>
