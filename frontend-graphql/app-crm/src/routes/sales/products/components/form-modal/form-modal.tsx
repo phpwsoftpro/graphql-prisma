@@ -102,7 +102,9 @@ export const ProductsFormModal: FC<Props> = ({ action, onCancel, onMutationSucce
       navigate("/products");
     } catch (error: any) {
       console.error("create product error", error);
+
       message.error(error?.message || "Có lỗi xảy ra!");
+
     } finally {
       setLoading(false);
     }
