@@ -9,6 +9,7 @@ export const PRODUCTS_TABLE_QUERY = gql`
         internalReference
         responsible
         productTags
+        status
         salesPrice
         cost
         quantityOnHand

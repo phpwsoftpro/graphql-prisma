@@ -6,6 +6,8 @@ services:
       context: .
       dockerfile: Dockerfile
     container_name: refine_frontend_crm_graphql
+    volumes:
+      - /Users/apple/project_crm/graphql-prisma/frontend-graphql/app-crm:/app-crm
     ports:
       - "5174:5173"  # Changed external port from 5173 to 5174
     environment:

@@ -219,6 +219,12 @@ export const ProductsListPage: FC<PropsWithChildren> = ({ children }) => {
               render={value => `${value.toFixed(2)} €`}
             />
             <Table.Column
+              dataIndex="status"
+              title="Status"
+              width={120}
+              sorter
+            />
+            <Table.Column
               dataIndex="cost"
               title="Cost"
               width={100}
