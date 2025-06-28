@@ -1,6 +1,6 @@
 import type { FC } from "react";
 import { useState } from "react";
-import { Modal, Form, Input, InputNumber, Select, Spin, Checkbox, Row, Col, Tabs } from "antd";
+import { Modal, Form, Input, InputNumber, Select, Spin, Checkbox, Row, Col, Tabs, message } from "antd";
 import { useNavigate } from "react-router-dom";
 import { type HttpError, useCreate } from "@refinedev/core";
 import styles from "./index.module.css";
@@ -102,6 +102,9 @@ export const ProductsFormModal: FC<Props> = ({ action, onCancel, onMutationSucce
       navigate("/products");
     } catch (error: any) {
       console.error("create product error", error);
+
+      message.error(error?.message || "Có lỗi xảy ra!");
+
     } finally {
       setLoading(false);
     }
