@@ -79,35 +79,40 @@ export const ProductsFormModal: FC<Props> = ({ action, onCancel, onMutationSucce
     navigate("/products");
   };
 
+  const handleOk = async () => {
+    try {
+      const values = await form.validateFields();
+      setLoading(true);
+
+      await mutateAsync({
+        values: {
+          name: values.name,
+          internalReference: values.internalReference,
+          responsible: values.responsible,
+          productTags: values.tags || [],
+          description: values.description,
+          salesPrice: Number(values.salesPrice || 0),
+          cost: Number(values.cost || 0),
+          unitOfMeasure: values.unitOfMeasure,
+        },
+      });
+
+      onMutationSuccess?.();
+      setOpen(false);
+      navigate("/products");
+    } catch (error: any) {
+      console.error("create product error", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <Modal
       open={open}
       title={action === "create" ? "Create Product" : "Edit Product"}
       onCancel={handleClose}
-      onOk={() => {
-        form.validateFields().then(async (values) => {
-          setLoading(true);
-          try {
-            await mutateAsync({
-              values: {
-                name: values.name,
-                internalReference: values.internalReference,
-                responsible: values.responsible,
-                productTags: values.tags || [],
-                description: values.description,
-                salesPrice: Number(values.salesPrice || 0),
-                cost: Number(values.cost || 0),
-                unitOfMeasure: values.unitOfMeasure,
-              },
-            });
-            onMutationSuccess?.();
-            setOpen(false);
-            navigate("/products");
-          } finally {
-            setLoading(false);
-          }
-        });
-      }}
+      onOk={handleOk}
       confirmLoading={loading}
       width={900}
       destroyOnClose
