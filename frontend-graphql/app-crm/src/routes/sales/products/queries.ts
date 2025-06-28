@@ -4,8 +4,8 @@ export const PRODUCTS_TABLE_QUERY = gql`
   query ProductsTable {
     products {
       id
-      name
-      salesPrice
+      title
+      unitPrice
       createdAt
     }
   }
@@ -15,10 +15,8 @@ export const PRODUCT_CREATE_MUTATION = gql`
   mutation CreateProduct($data: CreateProductInput!) {
     createProduct(data: $data) {
       id
-      name
-      internalReference
-      responsible
-      salesPrice
+      title
+      unitPrice
     }
   }
 `;

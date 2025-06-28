@@ -22,7 +22,7 @@ import { PRODUCTS_TABLE_QUERY } from "./queries";
 // type Product = GetFieldsFromList<ProductsTableQuery>;
 type Product = {
   id: string;
-  name: string;
+  title: string;
   price: number;
   createdAt: string;
   image?: string;
@@ -32,11 +32,11 @@ type Product = {
 const mockProducts = [
   {
     id: "1",
-    name: "yyyyy",
+    title: "yyyyy",
     internalReference: "REF001",
     responsible: "Administrator",
     productTags: ["tag1", "tag2", "tag3"],
-    salesPrice: 0.0,
+    unitPrice: 0.0,
     cost: 0.0,
     quantityOnHand: 10,
     forecastedQuantity: 12,
@@ -44,11 +44,11 @@ const mockProducts = [
   },
   {
     id: "2",
-    name: "Service on Timesheet",
+    title: "Service on Timesheet",
     internalReference: "REF002",
     responsible: "Administrator",
     productTags: [],
-    salesPrice: 40.0,
+    unitPrice: 40.0,
     cost: 0.0,
     quantityOnHand: 0,
     forecastedQuantity: 0,
@@ -56,11 +56,11 @@ const mockProducts = [
   },
   {
     id: "3",
-    name: "Senior Developer (Timesheet)",
+    title: "Senior Developer (Timesheet)",
     internalReference: "REF003",
     responsible: "Administrator",
     productTags: [],
-    salesPrice: 20.0,
+    unitPrice: 20.0,
     cost: 0.0,
     quantityOnHand: 0,
     forecastedQuantity: 0,
@@ -77,18 +77,18 @@ export const ProductsListPage: FC<PropsWithChildren> = ({ children }) => {
     filters,
     sorters,
     tableQuery: tableQueryResult,
-  } = useTable<Product, HttpError, { name: string }>({
+  } = useTable<Product, HttpError, { title: string }>({
     resource: "products",
     onSearch: (values) => [
       {
-        field: "name",
+        field: "title",
         operator: "contains",
-        value: values.name,
+        value: values.title,
       },
     ],
     filters: {
       initial: [
-        { field: "name", value: "", operator: "contains" },
+        { field: "title", value: "", operator: "contains" },
       ],
     },
     sorters: {
@@ -101,7 +101,7 @@ export const ProductsListPage: FC<PropsWithChildren> = ({ children }) => {
 
   const onSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
     searchFormProps?.onFinish?.({
-      name: e.target.value ?? "",
+      title: e.target.value ?? "",
     });
   };
 
@@ -129,11 +129,11 @@ export const ProductsListPage: FC<PropsWithChildren> = ({ children }) => {
                 <Form
                   {...searchFormProps}
                   initialValues={{
-                    name: getDefaultFilter("name", filters, "contains"),
+                    title: getDefaultFilter("title", filters, "contains"),
                   }}
                   layout="inline"
                 >
-                  <Form.Item name="name" noStyle>
+                  <Form.Item name="title" noStyle>
                     <Input
                       size="large"
                       prefix={<SearchOutlined />}
@@ -143,7 +143,7 @@ export const ProductsListPage: FC<PropsWithChildren> = ({ children }) => {
                           spinning={tableQueryResult.isFetching}
                         />
                       }
-                      placeholder="Search by name"
+                      placeholder="Search by title"
                       onChange={debouncedOnChange}
                     />
                   </Form.Item>
@@ -170,14 +170,14 @@ export const ProductsListPage: FC<PropsWithChildren> = ({ children }) => {
             rowKey="id"
           >
             <Table.Column
-              dataIndex="name"
+              dataIndex="title"
               title="Product Name"
               width={200}
               sorter
               render={(_, record) => (
                 <span style={{ display: "flex", alignItems: "center", gap: 8 }}>
-                  <CustomAvatar name={record.name} src={record.image} shape="square" size={28} style={{ marginRight: 6 }} />
-                  {record.name}
+                  <CustomAvatar name={record.title} src={record.image} shape="square" size={28} style={{ marginRight: 6 }} />
+                  {record.title}
                 </span>
               )}
             />
@@ -212,7 +212,7 @@ export const ProductsListPage: FC<PropsWithChildren> = ({ children }) => {
               )}
             />
             <Table.Column
-              dataIndex="salesPrice"
+              dataIndex="unitPrice"
               title="Sales Price"
               width={100}
               sorter
