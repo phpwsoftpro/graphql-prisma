@@ -1,21 +1,17 @@
 import { gql } from "@apollo/client";
 
 export const PRODUCTS_TABLE_QUERY = gql`
-  query ProductsTable($filter: FilterInput, $sorting: [SortInput!], $paging: OffsetPagingInput) {
+  query ProductsTable(
+    $filter: FilterInput
+    $sorting: [SortInput!]
+    $paging: OffsetPagingInput
+  ) {
     products(filter: $filter, sorting: $sorting, paging: $paging) {
       nodes {
         id
-        name
-        internalReference
-        responsible
-        productTags
-        status
-        salesPrice
-        cost
-        quantityOnHand
-        forecastedQuantity
-        unitOfMeasure
-        image
+        title
+        description
+        unitPrice
         createdAt
       }
       totalCount
@@ -27,18 +23,9 @@ export const PRODUCT_CREATE_MUTATION = gql`
   mutation CreateProduct($data: CreateProductInput!) {
     createProduct(data: $data) {
       id
-      name
+      title
       description
-      internalReference
-      responsible
-      productTags
-      salesPrice
-      cost
-      quantityOnHand
-      forecastedQuantity
-      unitOfMeasure
-      status
-      categoryId
+      unitPrice
     }
   }
 `;
