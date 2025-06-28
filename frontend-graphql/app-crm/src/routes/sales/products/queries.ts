@@ -27,9 +27,16 @@ export const PRODUCT_CREATE_MUTATION = gql`
   mutation CreateProduct($data: CreateProductInput!) {
     createProduct(data: $data) {
       id
-      title
+      name
       description
-      unitPrice
+      internalReference
+      responsible
+      productTags
+      salesPrice
+      cost
+      quantityOnHand
+      forecastedQuantity
+      unitOfMeasure
       status
       categoryId
     }

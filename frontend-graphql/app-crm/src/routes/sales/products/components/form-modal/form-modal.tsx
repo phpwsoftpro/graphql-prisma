@@ -90,9 +90,14 @@ export const ProductsFormModal: FC<Props> = ({ action, onCancel, onMutationSucce
           try {
             await mutateAsync({
               values: {
-                title: values.name,
+                name: values.name,
+                internalReference: values.internalReference,
+                responsible: values.responsible,
+                productTags: values.tags || [],
                 description: values.description,
-                unitPrice: Number(values.salesPrice || 0),
+                salesPrice: Number(values.salesPrice || 0),
+                cost: Number(values.cost || 0),
+                unitOfMeasure: values.unitOfMeasure,
               },
             });
             onMutationSuccess?.();

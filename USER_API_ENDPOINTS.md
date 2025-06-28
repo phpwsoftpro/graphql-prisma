@@ -48,9 +48,7 @@ The endpoint responds with a JSON array of users with the fields listed above.
 
 - **Endpoint**: `POST /products`
 
-- **Body**: `title`, `description`, `unitPrice`, `status`, `categoryId`
-
-- **Body**: `title`, `description`, `unitPrice`, `categoryId`
+- **Body**: `name`, `internalReference`, `responsible`, `productTags`, `salesPrice`, `cost`, `quantityOnHand`, `forecastedQuantity`, `unitOfMeasure`, `status`, `description`, `categoryId`
 
 - **Returns**: the created product object.
 

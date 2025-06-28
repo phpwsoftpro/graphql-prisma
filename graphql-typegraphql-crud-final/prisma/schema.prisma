@@ -158,16 +158,23 @@ model Category {
 }
 
 model Product {
-  id          Int      @id @default(autoincrement())
-  title        String
-  description String?
-  unitPrice   Float
-  status      String   @default("AVAILABLE")
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-  categoryId  Int?
-  category    Category? @relation("ProductCategory", fields: [categoryId], references: [id])
-  quotes      QuoteProduct[] @relation("QuoteProducts")
+  id                 Int      @id @default(autoincrement())
+  name               String
+  description        String?
+  internalReference  String?
+  responsible        String?
+  productTags        Json     @default(Json("[]"))
+  salesPrice         Float
+  cost               Float    @default(0)
+  quantityOnHand     Int      @default(0)
+  forecastedQuantity Int      @default(0)
+  unitOfMeasure      String   @default("Units")
+  status             String   @default("active")
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+  categoryId         Int?
+  category           Category?   @relation("ProductCategory", fields: [categoryId], references: [id])
+  quotes             QuoteProduct[] @relation("QuoteProducts")
 }
 
 model Quote {

@@ -11,7 +11,7 @@ export class QuoteFieldResolver {
     }
     
     return quote.items.reduce((total, item) => {
-      return total + (item.quantity * item.product.unitPrice);
+      return total + item.quantity * item.product.salesPrice;
     }, 0);
   }
 
