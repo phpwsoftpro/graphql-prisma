@@ -107,12 +107,13 @@ export const ProductsListPage: FC<PropsWithChildren> = ({ children }) => {
 
   const debouncedOnChange = debounce(onSearch, 500);
 
-  const dataSource = Array.isArray(tableProps.dataSource)
-    ? tableProps.dataSource.map((product: any) => ({
-        ...product,
-        id: product._id ?? product.id,
-      }))
-    : [];
+  const dataSource = Array.isArray(tableProps.dataSource?.nodes)
+  ? tableProps.dataSource.nodes.map((product: any) => ({
+      ...product,
+      id: product._id ?? product.id,
+  }))
+  : [];
+
 
   return (
     <div className="page-container">

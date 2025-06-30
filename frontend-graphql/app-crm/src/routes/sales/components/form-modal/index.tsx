@@ -35,15 +35,20 @@ type Props = {
 export const QuotesFormModal: FC<Props> = ({
   action,
   redirect,
-  onCancel,
   onMutationSuccess,
+  onCancel,
 }) => {
   const { pathname } = useLocation();
   const params = useParams<{ id: string }>();
   const { list, replace } = useNavigation();
   const [searchParams] = useSearchParams();
 
-  const { formProps, modalProps, close } = useModalForm<
+  const {
+    formProps,
+    modalProps,
+    close,
+    error,
+  } = useModalForm<
     GetFields<QuotesCreateQuoteMutation>,
     HttpError,
     GetVariables<QuotesCreateQuoteMutationVariables>
@@ -79,28 +84,30 @@ export const QuotesFormModal: FC<Props> = ({
     queryResult: { isLoading: isLoadingSalesOwners },
   } = useUsersSelect();
 
-  const loading =
-    isLoadingCompanies || isLoadingContact || isLoadingSalesOwners;
-
+  const loading = isLoadingCompanies || isLoadingContact || isLoadingSalesOwners;
   const isHaveOverModal = pathname.includes("company-create");
 
   return (
     <Modal
       {...modalProps}
-      confirmLoading={loading}
+      confirmLoading={loading || modalProps.confirmLoading}
       width={560}
-      style={{ display: isHaveOverModal ? "none" : "inherit" }}
+      style={isHaveOverModal ? { display: "none" } : undefined}
       onCancel={() => {
         if (onCancel) {
           onCancel();
           return;
         }
-        //TODO: modalProps.onCancel expect an event so, I used close. Actually both of them are same.
         close();
         list("quotes", "replace");
       }}
     >
       <Spin spinning={loading}>
+        {error && (
+          <div style={{ color: "red", marginBottom: 12 }}>
+            {error?.message ?? JSON.stringify(error)}
+          </div>
+        )}
         <Form {...formProps} layout="vertical">
           <Form.Item
             rules={[{ required: true }]}
@@ -111,8 +118,8 @@ export const QuotesFormModal: FC<Props> = ({
           </Form.Item>
           <Form.Item
             rules={[{ required: true }]}
-            name={["salesOwnerId"]}
-            initialValue={formProps?.initialValues?.salesOwner?.id}
+            name="salesOwnerId"
+            initialValue={formProps?.initialValues?.salesOwner?.id ?? undefined}
             label="Sales owner"
           >
             <Select
@@ -122,17 +129,17 @@ export const QuotesFormModal: FC<Props> = ({
           </Form.Item>
           <Form.Item
             rules={[{ required: true }]}
-            name={["companyId"]}
+            name="companyId"
             initialValue={
               searchParams.get("companyId") ??
-              formProps?.initialValues?.company?.id
+              formProps?.initialValues?.company?.id ??
+              undefined
             }
             label="Company"
             extra={
               <Button
                 style={{ paddingLeft: 0 }}
                 type="link"
-                // @ts-expect-error Ant Design Icon's v5.0.1 has an issue with @types/react@^18.2.66
                 icon={<PlusCircleOutlined />}
                 onClick={() => replace(`company-create?to=${pathname}`)}
               >
@@ -147,8 +154,8 @@ export const QuotesFormModal: FC<Props> = ({
           </Form.Item>
           <Form.Item
             rules={[{ required: true }]}
-            name={["contactId"]}
-            initialValue={formProps?.initialValues?.contact?.id}
+            name="contactId"
+            initialValue={formProps?.initialValues?.contact?.id ?? undefined}
             label="Quote Contact"
           >
             <Select
