@@ -256,7 +256,11 @@ const App: React.FC = () => {
                     />
                     <Route
                       path="/products"
-                      element={<ProductsListPage />}
+                      element={
+                        <ProductsListPage>
+                          <Outlet />
+                        </ProductsListPage>
+                      }
                     >
                       <Route path="create" element={<ProductsCreatePage />} />
                     </Route>
