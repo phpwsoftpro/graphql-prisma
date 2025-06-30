@@ -35,8 +35,8 @@ services:
         npx prisma generate &&
         echo '⏳ Waiting for PostgreSQL...' &&
         until nc -z postgres 5432; do sleep 1; done &&
-        echo '🚀 Creating and applying migrations...' &&
-        npx prisma migrate dev --name init --skip-seed &&
+        echo '🚀 Applying migrations...' &&
+        npx prisma migrate deploy &&
         echo '🟢 Starting development server with hot reload on port 8000...' &&
         npm run dev
       "
