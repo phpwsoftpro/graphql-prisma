@@ -2,6 +2,7 @@ import type { FC } from "react";
 import { useState } from "react";
 import { Modal, Form, Input, InputNumber, Select, Spin, Checkbox, Row, Col, Tabs } from "antd";
 import { useNavigate } from "react-router-dom";
+import { useInvalidate } from "@refinedev/core";
 import { dataProvider, API_URL } from "@/providers/data";
 import styles from "./index.module.css";
 
@@ -62,6 +63,7 @@ export const ProductsFormModal: FC<Props> = ({ action, onCancel, onMutationSucce
   const [open, setOpen] = useState(true);
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+  const invalidate = useInvalidate();
 
   // Theo dõi giá trị checkbox
   const canBeSold = Form.useWatch("canBeSold", form);
@@ -103,6 +105,7 @@ export const ProductsFormModal: FC<Props> = ({ action, onCancel, onMutationSucce
                 `,
               },
             });
+            await invalidate({ resource: "products", invalidates: ["list"] });
             setLoading(false);
             onMutationSuccess?.();
             setOpen(false);
