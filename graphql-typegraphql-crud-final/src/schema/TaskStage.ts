@@ -1,4 +1,7 @@
 import { Field, ID, ObjectType, Int } from "type-graphql";
+import { Task } from "./Task";
+import { User } from "./User";
+import { TaskStageTasksAggregateResponse } from "./TaskAggregate";
 
 @ObjectType()
 export class TaskStage {
@@ -20,7 +23,17 @@ export class TaskStage {
   @Field()
   updatedAt: Date;
 
- 
+  @Field(() => [Task], { nullable: true })
+  tasks?: Task[];
+
+  @Field(() => [TaskStageTasksAggregateResponse], { nullable: true })
+  tasksAggregate?: TaskStageTasksAggregateResponse[];
+
+  @Field(() => User, { nullable: true })
+  createdBy?: User;
+
+  @Field(() => User, { nullable: true })
+  updatedBy?: User;
 }
 
 @ObjectType()

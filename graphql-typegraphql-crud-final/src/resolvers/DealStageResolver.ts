@@ -45,23 +45,7 @@ export class DealStageResolver {
       prisma.dealStage.count({ where }),
     ]);
 
-    // Map từng node để thêm dealsAggregate
-    const nodesWithAggregate = await Promise.all(
-      nodes.map(async (stage) => {
-        const sum = await prisma.deal.aggregate({
-          where: { stageId: stage.id },
-          _sum: { amount: true },
-        });
-        return {
-          ...stage,
-          dealsAggregate: [
-            { sum: { value: sum._sum.amount ?? 0 } }
-          ]
-        };
-      })
-    );
-
-    return { nodes: nodesWithAggregate as any, totalCount };
+    return { nodes, totalCount };
   }
 
   @Query(() => [DealStageSummary])

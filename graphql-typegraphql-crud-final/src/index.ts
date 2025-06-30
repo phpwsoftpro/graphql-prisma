@@ -15,6 +15,7 @@ import { NoteResolver } from "./resolvers/NoteResolver";
 import { NotificationResolver } from "./resolvers/NotificationResolver";
 import { TokenResolver } from "./resolvers/TokenResolver";
 import { TaskStageResolver } from "./resolvers/TaskStageResolver";
+import { TaskStageFieldResolver } from "./resolvers/TaskStageFieldResolver";
 import { TaskResolver } from "./resolvers/TaskResolver";
 import { CategoryResolver } from "./resolvers/CategoryResolver";
 import { EventCategoryResolver } from "./resolvers/EventCategoryResolver";
@@ -24,6 +25,7 @@ import { AuditResolver } from "./resolvers/AuditResolver";
 import { ProductResolver } from "./resolvers/ProductResolver";
 import { QuoteResolver } from "./resolvers/QuoteResolver";
 import { DealStageResolver } from "./resolvers/DealStageResolver";
+import { DealStageFieldResolver } from "./resolvers/DealStageFieldResolver";
 import { DealResolver } from "./resolvers/DealResolver";
 import { ProjectResolver } from "./resolvers/ProjectResolver";
 import { EventResolver } from "./resolvers/EventResolver";
@@ -43,6 +45,7 @@ async function bootstrap() {
       NotificationResolver,
       TokenResolver,
       TaskStageResolver,
+      TaskStageFieldResolver,
       TaskResolver,
       CategoryResolver,
       EventCategoryResolver,
@@ -51,6 +54,7 @@ async function bootstrap() {
       ProductResolver,
       QuoteResolver,
       DealStageResolver,
+      DealStageFieldResolver,
       DealResolver,
       DashboardResolver,
       ProjectResolver,

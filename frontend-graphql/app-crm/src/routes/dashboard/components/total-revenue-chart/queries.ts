@@ -10,6 +10,10 @@ export const DASHBOARD_TOTAL_REVENUE_QUERY = gql`
             nodes {
                 title
                 dealsAggregate {
+                    groupBy {
+                        closeDateMonth
+                        closeDateYear
+                    }
                     sum {
                         value
                     }

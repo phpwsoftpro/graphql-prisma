@@ -10,24 +10,47 @@ export class DealStageFieldResolver {
   @FieldResolver(() => [DealAggregateGroupBySum], { nullable: true })
   async dealsAggregate(@Root() stage: DealStage): Promise<DealAggregateGroupBySum[]> {
     const deals = await prisma.deal.findMany({ where: { stageId: stage.id } });
-    if (!deals.length) return [];
-    const groupMap = new Map<string, { month: number; year: number; sum: number }>();
-    for (const deal of deals) {
-      if (!deal.updatedAt) continue;
-      const date = deal.updatedAt;
-      const month = date.getMonth() + 1;
-      const year = date.getFullYear();
-      if (!month || !year) continue;
-      const key = `${year}-${month}`;
-      const group = groupMap.get(key) || { month, year, sum: 0 };
-      group.sum += deal.amount;
-      groupMap.set(key, group);
+    
+    // Always return at least one object with sum 0, even when there are no deals
+    const now = new Date();
+    const month = now.getMonth() + 1;
+    const year = now.getFullYear();
+    
+    if (!deals.length) {
+      return [{
+        groupBy: { 
+          closeDateMonth: month, 
+          closeDateYear: year 
+        },
+        sum: { 
+          value: 0 
+        },
+      }];
     }
-    return Array.from(groupMap.values())
-      .filter(g => g.month && g.year)
-      .map(g => ({
-        groupBy: { closeDateMonth: g.month, closeDateYear: g.year },
-        sum: { value: g.sum },
-      }));
+    
+    // Calculate total sum for all deals in this stage
+    const totalSum = deals.reduce((sum: number, deal: any) => sum + deal.amount, 0);
+    
+    // Get the most recent deal's date for grouping, or use current date if no deals have dates
+    const mostRecentDeal = deals.reduce((latest: any, deal: any) => {
+      if (!latest || (deal.updatedAt && deal.updatedAt > latest.updatedAt)) {
+        return deal;
+      }
+      return latest;
+    }, null as any);
+    
+    const date = mostRecentDeal?.updatedAt || now;
+    const dealMonth = date.getMonth() + 1;
+    const dealYear = date.getFullYear();
+    
+    return [{
+      groupBy: { 
+        closeDateMonth: dealMonth, 
+        closeDateYear: dealYear 
+      },
+      sum: { 
+        value: totalSum 
+      },
+    }];
   }
 } 

@@ -29,7 +29,7 @@ export const DashboardTotalRevenueChart: React.FC = () => {
       {
         field: "title",
         operator: "nin",
-        value: ["WON", "LOST"],
+        value: ["Closed"],
       },
     ],
     meta: {
@@ -48,7 +48,7 @@ export const DashboardTotalRevenueChart: React.FC = () => {
       {
         field: "title",
         operator: "eq",
-        value: "WON",
+        value: "Closed",
       },
     ],
     meta: {
