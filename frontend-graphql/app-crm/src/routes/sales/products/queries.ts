@@ -21,3 +21,15 @@ export const PRODUCTS_TABLE_QUERY = gql`
     }
   }
 `;
+
+export const PRODUCTS_CREATE_MUTATION = gql`
+  mutation ProductsCreate($data: CreateProductInput!) {
+    createProduct(data: $data) {
+      id
+      title
+      description
+      unitPrice
+      categoryId
+    }
+  }
+`;
