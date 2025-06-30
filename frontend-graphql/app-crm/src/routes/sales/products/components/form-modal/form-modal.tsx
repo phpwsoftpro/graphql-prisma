@@ -82,39 +82,44 @@ export const ProductsFormModal: FC<Props> = ({ action, onCancel, onMutationSucce
       title={action === "create" ? "Create Product" : "Edit Product"}
       onCancel={handleClose}
       onOk={() => {
-        form.validateFields().then(async (values) => {
-          setLoading(true);
-          try {
-            await dataProvider.custom({
-              url: API_URL,
-              method: "post",
-              meta: {
-                variables: {
-                  data: {
-                    title: values.name,
-                    description: values.description,
-                    unitPrice: Number(values.salesPrice),
+          form.validateFields().then(async (values) => {
+            setLoading(true);
+            try {
+              await dataProvider.custom({
+                url: API_URL,
+                method: "post",
+                meta: {
+                  variables: {
+                    data: {
+                      title: values.name,
+                      description: values.description,
+                      unitPrice: Number(values.salesPrice),
+                      status: values.status || "active", // thêm status
+                    },
                   },
-                },
-                rawQuery: `
-                  mutation CreateProduct($data: CreateProductInput!) {
-                    createProduct(data: $data) {
-                      id
+                  rawQuery: `
+                    mutation CreateProduct($data: CreateProductInput!) {
+                      createProduct(data: $data) {
+                        id
+                        title
+                        status
+                      }
                     }
-                  }
-                `,
-              },
-            });
-            await invalidate({ resource: "products", invalidates: ["list"] });
-            setLoading(false);
-            onMutationSuccess?.();
-            setOpen(false);
-            navigate("/products");
-          } catch {
-            setLoading(false);
-          }
-        });
-      }}
+                  `,
+                },
+              });
+              await invalidate({ resource: "products", invalidates: ["list"] });
+              setLoading(false);
+              onMutationSuccess?.();
+              setOpen(false);
+              navigate("/products");
+            } catch (error) {
+              console.error("Create product error:", error);
+              setLoading(false);
+            }
+          });
+        }}
+
       confirmLoading={loading}
       width={900}
       destroyOnClose
