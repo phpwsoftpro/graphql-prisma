@@ -27,39 +27,31 @@ export const DashboardDealsChart: React.FC = () => {
     },
   });
 
-  
-
   const dealData = useMemo(() => {
     const wonNode = data?.data.find((node) => node.title === "WON");
     const lostNode = data?.data.find((node) => node.title === "LOST");
 
-    const won = wonNode?.dealsAggregate?.groupBy?.map((group, idx) => {
-      const sumValue = wonNode.dealsAggregate?.sum?.value;
-      const date = dayjs(`${group.closeDateYear}-${group.closeDateMonth}-01`);
-      return {
-        timeUnix: date.unix(),
-        timeText: date.format("MMM YYYY"),
-        value: sumValue,
-        state: "Won",
-      };
-    });
+    const won = wonNode?.dealsAggregate?.[0]?.groupBy
+      ? [{
+          timeUnix: dayjs(`${wonNode.dealsAggregate[0].groupBy.closeDateYear}-${wonNode.dealsAggregate[0].groupBy.closeDateMonth}-01`).unix(),
+          timeText: dayjs(`${wonNode.dealsAggregate[0].groupBy.closeDateYear}-${wonNode.dealsAggregate[0].groupBy.closeDateMonth}-01`).format("MMM YYYY"),
+          value: wonNode.dealsAggregate[0].sum?.value,
+          state: "Won",
+        }]
+      : [];
 
-    const lost = lostNode?.dealsAggregate?.groupBy?.map((group, idx) => {
-      const sumValue = lostNode.dealsAggregate?.sum?.value;
-      const date = dayjs(`${group.closeDateYear}-${group.closeDateMonth}-01`);
-      return {
-        timeUnix: date.unix(),
-        timeText: date.format("MMM YYYY"),
-        value: sumValue,
-        state: "Lost",
-      };
-    });
+    const lost = lostNode?.dealsAggregate?.[0]?.groupBy
+      ? [{
+          timeUnix: dayjs(`${lostNode.dealsAggregate[0].groupBy.closeDateYear}-${lostNode.dealsAggregate[0].groupBy.closeDateMonth}-01`).unix(),
+          timeText: dayjs(`${lostNode.dealsAggregate[0].groupBy.closeDateYear}-${lostNode.dealsAggregate[0].groupBy.closeDateMonth}-01`).format("MMM YYYY"),
+          value: lostNode.dealsAggregate[0].sum?.value,
+          state: "Lost",
+        }]
+      : [];
 
-    return [...(won || []), ...(lost || [])].sort(
-      (a, b) => a.timeUnix - b.timeUnix,
-    );
+    return [...won, ...lost].sort((a, b) => a.timeUnix - b.timeUnix);
   }, [data]);
- 
+
   const config: AreaConfig = {
     isStack: false,
     data: dealData,

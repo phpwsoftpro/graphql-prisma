@@ -8,11 +8,11 @@ export class DealAggregateSum {
 
 @ObjectType()
 export class DealAggregateGroupBy {
-  @Field(() => Int)
-  closeDateMonth: number;
+  @Field(() => Int, { nullable: true })
+  closeDateMonth?: number;
 
-  @Field(() => Int)
-  closeDateYear: number;
+  @Field(() => Int, { nullable: true })
+  closeDateYear?: number;
 }
 
 @ObjectType()

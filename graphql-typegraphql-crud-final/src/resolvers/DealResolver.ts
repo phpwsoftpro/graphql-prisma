@@ -69,9 +69,11 @@ export class DealResolver {
         orderBy,
         skip,
         take,
+
         include: {
           company: true,
           dealOwner: true,
+          stage: true,
         },
       }),
       prisma.deal.count({ where }),

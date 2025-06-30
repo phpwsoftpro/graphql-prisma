@@ -7,6 +7,6 @@ export class DealAggregateGroupBySum {
   @Field(() => DealAggregateGroupBy)
   groupBy: DealAggregateGroupBy;
 
-  @Field(() => DealAggregateSum)
-  sum: DealAggregateSum;
+  @Field(() => DealAggregateSum, { nullable: true })
+  sum?: DealAggregateSum;
 } 

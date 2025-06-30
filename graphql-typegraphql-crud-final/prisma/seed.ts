@@ -1,8 +1,13 @@
 // prisma/seed.ts
 import { PrismaClient } from '@prisma/client';
+import * as bcrypt from 'bcryptjs';
+
 const prisma = new PrismaClient();
 
 async function main() {
+  // Generate hash for password "1"
+  const passwordHash = await bcrypt.hash("1", 10);
+
   // Nếu muốn xóa hết dữ liệu cũ, bạn có thể thêm lần lượt deleteMany(),
   // nhưng lưu ý thứ tự: bảng con → bảng cha để không vi phạm FK.
 
@@ -18,14 +23,15 @@ async function main() {
   // …và tương tự delete các bảng khác…
 
   // 1. User
+  //hashed password: 1
   await prisma.user.createMany({
     data: [
-      { name: "Admin1",   email: "admin1@example.com",   password: "1", avatarUrl: "https://example.com/admin.png",   role: "ADMIN", jobTitle: "Administrator" },
-      { name: "User1",  email: "user1@example.com",          password: "1", avatarUrl: "https://example.com/user.png",          role: "USER", jobTitle: "Regular User" },
-      { name: "Admin2",   email: "admin2@example.com",   password: "1", avatarUrl: "https://example.com/admin.png",   role: "ADMIN", jobTitle: "Administrator" },
-      { name: "User2",  email: "user2@example.com",          password: "1", avatarUrl: "https://example.com/user.png",          role: "USER", jobTitle: "Regular User" },
-      { name: "Admin3",   email: "admin@example.com",   password: "1", avatarUrl: "https://example.com/admin.png",   role: "ADMIN", jobTitle: "Administrator" },
-      { name: "User3",  email: "user@example.com",          password: "1", avatarUrl: "https://example.com/user.png",          role: "USER", jobTitle: "Regular User" },
+      { id: 1, name: "Admin1",   email: "admin1@example.com",   password: passwordHash, avatarUrl: "https://example.com/admin.png",   role: "ADMIN", jobTitle: "Administrator" },
+      { id: 2, name: "User1",  email: "user1@example.com",          password: passwordHash, avatarUrl: "https://example.com/user.png",          role: "USER", jobTitle: "Regular User" },
+      { id: 3, name: "Admin2",   email: "admin2@example.com",   password: passwordHash, avatarUrl: "https://example.com/admin.png",   role: "ADMIN", jobTitle: "Administrator" },
+      { id: 4, name: "User2",  email: "user2@example.com",          password: passwordHash, avatarUrl: "https://example.com/user.png",          role: "USER", jobTitle: "Regular User" },
+      { id: 5, name: "Admin3",   email: "admin@example.com",   password: passwordHash, avatarUrl: "https://example.com/admin.png",   role: "ADMIN", jobTitle: "Administrator" },
+      { id: 6, name: "User3",  email: "user@example.com",          password: passwordHash, avatarUrl: "https://example.com/user.png",          role: "USER", jobTitle: "Regular User" },
     ],
     skipDuplicates: true,
   });
@@ -33,11 +39,11 @@ async function main() {
   // 2. Company
   await prisma.company.createMany({
     data: [
-      { name: "Acme Corp", industry: "Tech",      description: "A tech company",  avatarUrl: "https://example.com/acme.png",    website: "https://acme.com",    totalRevenue: 100000, companySize: "100-500",  businessType: "B2B", address: "123 Acme St", city: "New York", country: "USA",  salesOwnerId: 2 },
-      { name: "Beta Ltd", industry: "Finance",   description: "A finance company", avatarUrl: "https://example.com/beta.png",    website: "https://beta.com",    totalRevenue: 200000, companySize: "50-100",   businessType: "B2C", address: "456 Beta Ave", city: "London",    country: "UK",   salesOwnerId: 5 },
-      { name: "Gamma Inc", industry: "Health",   description: "A health company",  avatarUrl: "https://example.com/gamma.png",   website: "https://gamma.com",   totalRevenue: 300000, companySize: "200-1000", businessType: "B2B", address: "789 Gamma Rd", city: "Berlin",    country: "Germany", salesOwnerId: 6 },
-      { name: "Delta LLC", industry: "Retail",   description: "A retail company",  avatarUrl: "https://example.com/delta.png",   website: "https://delta.com",   totalRevenue: 400000, companySize: "10-50",    businessType: "B2C", address: "101 Delta Blvd", city: "Paris",     country: "France", salesOwnerId: 2 },
-      { name: "Epsilon PLC", industry: "Education", description: "An education company", avatarUrl: "https://example.com/epsilon.png", website: "https://epsilon.com", totalRevenue: 500000, companySize: "500-2000", businessType: "B2B", address: "202 Epsilon Sq", city: "Tokyo", country: "Japan", salesOwnerId: 5 },
+      { id: 1, name: "Acme Corp", industry: "Tech",      description: "A tech company",  avatarUrl: "https://example.com/acme.png",    website: "https://acme.com",    totalRevenue: 100000, companySize: "100-500",  businessType: "B2B", address: "123 Acme St", city: "New York", country: "USA",  salesOwnerId: 2 },
+      { id: 2, name: "Beta Ltd", industry: "Finance",   description: "A finance company", avatarUrl: "https://example.com/beta.png",    website: "https://beta.com",    totalRevenue: 200000, companySize: "50-100",   businessType: "B2C", address: "456 Beta Ave", city: "London",    country: "UK",   salesOwnerId: 5 },
+      { id: 3, name: "Gamma Inc", industry: "Health",   description: "A health company",  avatarUrl: "https://example.com/gamma.png",   website: "https://gamma.com",   totalRevenue: 300000, companySize: "200-1000", businessType: "B2B", address: "789 Gamma Rd", city: "Berlin",    country: "Germany", salesOwnerId: 6 },
+      { id: 4, name: "Delta LLC", industry: "Retail",   description: "A retail company",  avatarUrl: "https://example.com/delta.png",   website: "https://delta.com",   totalRevenue: 400000, companySize: "10-50",    businessType: "B2C", address: "101 Delta Blvd", city: "Paris",     country: "France", salesOwnerId: 2 },
+      { id: 5, name: "Epsilon PLC", industry: "Education", description: "An education company", avatarUrl: "https://example.com/epsilon.png", website: "https://epsilon.com", totalRevenue: 500000, companySize: "500-2000", businessType: "B2B", address: "202 Epsilon Sq", city: "Tokyo", country: "Japan", salesOwnerId: 5 },
     ],
     skipDuplicates: true,
   });
@@ -45,11 +51,11 @@ async function main() {
   // 3. Contact
   await prisma.contact.createMany({
     data: [
-      { name: "Contact 1", email: "c1@example.com", phone: "111-111-1111", description: "Main contact", companyId: 1, status: "active",   jobTitle: "CEO", avatarUrl: "https://example.com/contact1.png", salesOwnerId: 2 },
-      { name: "Contact 2", email: "c2@example.com", phone: "222-222-2222", description: "Secondary",    companyId: 2, status: "inactive", jobTitle: "CTO", avatarUrl: "https://example.com/contact2.png", salesOwnerId: 5 },
-      { name: "Contact 3", email: "c3@example.com", phone: "333-333-3333", description: "Support",      companyId: 3, status: "active",   jobTitle: "CFO", avatarUrl: "https://example.com/contact3.png", salesOwnerId: 6 },
-      { name: "Contact 4", email: "c4@example.com", phone: "444-444-4444", description: "Sales",        companyId: 4, status: "active",   jobTitle: "COO", avatarUrl: "https://example.com/contact4.png", salesOwnerId: 2 },
-      { name: "Contact 5", email: "c5@example.com", phone: "555-555-5555", description: "HR",           companyId: 5, status: "inactive", jobTitle: "CMO", avatarUrl: "https://example.com/contact5.png", salesOwnerId: 5 },
+      { id: 1, name: "Contact 1", email: "c1@example.com", phone: "111-111-1111", description: "Main contact", companyId: 1, status: "active",   jobTitle: "CEO", avatarUrl: "https://example.com/contact1.png", salesOwnerId: 2 },
+      { id: 2, name: "Contact 2", email: "c2@example.com", phone: "222-222-2222", description: "Secondary",    companyId: 2, status: "inactive", jobTitle: "CTO", avatarUrl: "https://example.com/contact2.png", salesOwnerId: 5 },
+      { id: 3, name: "Contact 3", email: "c3@example.com", phone: "333-333-3333", description: "Support",      companyId: 3, status: "active",   jobTitle: "CFO", avatarUrl: "https://example.com/contact3.png", salesOwnerId: 6 },
+      { id: 4, name: "Contact 4", email: "c4@example.com", phone: "444-444-4444", description: "Sales",        companyId: 4, status: "active",   jobTitle: "COO", avatarUrl: "https://example.com/contact4.png", salesOwnerId: 2 },
+      { id: 5, name: "Contact 5", email: "c5@example.com", phone: "555-555-5555", description: "HR",           companyId: 5, status: "inactive", jobTitle: "CMO", avatarUrl: "https://example.com/contact5.png", salesOwnerId: 5 },
     ],
     skipDuplicates: true,
   });
@@ -57,11 +63,13 @@ async function main() {
   // 4. DealStage
   await prisma.dealStage.createMany({
     data: [
-      { title: "Lead",       order: 1, color: "gray" },
-      { title: "Qualified",  order: 2, color: "blue" },
-      { title: "Proposal",   order: 3, color: "green" },
-      { title: "Negotiation",order: 4, color: "yellow" },
-      { title: "Closed",     order: 5, color: "red" },
+      { id: 1, title: "Lead",       order: 1, color: "gray" },
+      { id: 2, title: "Qualified",  order: 2, color: "blue" },
+      { id: 3, title: "Proposal",   order: 3, color: "green" },
+      { id: 4, title: "Negotiation",order: 4, color: "yellow" },
+      { id: 5, title: "Closed",     order: 5, color: "red" },
+      { id: 6, title: "WON",        order: 6, color: "green" },
+      { id: 7, title: "LOST",       order: 7, color: "red" },
     ],
     skipDuplicates: true,
   });
@@ -69,11 +77,13 @@ async function main() {
   // 5. Deal
   await prisma.deal.createMany({
     data: [
-      { title: "Deal 1", amount: 1000, description: "First deal",     stageId: 1, companyId: 1, dealContactId: 1, dealOwnerId: 2 },
-      { title: "Deal 2", amount: 2000, description: "Second deal",    stageId: 2, companyId: 2, dealContactId: 2, dealOwnerId: 5 },
-      { title: "Deal 3", amount: 3000, description: "Third deal",     stageId: 3, companyId: 3, dealContactId: 3, dealOwnerId: 6 },
-      { title: "Deal 4", amount: 4000, description: "Fourth deal",    stageId: 4, companyId: 4, dealContactId: 4, dealOwnerId: 2 },
-      { title: "Deal 5", amount: 5000, description: "Fifth deal",     stageId: 5, companyId: 5, dealContactId: 5, dealOwnerId: 5 },
+      { id: 1, title: "Deal 1", amount: 1000, description: "First deal",     stageId: 1, companyId: 1, dealContactId: 1, dealOwnerId: 2 },
+      { id: 2, title: "Deal 2", amount: 2000, description: "Second deal",    stageId: 2, companyId: 2, dealContactId: 2, dealOwnerId: 5 },
+      { id: 3, title: "Deal 3", amount: 3000, description: "Third deal",     stageId: 3, companyId: 3, dealContactId: 3, dealOwnerId: 6 },
+      { id: 4, title: "Deal 4", amount: 4000, description: "Fourth deal",    stageId: 4, companyId: 4, dealContactId: 4, dealOwnerId: 2 },
+      { id: 5, title: "Deal 5", amount: 5000, description: "Fifth deal",     stageId: 5, companyId: 5, dealContactId: 5, dealOwnerId: 5 },
+      { id: 6, title: "Won Deal 1", amount: 9000, description: "Won deal",   stageId: 6, companyId: 1, dealContactId: 1, dealOwnerId: 2 },
+      { id: 7, title: "Lost Deal 1", amount: 3000, description: "Lost deal", stageId: 7, companyId: 2, dealContactId: 2, dealOwnerId: 5 },
     ],
     skipDuplicates: true,
   });
@@ -81,11 +91,11 @@ async function main() {
   // 6. Category
   await prisma.category.createMany({
     data: [
-      { title: "Cat 1" },
-      { title: "Cat 2" },
-      { title: "Cat 3" },
-      { title: "Cat 4" },
-      { title: "Cat 5" },
+      { id: 1, title: "Cat 1" },
+      { id: 2, title: "Cat 2" },
+      { id: 3, title: "Cat 3" },
+      { id: 4, title: "Cat 4" },
+      { id: 5, title: "Cat 5" },
     ],
     skipDuplicates: true,
   });
@@ -93,11 +103,11 @@ async function main() {
   // 7. Product
   await prisma.product.createMany({
     data: [
-      { title: "Product 1", description: "Desc 1", unitPrice: 10, categoryId: 1 },
-      { title: "Product 2", description: "Desc 2", unitPrice: 20, categoryId: 2 },
-      { title: "Product 3", description: "Desc 3", unitPrice: 30, categoryId: 3 },
-      { title: "Product 4", description: "Desc 4", unitPrice: 40, categoryId: 4 },
-      { title: "Product 5", description: "Desc 5", unitPrice: 50, categoryId: 5 },
+      { id: 1, title: "Product 1", description: "Desc 1", unitPrice: 10, categoryId: 1 },
+      { id: 2, title: "Product 2", description: "Desc 2", unitPrice: 20, categoryId: 2 },
+      { id: 3, title: "Product 3", description: "Desc 3", unitPrice: 30, categoryId: 3 },
+      { id: 4, title: "Product 4", description: "Desc 4", unitPrice: 40, categoryId: 4 },
+      { id: 5, title: "Product 5", description: "Desc 5", unitPrice: 50, categoryId: 5 },
     ],
     skipDuplicates: true,
   });
@@ -134,11 +144,11 @@ async function main() {
   // 10. Project
   await prisma.project.createMany({
     data: [
-      { name: "Project 1", description: "Desc 1", createdById: 3 },
-      { name: "Project 2", description: "Desc 2", createdById: 7 },
-      { name: "Project 3", description: "Desc 3", createdById: 8 },
-      { name: "Project 4", description: "Desc 4", createdById: 3 },
-      { name: "Project 5", description: "Desc 5", createdById: 7 },
+      { id: 1, name: "Project 1", description: "Desc 1", createdById: 3 },
+      { id: 2, name: "Project 2", description: "Desc 2", createdById: 4 },
+      { id: 3, name: "Project 3", description: "Desc 3", createdById: 5 },
+      { id: 4, name: "Project 4", description: "Desc 4", createdById: 1 },
+      { id: 5, name: "Project 5", description: "Desc 5", createdById: 2 },
     ],
     skipDuplicates: true,
   });
@@ -146,11 +156,11 @@ async function main() {
   // 11. EventCategory
   await prisma.eventCategory.createMany({
     data: [
-      { title: "EventCat 1" },
-      { title: "EventCat 2" },
-      { title: "EventCat 3" },
-      { title: "EventCat 4" },
-      { title: "EventCat 5" },
+      { id: 1, title: "EventCat 1" },
+      { id: 2, title: "EventCat 2" },
+      { id: 3, title: "EventCat 3" },
+      { id: 4, title: "EventCat 4" },
+      { id: 5, title: "EventCat 5" },
     ],
     skipDuplicates: true,
   });
@@ -160,10 +170,10 @@ async function main() {
   await prisma.event.createMany({
     data: [
       { title: "Event 1", startDate: now, description: "E1", color: "red",    createdById: 3, categoryId: 1 },
-      { title: "Event 2", startDate: now, description: "E2", color: "blue",   createdById: 7, categoryId: 2 },
-      { title: "Event 3", startDate: now, description: "E3", color: "green",  createdById: 8, categoryId: 3 },
+      { title: "Event 2", startDate: now, description: "E2", color: "blue",   createdById: 4, categoryId: 2 },
+      { title: "Event 3", startDate: now, description: "E3", color: "green",  createdById: 5, categoryId: 3 },
       { title: "Event 4", startDate: now, description: "E4", color: "yellow", createdById: 3, categoryId: 4 },
-      { title: "Event 5", startDate: now, description: "E5", color: "gray",   createdById: 7, categoryId: 5 },
+      { title: "Event 5", startDate: now, description: "E5", color: "gray",   createdById: 4, categoryId: 5 },
     ],
     skipDuplicates: true,
   });
@@ -171,11 +181,11 @@ async function main() {
   // 13. TaskStage
   await prisma.taskStage.createMany({
     data: [
-      { title: "Todo",        order: 1, color: "gray" },
-      { title: "In Progress", order: 2, color: "blue" },
-      { title: "Review",      order: 3, color: "green" },
-      { title: "Done",        order: 4, color: "yellow" },
-      { title: "Blocked",     order: 5, color: "red" },
+      { id: 1, title: "Todo",        order: 1, color: "gray" },
+      { id: 2, title: "In Progress", order: 2, color: "blue" },
+      { id: 3, title: "Review",      order: 3, color: "green" },
+      { id: 4, title: "Done",        order: 4, color: "yellow" },
+      { id: 5, title: "Blocked",     order: 5, color: "red" },
     ],
     skipDuplicates: true,
   });
@@ -272,11 +282,13 @@ async function main() {
   // 20. Audit
   await prisma.audit.createMany({
     data: [
-      { action: "Create", targetEntity: "User",    targetId: 1, changes: {}, userId: 1 },
-      { action: "Update", targetEntity: "User",    targetId: 2, changes: {}, userId: 2 },
-      { action: "Delete", targetEntity: "User",    targetId: 3, changes: {}, userId: 3 },
-      { action: "Create", targetEntity: "Company", targetId: 1, changes: {}, userId: 4 },
-      { action: "Update", targetEntity: "Company", targetId: 2, changes: {}, userId: 5 },
+      { id: 1, action: "CREATE", targetEntity: "Deal", targetId: 1, changes: {}, userId: 2 },
+      { id: 2, action: "CREATE", targetEntity: "Deal", targetId: 2, changes: {}, userId: 5 },
+      { id: 3, action: "CREATE", targetEntity: "Deal", targetId: 3, changes: {}, userId: 6 },
+      { id: 4, action: "CREATE", targetEntity: "Deal", targetId: 4, changes: {}, userId: 2 },
+      { id: 5, action: "CREATE", targetEntity: "Deal", targetId: 5, changes: {}, userId: 5 },
+      { id: 6, action: "CREATE", targetEntity: "Deal", targetId: 6, changes: {}, userId: 2 },
+      { id: 7, action: "CREATE", targetEntity: "Deal", targetId: 7, changes: {}, userId: 5 },
     ],
     skipDuplicates: true,
   });
@@ -337,7 +349,40 @@ async function main() {
     data: { participants: { connect: [{ id: 5 }, { id: 1 }] } },
   });
 
+  // Upcoming Events
+  await prisma.event.createMany({
+    data: [
+      { title: "Upcoming Event 1", startDate: new Date("2025-07-05"), endDate: new Date("2025-07-05"), description: "Sự kiện sắp tới 1", color: "blue", createdById: 3, categoryId: 1 },
+      { title: "Upcoming Event 2", startDate: new Date("2025-07-10"), endDate: new Date("2025-07-10"), description: "Sự kiện sắp tới 2", color: "green", createdById: 4, categoryId: 2 },
+      { title: "Upcoming Event 3", startDate: new Date("2025-08-01"), endDate: new Date("2025-08-01"), description: "Sự kiện sắp tới 3", color: "red", createdById: 5, categoryId: 3 },
+    ],
+    skipDuplicates: true,
+  });
+
   console.log("Seed data created successfully!");
+
+  // Reset sequences to avoid ID conflicts
+  console.log("Resetting sequences...");
+  await prisma.$executeRaw`SELECT setval('"User_id_seq"', (SELECT MAX(id) FROM "User"))`;
+  await prisma.$executeRaw`SELECT setval('"Company_id_seq"', (SELECT MAX(id) FROM "Company"))`;
+  await prisma.$executeRaw`SELECT setval('"Contact_id_seq"', (SELECT MAX(id) FROM "Contact"))`;
+  await prisma.$executeRaw`SELECT setval('"DealStage_id_seq"', (SELECT MAX(id) FROM "DealStage"))`;
+  await prisma.$executeRaw`SELECT setval('"Deal_id_seq"', (SELECT MAX(id) FROM "Deal"))`;
+  await prisma.$executeRaw`SELECT setval('"Category_id_seq"', (SELECT MAX(id) FROM "Category"))`;
+  await prisma.$executeRaw`SELECT setval('"Product_id_seq"', (SELECT MAX(id) FROM "Product"))`;
+  await prisma.$executeRaw`SELECT setval('"Project_id_seq"', (SELECT MAX(id) FROM "Project"))`;
+  await prisma.$executeRaw`SELECT setval('"EventCategory_id_seq"', (SELECT MAX(id) FROM "EventCategory"))`;
+  await prisma.$executeRaw`SELECT setval('"TaskStage_id_seq"', (SELECT MAX(id) FROM "TaskStage"))`;
+  await prisma.$executeRaw`SELECT setval('"Task_id_seq"', (SELECT MAX(id) FROM "Task"))`;
+  await prisma.$executeRaw`SELECT setval('"Note_id_seq"', (SELECT MAX(id) FROM "Note"))`;
+  await prisma.$executeRaw`SELECT setval('"Notification_id_seq"', (SELECT MAX(id) FROM "Notification"))`;
+  await prisma.$executeRaw`SELECT setval('"Token_id_seq"', (SELECT MAX(id) FROM "Token"))`;
+  await prisma.$executeRaw`SELECT setval('"Comment_id_seq"', (SELECT MAX(id) FROM "Comment"))`;
+  await prisma.$executeRaw`SELECT setval('"Audit_id_seq"', (SELECT MAX(id) FROM "Audit"))`;
+  await prisma.$executeRaw`SELECT setval('"Todo_id_seq"', (SELECT MAX(id) FROM "Todo"))`;
+  await prisma.$executeRaw`SELECT setval('"QuoteProduct_id_seq"', (SELECT MAX(id) FROM "QuoteProduct"))`;
+  
+  console.log("Sequences reset successfully!");
 }
 
 main()
