@@ -16,6 +16,7 @@ export const PRODUCTS_TABLE_QUERY = gql`
         unitOfMeasure
         image
         createdAt
+        status
       }
       totalCount
     }
@@ -25,11 +26,19 @@ export const PRODUCTS_TABLE_QUERY = gql`
 export const PRODUCTS_CREATE_MUTATION = gql`
   mutation ProductsCreate($data: CreateProductInput!) {
     createProduct(data: $data) {
-      id
-      title
-      description
-      unitPrice
-      categoryId
+        id
+        name
+        internalReference
+        responsible
+        productTags
+        salesPrice
+        cost
+        quantityOnHand
+        forecastedQuantity
+        unitOfMeasure
+        image
+        createdAt
+        status
     }
   }
 `;

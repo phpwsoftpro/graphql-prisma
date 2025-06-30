@@ -168,6 +168,9 @@ export const ProductsFormModal: FC<Props> = ({ action, onCancel, onMutationSucce
                   <Form.Item name="description" label={<b>Internal Notes</b>}>
                     <Input.TextArea rows={3} placeholder="This note is only for internal purposes." />
                   </Form.Item>
+                  <Form.Item name="status" label="Status" rules={[{ required: true }]}>
+                    <Input placeholder="e.g. active, inactive" />
+                  </Form.Item>
                 </Col>
                 <Col span={12}>
                   <Form.Item name="salesPrice" label="Sales Price" rules={[{ required: true }]}> 

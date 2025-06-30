@@ -244,6 +244,11 @@ export const ProductsListPage: FC<PropsWithChildren> = ({ children }) => {
               sorter
             />
             <Table.Column
+              dataIndex="status"
+              title="Status"
+              width={120}
+            />
+            <Table.Column
               fixed="right"
               title="Actions"
               dataIndex="actions"

@@ -9,8 +9,10 @@ services:
     ports:
       - "5174:5173"  # Changed external port from 5173 to 5174
     volumes:
-      - ./app-crm:/app-crm
+      - ./app-crm:/app          # mount mã nguồn host vào đúng WORKDIR
+      - /app/node_modules
     environment:
       - NODE_ENV=development
     stdin_open: true
     tty: true
+

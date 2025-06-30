@@ -22,4 +22,7 @@ export class Product {
 
   @Field()
   updatedAt: Date;
+
+  @Field()
+  status: string;
 }
