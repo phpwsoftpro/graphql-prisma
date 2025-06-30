@@ -13,6 +13,9 @@ export class CreateProductInput {
 
   @Field({ nullable: true })
   categoryId?: number;
+
+  @Field({ nullable: true })
+  status?: string;
 }
 
 @InputType()
@@ -28,4 +31,7 @@ export class UpdateProductInput {
 
   @Field({ nullable: true })
   categoryId?: number;
+
+  @Field({ nullable: true })
+  status?: string;
 }

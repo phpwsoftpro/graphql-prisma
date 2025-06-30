@@ -156,7 +156,7 @@ export const ProductsListPage: FC<PropsWithChildren> = ({ children }) => {
               marginTop: "28px",
             },
           }}
-          title={<ListTitleButton buttonText="Add product" toPath="/products/create" />}
+          title={<ListTitleButton buttonText="Add product" toPath="products" />}
         >
           <Table
             {...tableProps}
@@ -242,6 +242,11 @@ export const ProductsListPage: FC<PropsWithChildren> = ({ children }) => {
               title="Unit of Measure"
               width={120}
               sorter
+            />
+            <Table.Column
+              dataIndex="status"
+              title="Status"
+              width={120}
             />
             <Table.Column
               fixed="right"

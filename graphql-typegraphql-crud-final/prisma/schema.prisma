@@ -195,6 +195,7 @@ model QuoteProduct {
   quote   Quote @relation("QuoteProducts", fields: [quoteId], references: [id])
   productId Int
   product   Product @relation("QuoteProducts", fields: [productId], references: [id])
+  status String @default("active") // <--- thêm đây
   quantity Int
   discount Float
   totalPrice Float

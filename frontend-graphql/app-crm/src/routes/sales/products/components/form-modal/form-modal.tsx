@@ -2,6 +2,8 @@ import type { FC } from "react";
 import { useState } from "react";
 import { Modal, Form, Input, InputNumber, Select, Spin, Checkbox, Row, Col, Tabs } from "antd";
 import { useNavigate } from "react-router-dom";
+import { useInvalidate } from "@refinedev/core";
+import { dataProvider, API_URL } from "@/providers/data";
 import styles from "./index.module.css";
 
 const PRODUCT_TYPES = [
@@ -61,6 +63,7 @@ export const ProductsFormModal: FC<Props> = ({ action, onCancel, onMutationSucce
   const [open, setOpen] = useState(true);
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+  const invalidate = useInvalidate();
 
   // Theo dõi giá trị checkbox
   const canBeSold = Form.useWatch("canBeSold", form);
@@ -79,15 +82,37 @@ export const ProductsFormModal: FC<Props> = ({ action, onCancel, onMutationSucce
       title={action === "create" ? "Create Product" : "Edit Product"}
       onCancel={handleClose}
       onOk={() => {
-        form.validateFields().then((values) => {
+        form.validateFields().then(async (values) => {
           setLoading(true);
-          // TODO: Gọi mutation tạo/sửa sản phẩm ở đây
-          setTimeout(() => {
+          try {
+            await dataProvider.custom({
+              url: API_URL,
+              method: "post",
+              meta: {
+                variables: {
+                  data: {
+                    title: values.name,
+                    description: values.description,
+                    unitPrice: Number(values.salesPrice),
+                  },
+                },
+                rawQuery: `
+                  mutation CreateProduct($data: CreateProductInput!) {
+                    createProduct(data: $data) {
+                      id
+                    }
+                  }
+                `,
+              },
+            });
+            await invalidate({ resource: "products", invalidates: ["list"] });
             setLoading(false);
             onMutationSuccess?.();
             setOpen(false);
             navigate("/products");
-          }, 800);
+          } catch {
+            setLoading(false);
+          }
         });
       }}
       confirmLoading={loading}
@@ -145,6 +170,9 @@ export const ProductsFormModal: FC<Props> = ({ action, onCancel, onMutationSucce
                   </Form.Item>
                   <Form.Item name="description" label={<b>Internal Notes</b>}>
                     <Input.TextArea rows={3} placeholder="This note is only for internal purposes." />
+                  </Form.Item>
+                  <Form.Item name="status" label="Status" rules={[{ required: true }]}>
+                    <Input placeholder="e.g. active, inactive" />
                   </Form.Item>
                 </Col>
                 <Col span={12}>
