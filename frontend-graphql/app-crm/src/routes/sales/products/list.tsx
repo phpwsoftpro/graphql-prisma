@@ -15,7 +15,12 @@ import { Form, Grid, Input, Space, Spin, Table, Avatar } from "antd";
 import dayjs from "dayjs";
 import debounce from "lodash/debounce";
 
-import { ListTitleButton, PaginationTotal, Text, CustomAvatar } from "@/components";
+import {
+  ListTitleButton,
+  PaginationTotal,
+  Text,
+  CustomAvatar,
+} from "@/components";
 import { PRODUCTS_TABLE_QUERY } from "./queries";
 
 // TODO: Thay thế bằng type thực tế của Product
@@ -87,9 +92,7 @@ export const ProductsListPage: FC<PropsWithChildren> = ({ children }) => {
       },
     ],
     filters: {
-      initial: [
-        { field: "title", value: "", operator: "contains" },
-      ],
+      initial: [{ field: "title", value: "", operator: "contains" }],
     },
     sorters: {
       initial: [{ field: "createdAt", order: "desc" }],
@@ -106,26 +109,19 @@ export const ProductsListPage: FC<PropsWithChildren> = ({ children }) => {
   };
 
   const debouncedOnChange = debounce(onSearch, 500);
-//   const dataSource = mockProducts
-  const dataSource = Array.isArray(tableProps.dataSource?.nodes)
-  ? tableProps.dataSource.nodes.map((product: any) => ({
-      id: product.id,
-      name: product.title,                  // map title -> name
-      internalReference: product.internalReference,
-      responsible: product.responsible,
-      productTags: product.productTags,
-      salesPrice: product.unitPrice,        // map unitPrice -> salesPrice
-      cost: product.cost,
-      quantityOnHand: product.quantityOnHand,
-      forecastedQuantity: product.forecastedQuantity,
-      unitOfMeasure: product.unitOfMeasure,
-  }))
-  : [];
-
+  // Đảm bảo dataSource luôn là mảng, không undefined
+  const dataSource = Array.isArray(tableProps.dataSource)
+    ? tableProps.dataSource.map((product: any) => ({
+        ...product,
+        id: product._id ?? product.id,
+        name: product.title, // map title -> name
+        salesPrice: product.unitPrice, // map unitPrice -> salesPrice
+      }))
+    : [];
 
   return (
     <div className="page-container">
-      <div style={{ padding: 24, background: '#fff', borderRadius: 8 }}>
+      <div style={{ padding: 24, background: "#fff", borderRadius: 8 }}>
         <List
           breadcrumb={false}
           headerButtons={() => {
@@ -185,20 +181,36 @@ export const ProductsListPage: FC<PropsWithChildren> = ({ children }) => {
               sorter
               render={(_, record) => (
                 <span style={{ display: "flex", alignItems: "center", gap: 8 }}>
-                  <CustomAvatar name={record.name} src={record.image} shape="square" size={28} style={{ marginRight: 6 }} />
+                  <CustomAvatar
+                    name={record.name}
+                    src={record.image}
+                    shape="square"
+                    size={28}
+                    style={{ marginRight: 6 }}
+                  />
                   {record.name}
                 </span>
               )}
             />
-            <Table.Column dataIndex="internalReference" title="Internal Reference" width={140} sorter />
+            <Table.Column
+              dataIndex="internalReference"
+              title="Internal Reference"
+              width={140}
+              sorter
+            />
             <Table.Column
               dataIndex="responsible"
               title="Responsible"
               width={140}
               sorter
-              render={value => (
+              render={(value) => (
                 <span>
-                  <Avatar style={{ backgroundColor: '#c44', marginRight: 6 }} size={24}>A</Avatar>
+                  <Avatar
+                    style={{ backgroundColor: "#c44", marginRight: 6 }}
+                    size={24}
+                  >
+                    A
+                  </Avatar>
                   {value}
                 </span>
               )}
@@ -208,14 +220,16 @@ export const ProductsListPage: FC<PropsWithChildren> = ({ children }) => {
               title="Product Tags"
               width={180}
               sorter
-              render={tags => (
-                <span style={{
-                  display: "inline-block",
-                  maxWidth: 120,
-                  whiteSpace: "nowrap",
-                  overflow: "hidden",
-                  textOverflow: "ellipsis"
-                }}>
+              render={(tags) => (
+                <span
+                  style={{
+                    display: "inline-block",
+                    maxWidth: 120,
+                    whiteSpace: "nowrap",
+                    overflow: "hidden",
+                    textOverflow: "ellipsis",
+                  }}
+                >
                   {tags?.join(", ")}
                 </span>
               )}
@@ -225,14 +239,14 @@ export const ProductsListPage: FC<PropsWithChildren> = ({ children }) => {
               title="Sales Price"
               width={100}
               sorter
-              render={value => `${value.toFixed(2)} €`}
+              render={(value) => `${value.toFixed(2)} €`}
             />
             <Table.Column
               dataIndex="cost"
               title="Cost"
               width={100}
               sorter
-              render={value => `${value.toFixed(2)} €`}
+              render={(value) => `${value.toFixed(2)} €`}
             />
             <Table.Column
               dataIndex="quantityOnHand"
@@ -252,11 +266,7 @@ export const ProductsListPage: FC<PropsWithChildren> = ({ children }) => {
               width={120}
               sorter
             />
-            <Table.Column
-              dataIndex="status"
-              title="Status"
-              width={120}
-            />
+            <Table.Column dataIndex="status" title="Status" width={120} />
             <Table.Column
               fixed="right"
               title="Actions"
