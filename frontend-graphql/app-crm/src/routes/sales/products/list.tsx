@@ -77,18 +77,18 @@ export const ProductsListPage: FC<PropsWithChildren> = ({ children }) => {
     filters,
     sorters,
     tableQuery: tableQueryResult,
-  } = useTable<Product, HttpError, { name: string }>({
+  } = useTable<Product, HttpError, { title: string }>({
     resource: "products",
     onSearch: (values) => [
       {
-        field: "name",
+        field: "title",
         operator: "contains",
-        value: values.name,
+        value: values.title,
       },
     ],
     filters: {
       initial: [
-        { field: "name", value: "", operator: "contains" },
+        { field: "title", value: "", operator: "contains" },
       ],
     },
     sorters: {
@@ -101,7 +101,7 @@ export const ProductsListPage: FC<PropsWithChildren> = ({ children }) => {
 
   const onSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
     searchFormProps?.onFinish?.({
-      name: e.target.value ?? "",
+      title: e.target.value ?? "",
     });
   };
 
@@ -138,11 +138,11 @@ export const ProductsListPage: FC<PropsWithChildren> = ({ children }) => {
                 <Form
                   {...searchFormProps}
                   initialValues={{
-                    name: getDefaultFilter("name", filters, "contains"),
+                    title: getDefaultFilter("title", filters, "contains"),
                   }}
                   layout="inline"
                 >
-                  <Form.Item name="name" noStyle>
+                  <Form.Item name="title" noStyle>
                     <Input
                       size="large"
                       prefix={<SearchOutlined />}
