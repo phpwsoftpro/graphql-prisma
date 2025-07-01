@@ -22,8 +22,13 @@ export const client = new GraphQLClient(API_URL, {
 
       return response;
     } catch (error: any) {
-      const messages = error?.map((error: any) => error?.message)?.join("");
-      const code = error?.[0]?.extensions?.code;
+      const graphQLErrors = error?.response?.data?.errors || error;
+      const messages = Array.isArray(graphQLErrors)
+        ? graphQLErrors.map((e: any) => e?.message).join("")
+        : error?.message;
+      const code = Array.isArray(graphQLErrors)
+        ? graphQLErrors[0]?.extensions?.code
+        : error?.response?.status;
 
       return Promise.reject({
         message: messages || JSON.stringify(error),

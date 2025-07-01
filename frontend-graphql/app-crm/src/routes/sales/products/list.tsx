@@ -106,7 +106,7 @@ export const ProductsListPage: FC<PropsWithChildren> = ({ children }) => {
   };
 
   const debouncedOnChange = debounce(onSearch, 500);
-
+//   const dataSource = mockProducts
   const dataSource = Array.isArray(tableProps.dataSource?.nodes)
   ? tableProps.dataSource.nodes.map((product: any) => ({
       id: product.id,
@@ -119,9 +119,6 @@ export const ProductsListPage: FC<PropsWithChildren> = ({ children }) => {
       quantityOnHand: product.quantityOnHand,
       forecastedQuantity: product.forecastedQuantity,
       unitOfMeasure: product.unitOfMeasure,
-      image: product.image,
-      createdAt: product.createdAt,
-      status: product.status,
   }))
   : [];
 
