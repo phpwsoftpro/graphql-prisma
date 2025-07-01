@@ -15,58 +15,20 @@ import { Form, Grid, Input, Space, Spin, Table, Avatar } from "antd";
 import dayjs from "dayjs";
 import debounce from "lodash/debounce";
 
-import { ListTitleButton, PaginationTotal, Text, CustomAvatar } from "@/components";
+import { ListTitleButton, PaginationTotal } from "@/components";
 import { PRODUCTS_TABLE_QUERY } from "./queries";
 
 // TODO: Thay thế bằng type thực tế của Product
 // type Product = GetFieldsFromList<ProductsTableQuery>;
 type Product = {
   id: string;
-  name: string;
-  price: number;
+  title: string;
+  description?: string;
+  unitPrice: number;
   createdAt: string;
-  image?: string;
+  status: string;
 };
 
-// TẠM MOCKDATA CHO DEMO UI
-const mockProducts = [
-  {
-    id: "1",
-    name: "yyyyy",
-    internalReference: "REF001",
-    responsible: "Administrator",
-    productTags: ["tag1", "tag2", "tag3"],
-    salesPrice: 0.0,
-    cost: 0.0,
-    quantityOnHand: 10,
-    forecastedQuantity: 12,
-    unitOfMeasure: "Units",
-  },
-  {
-    id: "2",
-    name: "Service on Timesheet",
-    internalReference: "REF002",
-    responsible: "Administrator",
-    productTags: [],
-    salesPrice: 40.0,
-    cost: 0.0,
-    quantityOnHand: 0,
-    forecastedQuantity: 0,
-    unitOfMeasure: "Hours",
-  },
-  {
-    id: "3",
-    name: "Senior Developer (Timesheet)",
-    internalReference: "REF003",
-    responsible: "Administrator",
-    productTags: [],
-    salesPrice: 20.0,
-    cost: 0.0,
-    quantityOnHand: 0,
-    forecastedQuantity: 0,
-    unitOfMeasure: "Units",
-  },
-];
 
 export const ProductsListPage: FC<PropsWithChildren> = ({ children }) => {
   const screens = Grid.useBreakpoint();
@@ -77,18 +39,18 @@ export const ProductsListPage: FC<PropsWithChildren> = ({ children }) => {
     filters,
     sorters,
     tableQuery: tableQueryResult,
-  } = useTable<Product, HttpError, { name: string }>({
+  } = useTable<Product, HttpError, { title: string }>({
     resource: "products",
     onSearch: (values) => [
       {
-        field: "name",
+        field: "title",
         operator: "contains",
-        value: values.name,
+        value: values.title,
       },
     ],
     filters: {
       initial: [
-        { field: "name", value: "", operator: "contains" },
+        { field: "title", value: "", operator: "contains" },
       ],
     },
     sorters: {
@@ -101,7 +63,7 @@ export const ProductsListPage: FC<PropsWithChildren> = ({ children }) => {
 
   const onSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
     searchFormProps?.onFinish?.({
-      name: e.target.value ?? "",
+      title: e.target.value ?? "",
     });
   };
 
@@ -130,11 +92,11 @@ export const ProductsListPage: FC<PropsWithChildren> = ({ children }) => {
                 <Form
                   {...searchFormProps}
                   initialValues={{
-                    name: getDefaultFilter("name", filters, "contains"),
+                    title: getDefaultFilter("title", filters, "contains"),
                   }}
                   layout="inline"
                 >
-                  <Form.Item name="name" noStyle>
+                  <Form.Item name="title" noStyle>
                     <Input
                       size="large"
                       prefix={<SearchOutlined />}
@@ -144,7 +106,7 @@ export const ProductsListPage: FC<PropsWithChildren> = ({ children }) => {
                           spinning={tableQueryResult.isFetching}
                         />
                       }
-                      placeholder="Search by name"
+                      placeholder="Search by title"
                       onChange={debouncedOnChange}
                     />
                   </Form.Item>
@@ -171,84 +133,26 @@ export const ProductsListPage: FC<PropsWithChildren> = ({ children }) => {
             rowKey="id"
           >
             <Table.Column
-              dataIndex="name"
-              title="Product Name"
+              dataIndex="title"
+              title="Title"
               width={200}
               sorter
-              render={(_, record) => (
-                <span style={{ display: "flex", alignItems: "center", gap: 8 }}>
-                  <CustomAvatar name={record.name} src={record.image} shape="square" size={28} style={{ marginRight: 6 }} />
-                  {record.name}
-                </span>
-              )}
             />
-            <Table.Column dataIndex="internalReference" title="Internal Reference" width={140} sorter />
             <Table.Column
-              dataIndex="responsible"
-              title="Responsible"
-              width={140}
+              dataIndex="unitPrice"
+              title="Unit Price"
+              width={120}
               sorter
-              render={value => (
-                <span>
-                  <Avatar style={{ backgroundColor: '#c44', marginRight: 6 }} size={24}>A</Avatar>
-                  {value}
-                </span>
-              )}
+              render={(value) => `${value.toFixed(2)} €`}
             />
             <Table.Column
-              dataIndex="productTags"
-              title="Product Tags"
+              dataIndex="createdAt"
+              title="Created At"
               width={180}
               sorter
-              render={tags => (
-                <span style={{
-                  display: "inline-block",
-                  maxWidth: 120,
-                  whiteSpace: "nowrap",
-                  overflow: "hidden",
-                  textOverflow: "ellipsis"
-                }}>
-                  {tags?.join(", ")}
-                </span>
-              )}
+              render={(value) => dayjs(value).format("YYYY-MM-DD HH:mm")}
             />
-            <Table.Column
-              dataIndex="salesPrice"
-              title="Sales Price"
-              width={100}
-              sorter
-              render={value => `${value.toFixed(2)} €`}
-            />
-            <Table.Column
-              dataIndex="cost"
-              title="Cost"
-              width={100}
-              sorter
-              render={value => `${value.toFixed(2)} €`}
-            />
-            <Table.Column
-              dataIndex="quantityOnHand"
-              title="Quantity On Hand"
-              width={120}
-              sorter
-            />
-            <Table.Column
-              dataIndex="forecastedQuantity"
-              title="Forecasted Quantity"
-              width={140}
-              sorter
-            />
-            <Table.Column
-              dataIndex="unitOfMeasure"
-              title="Unit of Measure"
-              width={120}
-              sorter
-            />
-            <Table.Column
-              dataIndex="status"
-              title="Status"
-              width={120}
-            />
+            <Table.Column dataIndex="status" title="Status" width={120} />
             <Table.Column
               fixed="right"
               title="Actions"
