@@ -5,11 +5,11 @@ export const PRODUCTS_TABLE_QUERY = gql`
     products(filter: $filter, sorting: $sorting, paging: $paging) {
       nodes {
         id
-        name
+        title
         internalReference
         responsible
         productTags
-        salesPrice
+        unitPrice
         cost
         quantityOnHand
         forecastedQuantity
@@ -27,11 +27,11 @@ export const PRODUCTS_CREATE_MUTATION = gql`
   mutation ProductsCreate($data: CreateProductInput!) {
     createProduct(data: $data) {
         id
-        name
+        title
         internalReference
         responsible
         productTags
-        salesPrice
+        unitPrice
         cost
         quantityOnHand
         forecastedQuantity

@@ -109,8 +109,19 @@ export const ProductsListPage: FC<PropsWithChildren> = ({ children }) => {
 
   const dataSource = Array.isArray(tableProps.dataSource?.nodes)
   ? tableProps.dataSource.nodes.map((product: any) => ({
-      ...product,
-      id: product._id ?? product.id,
+      id: product.id,
+      name: product.title,                  // map title -> name
+      internalReference: product.internalReference,
+      responsible: product.responsible,
+      productTags: product.productTags,
+      salesPrice: product.unitPrice,        // map unitPrice -> salesPrice
+      cost: product.cost,
+      quantityOnHand: product.quantityOnHand,
+      forecastedQuantity: product.forecastedQuantity,
+      unitOfMeasure: product.unitOfMeasure,
+      image: product.image,
+      createdAt: product.createdAt,
+      status: product.status,
   }))
   : [];
 
