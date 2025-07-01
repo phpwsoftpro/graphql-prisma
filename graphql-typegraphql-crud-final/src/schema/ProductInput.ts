@@ -6,10 +6,31 @@ export class CreateProductInput {
   title: string;
 
   @Field({ nullable: true })
+  internalReference?: string;
+
+  @Field({ nullable: true })
+  responsible?: string;
+
+  @Field({ nullable: true })
   description?: string;
+
+  @Field({ nullable: true })
+  productTags?: string;
 
   @Field()
   unitPrice: number;
+
+  @Field({ nullable: true })
+  cost?: number;
+
+  @Field({ nullable: true })
+  quantityOnHand?: string;
+
+  @Field({ nullable: true })
+  forecastedQuantity?: string;
+
+  @Field({ nullable: true })
+  unitOfMeasure?: string;
 
   @Field({ nullable: true })
   categoryId?: number;
@@ -24,10 +45,31 @@ export class UpdateProductInput {
   title?: string;
 
   @Field({ nullable: true })
+  internalReference?: string;
+
+  @Field({ nullable: true })
+  responsible?: string;
+
+  @Field({ nullable: true })
   description?: string;
 
   @Field({ nullable: true })
+  productTags?: string;
+
+  @Field({ nullable: true })
   unitPrice?: number;
+
+  @Field({ nullable: true })
+  cost?: number;
+
+  @Field({ nullable: true })
+  quantityOnHand?: string;
+
+  @Field({ nullable: true })
+  forecastedQuantity?: string;
+
+  @Field({ nullable: true })
+  unitOfMeasure?: string;
 
   @Field({ nullable: true })
   categoryId?: number;

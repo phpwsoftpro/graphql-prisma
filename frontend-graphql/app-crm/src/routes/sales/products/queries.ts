@@ -14,7 +14,6 @@ export const PRODUCTS_TABLE_QUERY = gql`
         quantityOnHand
         forecastedQuantity
         unitOfMeasure
-        image
         createdAt
         status
       }
@@ -36,7 +35,6 @@ export const PRODUCTS_CREATE_MUTATION = gql`
         quantityOnHand
         forecastedQuantity
         unitOfMeasure
-        image
         createdAt
         status
     }
