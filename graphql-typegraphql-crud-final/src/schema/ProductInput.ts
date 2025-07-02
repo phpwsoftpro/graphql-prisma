@@ -3,7 +3,7 @@ import { Field, InputType } from "type-graphql";
 @InputType()
 export class CreateProductInput {
   @Field()
-  title: string;
+  name: string;
 
   @Field({ nullable: true })
   internalReference?: string;
@@ -18,16 +18,16 @@ export class CreateProductInput {
   productTags?: string;
 
   @Field()
-  unitPrice: number;
+  salesPrice: number;
 
   @Field({ nullable: true })
   cost?: number;
 
   @Field({ nullable: true })
-  quantityOnHand?: string;
+  quantityOnHand?: number;
 
   @Field({ nullable: true })
-  forecastedQuantity?: string;
+  forecastedQuantity?: number;
 
   @Field({ nullable: true })
   unitOfMeasure?: string;
@@ -42,7 +42,7 @@ export class CreateProductInput {
 @InputType()
 export class UpdateProductInput {
   @Field({ nullable: true })
-  title?: string;
+  name?: string;
 
   @Field({ nullable: true })
   internalReference?: string;
@@ -57,16 +57,16 @@ export class UpdateProductInput {
   productTags?: string;
 
   @Field({ nullable: true })
-  unitPrice?: number;
+  salesPrice?: number;
 
   @Field({ nullable: true })
   cost?: number;
 
   @Field({ nullable: true })
-  quantityOnHand?: string;
+  quantityOnHand?: number;
 
   @Field({ nullable: true })
-  forecastedQuantity?: string;
+  forecastedQuantity?: number;
 
   @Field({ nullable: true })
   unitOfMeasure?: string;

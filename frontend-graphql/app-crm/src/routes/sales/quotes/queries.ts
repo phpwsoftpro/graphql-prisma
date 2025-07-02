@@ -14,8 +14,8 @@ const QUOTE_FRAGMENT = gql`
             id
             product {
                 id
-                title
-                unitPrice
+                name
+                salesPrice
             }
             quantity
             discount

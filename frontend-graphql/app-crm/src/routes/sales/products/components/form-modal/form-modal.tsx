@@ -91,9 +91,9 @@ export const ProductsFormModal: FC<Props> = ({ action, onCancel, onMutationSucce
                 meta: {
                   variables: {
                     data: {
-                      title: values.name,
+                      name: values.name,
                       description: values.description,
-                      unitPrice: Number(values.salesPrice),
+                      salesPrice: Number(values.salesPrice),
                       status: values.status || "active", // thêm status
                     },
                   },
@@ -101,7 +101,7 @@ export const ProductsFormModal: FC<Props> = ({ action, onCancel, onMutationSucce
                     mutation CreateProduct($data: CreateProductInput!) {
                       createProduct(data: $data) {
                         id
-                        title
+                        name
                         status
                       }
                     }

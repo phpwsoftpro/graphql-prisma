@@ -4,5 +4,5 @@ import { StringFilter } from "./StringFilter";
 @InputType()
 export class ProductFilter {
   @Field(() => StringFilter, { nullable: true })
-  title?: StringFilter;
+  name?: StringFilter;
 }

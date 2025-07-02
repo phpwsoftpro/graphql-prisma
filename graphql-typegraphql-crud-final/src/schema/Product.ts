@@ -6,7 +6,7 @@ export class Product {
   id: number;
 
   @Field()
-  title: string;
+  name: string;
 
   @Field({ nullable: true })
   internalReference?: string;
@@ -21,16 +21,16 @@ export class Product {
   productTags?: string;
 
   @Field()
-  unitPrice: number;
+  salesPrice: number;
 
   @Field()
   cost: number;
 
   @Field({ nullable: true })
-  quantityOnHand?: string;
+  quantityOnHand?: number;
 
   @Field({ nullable: true })
-  forecastedQuantity?: string;
+  forecastedQuantity?: number;
 
   @Field({ nullable: true })
   unitOfMeasure?: string;
