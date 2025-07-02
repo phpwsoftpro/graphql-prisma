@@ -1,6 +1,6 @@
 import type { FC } from "react";
 import { useState } from "react";
-import { Modal, Form, Input, InputNumber, Select, Spin, Checkbox, Row, Col, Tabs } from "antd";
+import { Modal, Form, Input, InputNumber, Select, Spin, Checkbox, Row, Col, Tabs,message } from "antd";
 import { useNavigate } from "react-router-dom";
 import { useInvalidate } from "@refinedev/core";
 import { dataProvider, API_URL } from "@/providers/data";
@@ -84,6 +84,7 @@ export const ProductsFormModal: FC<Props> = ({ action, onCancel, onMutationSucce
       onOk={() => {
           form.validateFields().then(async (values) => {
             setLoading(true);
+            message.success("Successfully created product");
             try {
               await dataProvider.custom({
                 url: API_URL,
@@ -91,9 +92,9 @@ export const ProductsFormModal: FC<Props> = ({ action, onCancel, onMutationSucce
                 meta: {
                   variables: {
                     data: {
-                      title: values.name,
+                      name: values.name,
                       description: values.description,
-                      unitPrice: Number(values.salesPrice),
+                      salesPrice: Number(values.salesPrice),
                       status: values.status || "active", // thêm status
                     },
                   },
@@ -101,7 +102,7 @@ export const ProductsFormModal: FC<Props> = ({ action, onCancel, onMutationSucce
                     mutation CreateProduct($data: CreateProductInput!) {
                       createProduct(data: $data) {
                         id
-                        title
+                        name
                         status
                       }
                     }
@@ -176,12 +177,12 @@ export const ProductsFormModal: FC<Props> = ({ action, onCancel, onMutationSucce
                   <Form.Item name="description" label={<b>Internal Notes</b>}>
                     <Input.TextArea rows={3} placeholder="This note is only for internal purposes." />
                   </Form.Item>
-                  <Form.Item name="status" label="Status" rules={[{ required: true }]}>
+                  <Form.Item name="status" label="Status" rules={[{ required: false }]}>
                     <Input placeholder="e.g. active, inactive" />
                   </Form.Item>
                 </Col>
                 <Col span={12}>
-                  <Form.Item name="salesPrice" label="Sales Price" rules={[{ required: true }]}> 
+                  <Form.Item name="salesPrice" label="Sales Price" rules={[{ required: true }]}>
                     <InputNumber min={0} style={{ width: "100%" }} placeholder="e.g. 1.00" addonAfter="$" />
                   </Form.Item>
                   <Form.Item name="customerTaxes" label="Customer Taxes">

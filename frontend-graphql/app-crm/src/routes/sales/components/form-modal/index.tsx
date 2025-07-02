@@ -117,7 +117,7 @@ export const QuotesFormModal: FC<Props> = ({
             <Input placeholder="Please enter quote title" />
           </Form.Item>
           <Form.Item
-            rules={[{ required: true }]}
+            rules={[{ required: false }]}
             name="salesOwnerId"
             initialValue={formProps?.initialValues?.salesOwner?.id ?? undefined}
             label="Sales owner"
@@ -128,7 +128,7 @@ export const QuotesFormModal: FC<Props> = ({
             />
           </Form.Item>
           <Form.Item
-            rules={[{ required: true }]}
+            rules={[{ required: false }]}
             name="companyId"
             initialValue={
               searchParams.get("companyId") ??
@@ -153,7 +153,7 @@ export const QuotesFormModal: FC<Props> = ({
             />
           </Form.Item>
           <Form.Item
-            rules={[{ required: true }]}
+            rules={[{ required: false }]}
             name="contactId"
             initialValue={formProps?.initialValues?.contact?.id ?? undefined}
             label="Quote Contact"

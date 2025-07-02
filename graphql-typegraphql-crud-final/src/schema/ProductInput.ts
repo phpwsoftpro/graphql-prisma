@@ -3,13 +3,34 @@ import { Field, InputType } from "type-graphql";
 @InputType()
 export class CreateProductInput {
   @Field()
-  title: string;
+  name: string;
+
+  @Field({ nullable: true })
+  internalReference?: string;
+
+  @Field({ nullable: true })
+  responsible?: string;
 
   @Field({ nullable: true })
   description?: string;
 
+  @Field({ nullable: true })
+  productTags?: string;
+
   @Field()
-  unitPrice: number;
+  salesPrice: number;
+
+  @Field({ nullable: true })
+  cost?: number;
+
+  @Field({ nullable: true })
+  quantityOnHand?: number;
+
+  @Field({ nullable: true })
+  forecastedQuantity?: number;
+
+  @Field({ nullable: true })
+  unitOfMeasure?: string;
 
   @Field({ nullable: true })
   categoryId?: number;
@@ -21,13 +42,34 @@ export class CreateProductInput {
 @InputType()
 export class UpdateProductInput {
   @Field({ nullable: true })
-  title?: string;
+  name?: string;
+
+  @Field({ nullable: true })
+  internalReference?: string;
+
+  @Field({ nullable: true })
+  responsible?: string;
 
   @Field({ nullable: true })
   description?: string;
 
   @Field({ nullable: true })
-  unitPrice?: number;
+  productTags?: string;
+
+  @Field({ nullable: true })
+  salesPrice?: number;
+
+  @Field({ nullable: true })
+  cost?: number;
+
+  @Field({ nullable: true })
+  quantityOnHand?: number;
+
+  @Field({ nullable: true })
+  forecastedQuantity?: number;
+
+  @Field({ nullable: true })
+  unitOfMeasure?: string;
 
   @Field({ nullable: true })
   categoryId?: number;

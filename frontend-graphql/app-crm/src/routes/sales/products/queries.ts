@@ -1,20 +1,19 @@
 import { gql } from "@apollo/client";
 
 export const PRODUCTS_TABLE_QUERY = gql`
-  query ProductsTable($filter: FilterInput, $sorting: [SortInput!], $paging: OffsetPagingInput) {
+  query ProductsTable($filter: ProductFilter, $sorting: [ProductSort!], $paging: OffsetPaging) {
     products(filter: $filter, sorting: $sorting, paging: $paging) {
       nodes {
         id
-        title
+        name
         internalReference
         responsible
         productTags
-        unitPrice
+        salesPrice
         cost
         quantityOnHand
         forecastedQuantity
         unitOfMeasure
-        image
         createdAt
         status
       }
@@ -27,16 +26,15 @@ export const PRODUCTS_CREATE_MUTATION = gql`
   mutation ProductsCreate($data: CreateProductInput!) {
     createProduct(data: $data) {
         id
-        title
+        name
         internalReference
         responsible
         productTags
-        unitPrice
+        salesPrice
         cost
         quantityOnHand
         forecastedQuantity
         unitOfMeasure
-        image
         createdAt
         status
     }
