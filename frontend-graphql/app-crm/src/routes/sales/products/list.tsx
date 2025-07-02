@@ -82,17 +82,17 @@ export const ProductsListPage: FC<PropsWithChildren> = ({ children }) => {
     filters,
     sorters,
     tableQuery: tableQueryResult,
-  } = useTable<Product, HttpError, { title: string }>({
+  } = useTable<Product, HttpError, { name: string }>({
     resource: "products",
     onSearch: (values) => [
       {
-        field: "title",
+        field: "name",
         operator: "contains",
-        value: values.title,
+        value: values.name,
       },
     ],
     filters: {
-      initial: [{ field: "title", value: "", operator: "contains" }],
+      initial: [{ field: "name", value: "", operator: "contains" }],
     },
     sorters: {
       initial: [{ field: "createdAt", order: "desc" }],
@@ -104,7 +104,7 @@ export const ProductsListPage: FC<PropsWithChildren> = ({ children }) => {
 
   const onSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
     searchFormProps?.onFinish?.({
-      title: e.target.value ?? "",
+      name: e.target.value ?? "",
     });
   };
 
@@ -114,8 +114,6 @@ export const ProductsListPage: FC<PropsWithChildren> = ({ children }) => {
     ? tableProps.dataSource.map((product: any) => ({
         ...product,
         id: product._id ?? product.id,
-        name: product.title, // map title -> name
-        salesPrice: product.unitPrice, // map unitPrice -> salesPrice
       }))
     : [];
 
@@ -134,11 +132,11 @@ export const ProductsListPage: FC<PropsWithChildren> = ({ children }) => {
                 <Form
                   {...searchFormProps}
                   initialValues={{
-                    title: getDefaultFilter("title", filters, "contains"),
+                    name: getDefaultFilter("name", filters, "contains"),
                   }}
                   layout="inline"
                 >
-                  <Form.Item name="title" noStyle>
+                  <Form.Item name="name" noStyle>
                     <Input
                       size="large"
                       prefix={<SearchOutlined />}

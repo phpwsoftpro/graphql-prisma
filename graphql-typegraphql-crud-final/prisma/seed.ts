@@ -103,11 +103,11 @@ async function main() {
   // 7. Product
   await prisma.product.createMany({
     data: [
-      { id: 1, title: "Product 1", description: "Desc 1", unitPrice: 10, categoryId: 1 },
-      { id: 2, title: "Product 2", description: "Desc 2", unitPrice: 20, categoryId: 2 },
-      { id: 3, title: "Product 3", description: "Desc 3", unitPrice: 30, categoryId: 3 },
-      { id: 4, title: "Product 4", description: "Desc 4", unitPrice: 40, categoryId: 4 },
-      { id: 5, title: "Product 5", description: "Desc 5", unitPrice: 50, categoryId: 5 },
+      { id: 1, name: "Product 1", description: "Desc 1", salesPrice: 10, categoryId: 1 },
+      { id: 2, name: "Product 2", description: "Desc 2", salesPrice: 20, categoryId: 2 },
+      { id: 3, name: "Product 3", description: "Desc 3", salesPrice: 30, categoryId: 3 },
+      { id: 4, name: "Product 4", description: "Desc 4", salesPrice: 40, categoryId: 4 },
+      { id: 5, name: "Product 5", description: "Desc 5", salesPrice: 50, categoryId: 5 },
     ],
     skipDuplicates: true,
   });

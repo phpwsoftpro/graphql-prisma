@@ -18,17 +18,29 @@ export class ProductResolver {
     @Arg("paging", () => OffsetPaging, { nullable: true }) paging: OffsetPaging
   ): Promise<ProductListResponse> {
     const where: any = {};
-    if (filter?.title) {
-      if (typeof filter.title === 'string') {
-        if ((filter.title as string).trim() !== '' && filter.title !== '%%') {
-          where.title = { contains: filter.title as string };
+    if (filter?.name) {
+      if (typeof filter.name === 'string') {
+        if ((filter.name as string).trim() !== '' && filter.name !== '%%') {
+          where.name = { contains: filter.name as string };
         }
-      } else if (typeof filter.title.iLike === 'string' && filter.title.iLike !== '%%' && filter.title.iLike.trim() !== '') {
-        where.title = { contains: filter.title.iLike, mode: 'insensitive' };
-      } else if (typeof filter.title.contains === 'string' && filter.title.contains.trim() !== '' && filter.title.contains !== '%%') {
-        where.title = { contains: filter.title.contains };
-      } else if (typeof filter.title.eq === 'string' && filter.title.eq.trim() !== '' && filter.title.eq !== '%%') {
-        where.title = filter.title.eq;
+      } else if (
+        typeof filter.name.iLike === 'string' &&
+        filter.name.iLike !== '%%' &&
+        filter.name.iLike.trim() !== ''
+      ) {
+        where.name = { contains: filter.name.iLike, mode: 'insensitive' };
+      } else if (
+        typeof filter.name.contains === 'string' &&
+        filter.name.contains.trim() !== '' &&
+        filter.name.contains !== '%%'
+      ) {
+        where.name = { contains: filter.name.contains };
+      } else if (
+        typeof filter.name.eq === 'string' &&
+        filter.name.eq.trim() !== '' &&
+        filter.name.eq !== '%%'
+      ) {
+        where.name = filter.name.eq;
       }
     }
 
