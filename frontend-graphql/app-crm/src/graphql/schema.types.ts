@@ -3939,6 +3939,7 @@ export type TaskCreateInput = {
   checklist?: InputMaybe<Array<ChecklistItemInput>>;
   description?: InputMaybe<Scalars["String"]["input"]>;
   dueDate?: InputMaybe<Scalars["DateTime"]["input"]>;
+  startDate?: InputMaybe<Scalars["DateTime"]["input"]>;
   stageId?: InputMaybe<Scalars["Float"]["input"]>;
   title: Scalars["String"]["input"];
   userIds?: InputMaybe<Array<Scalars["ID"]["input"]>>;

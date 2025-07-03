@@ -136,6 +136,7 @@ model Task {
   description String?   @default("")
   status      String    @default("todo")
   dueDate     DateTime?
+  startDate   DateTime?
   completed   Boolean   @default(false)
 
   stageId Int?
