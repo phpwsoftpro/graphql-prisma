@@ -220,6 +220,8 @@ model Project {
 
   tasks Task[]
 
+  startDate  DateTime?
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
