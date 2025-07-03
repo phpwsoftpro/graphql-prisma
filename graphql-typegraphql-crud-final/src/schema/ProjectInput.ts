@@ -13,7 +13,6 @@ export class CreateProjectInput {
 
   @Field({ nullable: true })
   startDate?: Date;
-
 }
 
 @InputType()
@@ -29,6 +28,4 @@ export class UpdateProjectInput {
 
   @Field({ nullable: true })
   startDate?: Date;
-
-
 }

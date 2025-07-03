@@ -144,7 +144,7 @@ async function main() {
   // 10. Project
   await prisma.project.createMany({
     data: [
-       {
+      {
         id: 1,
         name: "Project 1",
         description: "Desc 1",
