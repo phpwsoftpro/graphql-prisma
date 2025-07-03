@@ -35,6 +35,7 @@ export const KANBAN_GET_TASK_QUERY = gql`
             completed
             description
             dueDate
+            startDate
             stage {
                 id
                 title
@@ -146,6 +147,7 @@ export const KANBAN_TASKS_QUERY = gql`
             nodes {
                 id
                 title
+                startDate
                 description
                 dueDate
                 completed

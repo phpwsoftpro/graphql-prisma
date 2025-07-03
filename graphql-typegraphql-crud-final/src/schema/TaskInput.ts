@@ -22,6 +22,9 @@ export class TaskInput {
   status?: string;
 
   @Field({ nullable: true })
+  startDate?: Date; // ✅ thêm dòng này
+
+  @Field({ nullable: true })
   dueDate?: Date;
 
   @Field({ nullable: true })

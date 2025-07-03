@@ -46,7 +46,7 @@ export const KanbanEditPage = () => {
 
   const id = data?.data?.id as number;
 
-  const { description, completed, stage, dueDate, users, checklist, title } =
+  const { description, completed, stage,startDate, dueDate, users, checklist, title } =
     data?.data ?? {};
 
   return (
@@ -97,6 +97,21 @@ export const KanbanEditPage = () => {
           cancelForm={() => setActiveKey(undefined)}
         />
       </Accordion>
+      <Accordion
+          accordionKey="start-date"
+          activeKey={activeKey}
+          setActive={setActiveKey}
+          fallback={<DueDateHeader dueData={startDate} />} // hoặc tạo StartDateHeader riêng
+          isLoading={isLoading}
+          icon={<FieldTimeOutlined />}
+          label="Start date"
+        >
+          <DueDateForm
+            initialValues={{ dueDate: startDate ?? undefined }} // nếu dùng same form
+            cancelForm={() => setActiveKey(undefined)}
+          />
+        </Accordion>
+
       <Accordion
         accordionKey="users"
         activeKey={activeKey}

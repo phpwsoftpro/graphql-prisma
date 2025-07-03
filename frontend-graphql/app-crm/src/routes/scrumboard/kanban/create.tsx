@@ -40,6 +40,7 @@ export const KanbanCreatePage = () => {
             stageId: searchParams.get("stageId")
               ? Number(searchParams.get("stageId"))
               : null,
+              startDate: new Date(),
             userIds: [],
           });
         }}
