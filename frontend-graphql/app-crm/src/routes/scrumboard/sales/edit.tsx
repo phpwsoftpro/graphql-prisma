@@ -137,7 +137,7 @@ export const SalesEditPage = () => {
           label="Company"
           initialValue={deal?.company?.id}
           name={["companyId"]}
-          rules={[{ required: true }]}
+          rules={[{ required: false }]}
           dependencies={["dealContactId"]}
         >
           <Select

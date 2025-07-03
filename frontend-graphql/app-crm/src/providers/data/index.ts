@@ -7,7 +7,7 @@ import { createClient } from "graphql-ws";
 
 import { axiosInstance } from "./axios";
 
-export const API_BASE_URL = "http://localhost:8000";
+export const API_BASE_URL = "http://192.168.1.130:8000";
 export const API_URL = `${API_BASE_URL}/graphql`;
 export const WS_URL = `ws://${API_BASE_URL}/graphql`;
 

@@ -57,7 +57,7 @@ export class TaskResolver {
     // Nếu userIds rỗng thì bỏ ra khỏi input
     const { stageId, userIds, ...rest } = input.task;
     const data: any = { ...rest };
-    if (stageId !== undefined) {
+    if (stageId !== undefined && stageId !== null) {
       data.stage = { connect: { id: Number(stageId) } };
     }
     if (userIds !== undefined) {
@@ -79,7 +79,7 @@ export class TaskResolver {
     const data: any = {
       ...rest,
     };
-    if (stageId !== undefined) {
+    if (stageId !== undefined && stageId !== null) {
       data.stage = { connect: { id: Number(stageId) } };
     }
     if (userIds !== undefined) {
