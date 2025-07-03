@@ -14,6 +14,9 @@ export class Project {
   @Field({ nullable: true })
   createdById?: number;
 
+  @Field({ nullable: true })
+  startDate?: Date;
+
   @Field()
   createdAt: Date;
 

@@ -10,6 +10,10 @@ export class CreateProjectInput {
 
   @Field({ nullable: true })
   createdById?: number;
+
+  @Field({ nullable: true })
+  startDate?: Date;
+
 }
 
 @InputType()
@@ -22,4 +26,9 @@ export class UpdateProjectInput {
 
   @Field({ nullable: true })
   createdById?: number;
+
+  @Field({ nullable: true })
+  startDate?: Date;
+
+
 }

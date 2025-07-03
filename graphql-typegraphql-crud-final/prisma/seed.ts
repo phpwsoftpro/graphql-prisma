@@ -144,11 +144,41 @@ async function main() {
   // 10. Project
   await prisma.project.createMany({
     data: [
-      { id: 1, name: "Project 1", description: "Desc 1", createdById: 3 },
-      { id: 2, name: "Project 2", description: "Desc 2", createdById: 4 },
-      { id: 3, name: "Project 3", description: "Desc 3", createdById: 5 },
-      { id: 4, name: "Project 4", description: "Desc 4", createdById: 1 },
-      { id: 5, name: "Project 5", description: "Desc 5", createdById: 2 },
+       {
+        id: 1,
+        name: "Project 1",
+        description: "Desc 1",
+        createdById: 3,
+        startDate: new Date(),
+      },
+      {
+        id: 2,
+        name: "Project 2",
+        description: "Desc 2",
+        createdById: 4,
+        startDate: new Date(),
+      },
+      {
+        id: 3,
+        name: "Project 3",
+        description: "Desc 3",
+        createdById: 5,
+        startDate: new Date(),
+      },
+      {
+        id: 4,
+        name: "Project 4",
+        description: "Desc 4",
+        createdById: 1,
+        startDate: new Date(),
+      },
+      {
+        id: 5,
+        name: "Project 5",
+        description: "Desc 5",
+        createdById: 2,
+        startDate: new Date(),
+      },
     ],
     skipDuplicates: true,
   });
