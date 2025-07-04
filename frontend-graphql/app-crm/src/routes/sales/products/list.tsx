@@ -21,6 +21,9 @@ import {
   Text,
   CustomAvatar,
 } from "@/components";
+
+import { PRODUCTS_TABLE_QUERY, PRODUCTS_DELETE_MUTATION } from "./queries";
+
 import { PRODUCTS_TABLE_QUERY ,PRODUCTS_DELETE_MUTATION} from "./queries";
 
 // TODO: Thay thế bằng type thực tế của Product

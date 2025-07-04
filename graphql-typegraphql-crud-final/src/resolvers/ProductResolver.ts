@@ -1,7 +1,7 @@
 import { Arg, ID, Mutation, Query, Resolver } from "type-graphql";
 import { PrismaClient } from "@prisma/client";
 import { Product } from "../schema/Product";
-import { CreateProductInput, UpdateProductInput,DeleteProductInput } from "../schema/ProductInput";
+import { CreateProductInput, UpdateProductInput, DeleteProductInput } from "../schema/ProductInput";
 import { ProductFilter } from "../schema/ProductFilter";
 import { ProductSort } from "../schema/ProductSort";
 import { OffsetPaging } from "../schema/PagingInput";
@@ -77,10 +77,11 @@ export class ProductResolver {
     return prisma.product.update({ where: { id }, data: updateData });
   }
 
-  @Mutation(() => Product)
+  @Mutation(() => Boolean)
   async deleteProduct(
     @Arg("input", () => DeleteProductInput) input: DeleteProductInput
   ) {
-    return prisma.product.delete({ where: { id: Number(input.id) } });
-    }
+    await prisma.product.delete({ where: { id: Number(input.id) } });
+    return true;
+  }
 }
