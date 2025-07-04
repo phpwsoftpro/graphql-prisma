@@ -60,7 +60,12 @@ import {
   SalesPage,
 } from "./routes/scrumboard/sales";
 import { UpdatePasswordPage } from "./routes/update-password";
-import { ProductsListPage, ProductsCreatePage } from "./routes/sales/products";
+import {
+  ProductsListPage,
+  ProductsCreatePage,
+  ProductsEditPage,
+  ProductsShowPage,
+} from "./routes/sales/products";
 import { InvoicesListPage, InvoicesShowPage } from "./routes/sales/invoices";
 import "./utilities/init-dayjs";
 import "@refinedev/antd/dist/reset.css";
@@ -263,6 +268,8 @@ const App: React.FC = () => {
                       }
                     >
                       <Route path="create" element={<ProductsCreatePage />} />
+                      <Route path="edit/:id" element={<ProductsEditPage />} />
+                      <Route path="show/:id" element={<ProductsShowPage />} />
                     </Route>
                     <Route path="/invoices" element={<InvoicesListPage />}>
                         {/* for invoices */}
