@@ -61,8 +61,8 @@ export class ProductResolver {
   }
 
   @Query(() => Product, { nullable: true })
-  async product(@Arg("id", () => ID) id: number) {
-    return prisma.product.findUnique({ where: { id } });
+  async product(@Arg("id", () => ID) id: string) {
+    return prisma.product.findUnique({ where: { id: Number(id) } });
   }
 
   @Mutation(() => Product)
@@ -72,18 +72,18 @@ export class ProductResolver {
 
   @Mutation(() => Product, { nullable: true })
   async updateProduct(
-    @Arg("id", () => ID) id: number,
+    @Arg("id", () => ID) id: string,
     @Arg("data") data: UpdateProductInput
   ) {
     const updateData = Object.fromEntries(
       Object.entries(data).filter(([, value]) => value !== undefined)
     ) as UpdateProductInput;
-    return prisma.product.update({ where: { id }, data: updateData });
+      return prisma.product.update({ where: { id: Number(id) }, data: updateData });
   }
 
   @Mutation(() => Boolean)
-  async deleteProduct(@Arg("id", () => ID) id: number) {
-    await prisma.product.delete({ where: { id } });
+  async deleteProduct(@Arg("id", () => ID) id: string) {
+    await prisma.product.delete({ where: { id: Number(id) } });
     return true;
   }
 
