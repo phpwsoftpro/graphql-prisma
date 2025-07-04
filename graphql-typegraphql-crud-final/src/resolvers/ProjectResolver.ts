@@ -1,7 +1,7 @@
 import { Arg, ID, Mutation, Query, Resolver, UseMiddleware } from "type-graphql";
 import { PrismaClient } from "@prisma/client";
 import { Project } from "../schema/Project";
-import { CreateProjectInput, UpdateProjectInput } from "../schema/ProjectInput";
+import { CreateProjectInput, UpdateProjectInput ,DeleteProductInput} from "../schema/ProjectInput";
 import { typeGraphqlAuth } from "../common/middleware/auth.middleware";
 
 const prisma = new PrismaClient();
@@ -40,8 +40,10 @@ export class ProjectResolver {
 
   @Mutation(() => Boolean)
   @UseMiddleware(typeGraphqlAuth)
-  async deleteProject(@Arg("id", () => ID) id: number) {
-    await prisma.project.delete({ where: { id } });
+  async deleteProduct(
+    @Arg("input", () => DeleteProductInput) input: DeleteProductInput
+  ) {
+    await prisma.product.delete({ where: { id: Number(input.id) } });
     return true;
   }
 }

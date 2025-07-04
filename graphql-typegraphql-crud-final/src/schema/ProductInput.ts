@@ -1,4 +1,8 @@
+
 import { Field, InputType, ID } from "type-graphql";
+
+import { Field, InputType,ID } from "type-graphql";
+
 
 @InputType()
 export class CreateProductInput {
@@ -82,4 +86,7 @@ export class UpdateProductInput {
 export class DeleteProductInput {
   @Field(() => ID)
   id: number;
+
+}
+
 }
