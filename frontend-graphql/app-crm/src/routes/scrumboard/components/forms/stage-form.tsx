@@ -43,7 +43,10 @@ export const StageForm = ({ initialValues, isLoading }: Props) => {
         return {
           ...values,
           stage: undefined,
-          stageId: Number(values.stage?.id),
+          stageId:
+            values.stage?.id === undefined || values.stage?.id === null
+              ? null
+              : Number(values.stage.id),
         };
       },
     },
