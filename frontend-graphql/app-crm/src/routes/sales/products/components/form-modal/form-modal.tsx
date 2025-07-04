@@ -1,9 +1,10 @@
 import type { FC } from "react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Modal, Form, Input, InputNumber, Select, Spin, Checkbox, Row, Col, Tabs,message } from "antd";
-import { useNavigate } from "react-router-dom";
-import { useInvalidate } from "@refinedev/core";
+import { useNavigate, useParams } from "react-router-dom";
+import { useInvalidate, useOne } from "@refinedev/core";
 import { dataProvider, API_URL } from "@/providers/data";
+import { PRODUCT_SHOW_QUERY } from "../../queries";
 import styles from "./index.module.css";
 
 const PRODUCT_TYPES = [
@@ -64,6 +65,22 @@ export const ProductsFormModal: FC<Props> = ({ action, onCancel, onMutationSucce
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   const invalidate = useInvalidate();
+  const params = useParams<{ id: string }>();
+
+  const { data: productData, isLoading: isLoadingProduct } = useOne({
+    resource: "products",
+    id: params.id ? Number(params.id) : undefined,
+    queryOptions: { enabled: action === "edit" },
+    meta: { gqlQuery: PRODUCT_SHOW_QUERY },
+  });
+
+  useEffect(() => {
+    if (action === "edit" && productData?.data) {
+      form.setFieldsValue({
+        ...productData.data,
+      });
+    }
+  }, [action, productData, form]);
 
   // Theo dõi giá trị checkbox
   const canBeSold = Form.useWatch("canBeSold", form);
@@ -84,21 +101,13 @@ export const ProductsFormModal: FC<Props> = ({ action, onCancel, onMutationSucce
       onOk={() => {
           form.validateFields().then(async (values) => {
             setLoading(true);
-            message.success("Successfully created product");
-            try {
-              await dataProvider.custom({
-                url: API_URL,
-                method: "post",
-                meta: {
-                  variables: {
-                    data: {
-                      name: values.name,
-                      description: values.description,
-                      salesPrice: Number(values.salesPrice),
-                      status: values.status || "active", // thêm status
-                    },
-                  },
-                  rawQuery: `
+            const variables =
+              action === "create"
+                ? { data: { name: values.name, description: values.description, salesPrice: Number(values.salesPrice), status: values.status || "active" } }
+                : { id: Number(params.id), data: { name: values.name, description: values.description, salesPrice: Number(values.salesPrice), status: values.status || "active" } };
+            const rawQuery =
+              action === "create"
+                ? `
                     mutation CreateProduct($data: CreateProductInput!) {
                       createProduct(data: $data) {
                         id
@@ -106,16 +115,40 @@ export const ProductsFormModal: FC<Props> = ({ action, onCancel, onMutationSucce
                         status
                       }
                     }
-                  `,
+                  `
+                : `
+                    mutation UpdateProduct($id: ID!, $data: UpdateProductInput!) {
+                      updateProduct(id: $id, data: $data) {
+                        id
+                        name
+                        status
+                      }
+                    }
+                  `;
+            try {
+              await dataProvider.custom({
+                url: API_URL,
+                method: "post",
+                meta: {
+                  variables,
+                  rawQuery,
                 },
               });
               await invalidate({ resource: "products", invalidates: ["list"] });
+              message.success(
+                action === "create"
+                  ? "Successfully created product"
+                  : "Successfully updated product"
+              );
               setLoading(false);
               onMutationSuccess?.();
               setOpen(false);
               navigate("/products");
             } catch (error) {
-              console.error("Create product error:", error);
+              console.error(
+                action === "create" ? "Create product error:" : "Update product error:",
+                error
+              );
               setLoading(false);
             }
           });
@@ -125,19 +158,23 @@ export const ProductsFormModal: FC<Props> = ({ action, onCancel, onMutationSucce
       width={900}
       destroyOnClose
     >
-      <Spin spinning={loading}>
-        <Form 
-          form={form} 
+      <Spin spinning={loading || isLoadingProduct}>
+        <Form
+          form={form}
           layout="vertical"
-          initialValues={{
-            productType: "consumable",
-            invoicingPolicy: "ordered",
-            reInvoiceExpenses: "no",
-            unitOfMeasure: "Units",
-            purchaseUoM: "Units",
-            canBeSold: false,
-            canBePurchased: false,
-          }}
+          initialValues={
+            action === "create"
+              ? {
+                  productType: "consumable",
+                  invoicingPolicy: "ordered",
+                  reInvoiceExpenses: "no",
+                  unitOfMeasure: "Units",
+                  purchaseUoM: "Units",
+                  canBeSold: false,
+                  canBePurchased: false,
+                }
+              : undefined
+          }
         >
           <Tabs defaultActiveKey="general">
             <Tabs.TabPane tab="General Information" key="general">

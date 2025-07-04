@@ -33,45 +33,6 @@ type Product = {
   image?: string;
 };
 
-// TẠM MOCKDATA CHO DEMO UI
-const mockProducts = [
-  {
-    id: "1",
-    name: "yyyyy",
-    internalReference: "REF001",
-    responsible: "Administrator",
-    productTags: ["tag1", "tag2", "tag3"],
-    salesPrice: 0.0,
-    cost: 0.0,
-    quantityOnHand: 10,
-    forecastedQuantity: 12,
-    unitOfMeasure: "Units",
-  },
-  {
-    id: "2",
-    name: "Service on Timesheet",
-    internalReference: "REF002",
-    responsible: "Administrator",
-    productTags: [],
-    salesPrice: 40.0,
-    cost: 0.0,
-    quantityOnHand: 0,
-    forecastedQuantity: 0,
-    unitOfMeasure: "Hours",
-  },
-  {
-    id: "3",
-    name: "Senior Developer (Timesheet)",
-    internalReference: "REF003",
-    responsible: "Administrator",
-    productTags: [],
-    salesPrice: 20.0,
-    cost: 0.0,
-    quantityOnHand: 0,
-    forecastedQuantity: 0,
-    unitOfMeasure: "Units",
-  },
-];
 
 export const ProductsListPage: FC<PropsWithChildren> = ({ children }) => {
   const screens = Grid.useBreakpoint();

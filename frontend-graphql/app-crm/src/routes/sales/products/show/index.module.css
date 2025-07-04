@@ -1,0 +1,11 @@
+.container {
+    max-width: 944px;
+    margin: 0 auto;
+}
+
+.title {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 24px;
+}

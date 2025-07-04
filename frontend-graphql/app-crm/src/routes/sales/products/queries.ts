@@ -40,3 +40,41 @@ export const PRODUCTS_CREATE_MUTATION = gql`
     }
   }
 `;
+
+export const PRODUCT_SHOW_QUERY = gql`
+  query ProductShow($id: ID!) {
+    product(id: $id) {
+      id
+      name
+      internalReference
+      responsible
+      productTags
+      salesPrice
+      cost
+      quantityOnHand
+      forecastedQuantity
+      unitOfMeasure
+      status
+      createdAt
+    }
+  }
+`;
+
+export const PRODUCTS_UPDATE_MUTATION = gql`
+  mutation ProductsUpdate($id: ID!, $data: UpdateProductInput!) {
+    updateProduct(id: $id, data: $data) {
+      id
+      name
+      internalReference
+      responsible
+      productTags
+      salesPrice
+      cost
+      quantityOnHand
+      forecastedQuantity
+      unitOfMeasure
+      status
+      createdAt
+    }
+  }
+`;
