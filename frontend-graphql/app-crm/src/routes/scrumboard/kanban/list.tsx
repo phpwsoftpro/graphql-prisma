@@ -134,7 +134,10 @@ export const KanbanPage: FC<PropsWithChildren> = ({ children }) => {
     updateTask({
       id: taskId,
       values: {
-        stageId: Number(stageId),
+        stageId:
+          stageId === undefined || stageId === null
+            ? null
+            : Number(stageId),
       },
       meta: {
         gqlMutation: KANBAN_UPDATE_TASK_MUTATION,
@@ -233,29 +236,7 @@ export const KanbanPage: FC<PropsWithChildren> = ({ children }) => {
   return (
     <>
       <KanbanBoard onDragEnd={handleOnDragEnd}>
-        <KanbanColumn
-          id={"unassigned"}
-          title={"unassigned"}
-          count={taskStages?.unassignedStage?.length || 0}
-          onAddClick={() => handleAddCard({ stageId: "unassigned" })}
-        >
-          {taskStages.unassignedStage?.map((task) => {
-            return (
-              <KanbanItem
-                key={task.id}
-                id={task.id}
-                data={{ ...task, stageId: "unassigned" }}
-              >
-                <ProjectCardMemo {...task} />
-              </KanbanItem>
-            );
-          })}
-          {!taskStages.unassignedStage?.length && (
-            <KanbanAddCardButton
-              onClick={() => handleAddCard({ stageId: "unassigned" })}
-            />
-          )}
-        </KanbanColumn>
+
         {taskStages.stages?.map((column) => {
           const contextMenuItems = getContextMenuItems(column);
 

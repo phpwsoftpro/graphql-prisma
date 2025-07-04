@@ -1,7 +1,11 @@
 import { Arg, ID, Mutation, Query, Resolver } from "type-graphql";
 import { PrismaClient } from "@prisma/client";
 import { Product } from "../schema/Product";
-import { CreateProductInput, UpdateProductInput } from "../schema/ProductInput";
+import {
+  CreateProductInput,
+  UpdateProductInput,
+  DeleteOneProductInput,
+} from "../schema/ProductInput";
 import { ProductFilter } from "../schema/ProductFilter";
 import { ProductSort } from "../schema/ProductSort";
 import { OffsetPaging } from "../schema/PagingInput";
@@ -82,4 +86,19 @@ export class ProductResolver {
     await prisma.product.delete({ where: { id: Number(id) } });
     return true;
   }
+
+
+  /**
+   * Delete a single product by id and return the removed entity.
+   *
+   * Returning the deleted product allows clients to select any fields they
+   * require in the mutation response instead of a simple boolean.
+   */
+   /**
+  @Mutation(() => Product, { nullable: true })
+  async deleteOneProduct(
+    @Arg("input", () => DeleteOneProductInput) input: DeleteOneProductInput,
+  ) {
+    return prisma.product.delete({ where: { id: Number(input.id)  } });
+  }*/
 }
