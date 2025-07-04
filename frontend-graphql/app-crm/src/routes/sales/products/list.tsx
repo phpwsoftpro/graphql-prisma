@@ -21,7 +21,7 @@ import {
   Text,
   CustomAvatar,
 } from "@/components";
-import { PRODUCTS_TABLE_QUERY } from "./queries";
+import { PRODUCTS_TABLE_QUERY, PRODUCTS_DELETE_MUTATION } from "./queries";
 
 // TODO: Thay thế bằng type thực tế của Product
 // type Product = GetFieldsFromList<ProductsTableQuery>;
@@ -288,6 +288,8 @@ export const ProductsListPage: FC<PropsWithChildren> = ({ children }) => {
                       hideText
                       size="small"
                       recordItemId={record.id}
+                      mutationMode="pessimistic"
+                      meta={{ gqlMutation: PRODUCTS_DELETE_MUTATION }}
                       style={{ backgroundColor: "transparent" }}
                     />
                   </Space>
