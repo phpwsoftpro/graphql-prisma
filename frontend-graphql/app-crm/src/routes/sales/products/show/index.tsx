@@ -13,7 +13,10 @@ export const ProductsShowPage = () => {
   const { data, isLoading } = useOne({
     resource: "products",
     id: id ? Number(id) : undefined,
+
+
     id,
+
     meta: { gqlQuery: PRODUCT_SHOW_QUERY },
   });
 

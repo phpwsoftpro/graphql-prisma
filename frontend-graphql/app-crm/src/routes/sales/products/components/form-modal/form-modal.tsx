@@ -69,6 +69,7 @@ export const ProductsFormModal: FC<Props> = ({ action, onCancel, onMutationSucce
 
   const { data: productData, isLoading: isLoadingProduct } = useOne({
     resource: "products",
+    id: params.id ? Number(params.id) : undefined,
 
     id: params.id ? Number(params.id) : undefined,
     id: params.id,
